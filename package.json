@@ -1,0 +1,29 @@
+{
+  "name": "warframe-nexus-query",
+  "version": "0.0.1",
+  "description": "Query the Warframe Nexus database for price check data.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/tobiah/warframe-nexus-query.git"
+  },
+  "keywords": [
+    "warframe",
+    "trading",
+    "warframe-nexus",
+    "warframe-trading"
+  ],
+  "author": "aliasfalse",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/tobiah/warframe-nexus-query/issues"
+  },
+  "homepage": "https://gitlab.com/tobiah/warframe-nexus-query#README",
+  "dependencies": {
+    "assert": "^1.4.1",
+    "mongodb": "^2.2.5"
+  }
+}
