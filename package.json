@@ -24,6 +24,9 @@
   "homepage": "https://gitlab.com/tobiah/warframe-nexus-query#README",
   "dependencies": {
     "assert": "^1.4.1",
-    "mongodb": "^2.2.5"
+    "json-query": "^2.1.1",
+    "mongodb": "^2.2.5",
+    "node-md-config": "^2.0.1",
+    "request": "^2.74.0"
   }
 }

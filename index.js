@@ -1,18 +1,22 @@
-var maxCacheLength = process.env.NEXUSSTATS_MAX_CACHE_LENGTH || 60000;
+var request = require('request');
+var maxCacheLength = process.env.NEXUSSTATS_MAX_CACHED_TIME || 60000;
+var Item = require('./lib/item.js');
+var md = require('node-md-config');
+var jsonQuery = require('json-query');
 
-var Parser = function () {
+var WarframeNexusStats = function () {
   this.cache = null;
   this.lastRefresh = null;
   this.refreshing = false;
   this.refreshQueue = [];
 }
 
-Parser.prototype.dataIsCurrent = function() {
+WarframeNexusStats.prototype.dataIsCurrent = function() {
   return this.cache &&
-     Date.now() - this.cache.creation < MAX_CACHED_TIME
+     Date.now() - this.cache.creation < NEXUSSTATS_MAX_CACHED_TIME
 }
 
-Parser.prototype.getData = function(callback) {
+WarframeNexusStats.prototype.getData = function(callback) {
   if(this.dataIsCurrent()) {
     callback(null, this.cache);
   } else {
@@ -20,7 +24,7 @@ Parser.prototype.getData = function(callback) {
   }
 }
 
-Parser.prototype.refresh = function(callback) {
+WarframeNexusStats.prototype.refresh = function(callback) {
   var self = this;
 
   this.refreshQueue.push(callback);
@@ -38,8 +42,8 @@ Parser.prototype.refresh = function(callback) {
   }
 }
 
-Parser.prototype.retrieve = function(callback) {
-  var url = platformURL[this.platform];
+WarframeNexusStats.prototype.retrieve = function(callback) {
+  var url = 'https://nexus-stats.com/api';
   var self = this;
   request.get(url, function(err, response, body) {
     if(err) {
@@ -63,66 +67,69 @@ Parser.prototype.retrieve = function(callback) {
       error = new Error('Invalid JSON from ' + url);
       return callback(error);
     }
-    callback(null, new WorldState(data, self.platform));
+    var wrappedData = {
+      items: data
+    }
+    callback(null, wrappedData);
   });
 }
 
-Parser.prototype.processRefreshQueue = function(err, data) {
+WarframeNexusStats.prototype.processRefreshQueue = function(err, data) {
   while(this.refreshQueue.length) {
     this.refreshQueue.shift()(err, data);
   }
 }
 
-var refresh = function(callback){
-  // Use connect method to connect to the Server 
-  MongoClient.connect(url, function(err, db) {
-    assert.equal(null, err);
-    console.log("Connected correctly to server");
-    cache = db.getCollection('Itemcache');
-    db.close();
-  });
-  callback(null, cache);
-}
-
-var WarframeNexusStats = function(){
-  this.cache = undefined;
-  if(cache === {}){
-    var self = this;
-    refresh(function(err, dataCache){
-      if(err){
-        console.error(err);
-        return;
-      }
-      self.cache = dataCache;
+WarframeNexusStats.prototype.priceCheckQuery = function(query, callback){
+  this.getData(function(err, dataCache){
+    if(err) {
+      return callback(err, null);
+    }
+    var results = jsonQuery('items[*Title~/'+query+'/i]', {
+      data: dataCache,
+      allowRegexp: true
     });
-  }
-  this.creation = new Date();
+    var componentsToReturn = [];
+    if(typeof results.value === 'undefined'){
+      callback(new Error("No value for given query - WarframeNexusStats.prototype.priceCheckQuery", "warframe-nexus-query/index.js", 88), null);
+      return;
+    }
+
+    results.value.forEach(function(item){
+      componentsToReturn.push(new Item(item));
+    })
+    callback(null, componentsToReturn);
+  })
 }
 
-WarframeNexusStats.prototype.refresh = function(callback){
-  var self = this;
-  if(Date.now() - this.creation.getDate()){
+WarframeNexusStats.prototype.priceCheckQueryString = function(query, callback){
+  this.getData(function(err, dataCache){
+    var defaultString = md.codeMulti+"Operator, there is no such item pricecheck available."+md.blockEnd;
+    if(err) {
+      return callback(err, defaultString);
+    }
+    var results = jsonQuery('items[*Title~/'+query+'/i]', {
+      data: dataCache,
+      allowRegexp: true
+    });
+    if(typeof results.value === 'undefined'){
+      callback(new Error("No value for given query - WarframeNexusStats.prototype.priceCheckQueryString"
+                         , "warframe-nexus-query/index.js", 111), null);
+      return;
+    }
+    var componentsToReturn = [];
+    results.value.forEach(function(item){
+      componentsToReturn.push(new Item(item));
+    });
     
-  }
-  refresh(function(err, dataCache){
-    if(err){
-      console.error(err);
-      return;
-    }
-    self.creation = new Date();
-    self.cache = dataCache;
-  });
-}
-
-WarframeNexusStats.prototype.getItemValues = function(callback){
-  this.refresh(function(err, dataCache){
-    if(err){
-      console.error(err);
-      return;
-    }
-    else{
-      callback(null, JSON.stringify(dataCache))
-    }      
+    var componentsToReturnString = "";
+    componentsToReturn.forEach(function(component){
+      componentsToReturnString += md.lineEnd + component.toString();
+    });
+    componentsToReturnString = componentsToReturn.length > 0 ? 
+                                  componentsToReturnString : 
+                                  defaultString;
+    callback(null, componentsToReturnString);
   });
 }
 
