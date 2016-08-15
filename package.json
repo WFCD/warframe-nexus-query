@@ -1,6 +1,6 @@
 {
   "name": "warframe-nexus-query",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Query the Warframe Nexus database for price check data.",
   "main": "index.js",
   "scripts": {
