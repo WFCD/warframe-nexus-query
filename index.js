@@ -13,7 +13,7 @@ var WarframeNexusStats = function () {
 
 WarframeNexusStats.prototype.dataIsCurrent = function() {
   return this.cache &&
-     Date.now() - this.cache.creation < NEXUSSTATS_MAX_CACHED_TIME
+     Date.now() - this.cache.creation < maxCacheLength
 }
 
 WarframeNexusStats.prototype.getData = function(callback) {
