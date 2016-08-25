@@ -14,6 +14,11 @@ Require | Module File | Accessor | Description | parameters
 `warframe-nexus-query` | `index.js` | `.priceCheckQueryString` | Get Query result string | `query`, `callback`
 `warframe-nexus-query` | `index.js` | `.priceCheckQuery` | Get Query result objects, has more parameters available | `query`, `callback`
 
+## Environment variables
+
+Variable | example | default
+--- | --- | ---
+`NEXUSSTATS_MAX_CACHED_TIME` | `600000` | `30000`
 
 ## Objects
 
