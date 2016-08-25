@@ -95,7 +95,7 @@ WarframeNexusStats.prototype.priceCheckQuery = function(query, callback){
       return;
     }
 
-    results.value.forEach(function(item){
+    results.value.slice(0, 4).forEach(function(item){
       componentsToReturn.push(new Item(item));
     })
     callback(null, componentsToReturn);
@@ -123,7 +123,7 @@ WarframeNexusStats.prototype.priceCheckQueryString = function(query, callback){
     });
     
     var componentsToReturnString = "";
-    componentsToReturn.forEach(function(component){
+    componentsToReturn.slice(0,4).forEach(function(component){
       componentsToReturnString += md.lineEnd + component.toString();
     });
     componentsToReturnString = componentsToReturn.length > 0 ? 
