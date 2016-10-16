@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>json-fetch-cache Class: Component</title>
+	<title>json-fetch-cache Class: Item</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -72,16 +72,16 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: Component</h1>
+	<h1 class="page-title">Class: Item</h1>
 <section>
 
 <header>
     
         <h2>
-        Component
+        Item
         </h2>
         
-            <div class="class-description">Represents an individual component object of an item.</div>
+            <div class="class-description">Describes an item, such as a prime item, mod, arcane, or syndicate item</div>
         
     
 </header>
@@ -93,16 +93,12 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="Component"><span class="type-signature"></span>new Component(data)</h4>
+    <h4 class="name" id="Item"><span class="type-signature"></span>new Item(data)</h4>
     
     
 </dt>
 <dd>
 
-    
-    <div class="description">
-        Represents an individual component object of an item.
-    </div>
     
 
     
@@ -142,7 +138,7 @@
             <td class="type">
             
                 
-<span class="param-type">json</span>
+<span class="param-type">JSON</span>
 
 
 
@@ -153,7 +149,7 @@
 
             
 
-            <td class="description last">the component data to parse into a component</td>
+            <td class="description last">to construct an item from</td>
         </tr>
 
     
@@ -197,8 +193,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_component.js.html">lib/component.js</a>,
-				 <a href="lib_component.js.html#sunlight-1-line-6">line 6</a>
+				<a href="lib_item.js.html">lib/item.js</a>,
+				 <a href="lib_item.js.html#sunlight-1-line-18">line 18</a>
 			</li>
 		</ul>
 	</dd>
@@ -246,15 +242,96 @@
         <dl>
             
 <hr>
-<dt class="name" id="avgPrice">
-    <h4 id="avgPrice"><span class="type-signature"></span>avgPrice<span class="type-signature"> :string</span></h4>
+<dt class="name" id="components">
+    <h4 id="components"><span class="type-signature"></span>components<span class="type-signature"> :Array.&lt;<a href="Component.html">Component</a>></span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Average price of the component as a string
+        Array of Component objects
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Array.&lt;<a href="Component.html">Component</a>></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="lib_item.js.html">lib/item.js</a>,
+				 <a href="lib_item.js.html#sunlight-1-line-28">line 28</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="demandAmount">
+    <h4 id="demandAmount"><span class="type-signature"></span>demandAmount<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Amount of the available data that is a sell request
     </div>
     
 
@@ -306,8 +383,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_component.js.html">lib/component.js</a>,
-				 <a href="lib_component.js.html#sunlight-1-line-24">line 24</a>
+				<a href="lib_item.js.html">lib/item.js</a>,
+				 <a href="lib_item.js.html#sunlight-1-line-74">line 74</a>
 			</li>
 		</ul>
 	</dd>
@@ -327,96 +404,15 @@
         
             
 <hr>
-<dt class="name" id="data">
-    <h4 id="data"><span class="type-signature"></span>data<span class="type-signature"> :JSON</span></h4>
+<dt class="name" id="demandPercent">
+    <h4 id="demandPercent"><span class="type-signature"></span>demandPercent<span class="type-signature"> :string</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Component data
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">JSON</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="lib_component.js.html">lib/component.js</a>,
-				 <a href="lib_component.js.html#sunlight-1-line-36">line 36</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="name">
-    <h4 id="name"><span class="type-signature"></span>name<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Name of the component, display value
+        Percentage of the available data that is a buy request
     </div>
     
 
@@ -468,8 +464,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_component.js.html">lib/component.js</a>,
-				 <a href="lib_component.js.html#sunlight-1-line-18">line 18</a>
+				<a href="lib_item.js.html">lib/item.js</a>,
+				 <a href="lib_item.js.html#sunlight-1-line-62">line 62</a>
 			</li>
 		</ul>
 	</dd>
@@ -489,15 +485,15 @@
         
             
 <hr>
-<dt class="name" id="rawAverage">
-    <h4 id="rawAverage"><span class="type-signature"></span>rawAverage<span class="type-signature"> :number</span></h4>
+<dt class="name" id="id">
+    <h4 id="id"><span class="type-signature"></span>id<span class="type-signature"> :string</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Raw average price of the component as a number
+        Unique identifier for the item
     </div>
     
 
@@ -506,7 +502,7 @@
         <ul>
             <li>
                 
-<span class="param-type">number</span>
+<span class="param-type">string</span>
 
 
 
@@ -549,8 +545,332 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_component.js.html">lib/component.js</a>,
-				 <a href="lib_component.js.html#sunlight-1-line-30">line 30</a>
+				<a href="lib_item.js.html">lib/item.js</a>,
+				 <a href="lib_item.js.html#sunlight-1-line-34">line 34</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="supplyAmount">
+    <h4 id="supplyAmount"><span class="type-signature"></span>supplyAmount<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Amount of the available data that is a sell request
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="lib_item.js.html">lib/item.js</a>,
+				 <a href="lib_item.js.html#sunlight-1-line-68">line 68</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="supplyPercent">
+    <h4 id="supplyPercent"><span class="type-signature"></span>supplyPercent<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Percentage of the available data that is a sell request
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="lib_item.js.html">lib/item.js</a>,
+				 <a href="lib_item.js.html#sunlight-1-line-56">line 56</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="title">
+    <h4 id="title"><span class="type-signature"></span>title<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Title (name) of item
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="lib_item.js.html">lib/item.js</a>,
+				 <a href="lib_item.js.html#sunlight-1-line-40">line 40</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="type">
+    <h4 id="type"><span class="type-signature"></span>type<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Type of the item, such as:* Prime* Mods* Arcane* Syndicate
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="lib_item.js.html">lib/item.js</a>,
+				 <a href="lib_item.js.html#sunlight-1-line-50">line 50</a>
 			</li>
 		</ul>
 	</dd>
@@ -577,168 +897,6 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="padName"><span class="type-signature"></span>padName(locationString)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Pad the left side of a string so that all componetshave the same string length before the pipe
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>locationString</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">the location string to pad</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="lib_component.js.html">lib/component.js</a>,
-				 <a href="lib_component.js.html#sunlight-1-line-53">line 53</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    the padded location string
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">string</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
     <h4 class="name" id="toString"><span class="type-signature"></span>toString()</h4>
     
     
@@ -747,7 +905,7 @@
 
     
     <div class="description">
-        The components's string representation
+        String representation of this Item.
     </div>
     
 
@@ -793,8 +951,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_component.js.html">lib/component.js</a>,
-				 <a href="lib_component.js.html#sunlight-1-line-43">line 43</a>
+				<a href="lib_item.js.html">lib/item.js</a>,
+				 <a href="lib_item.js.html#sunlight-1-line-85">line 85</a>
 			</li>
 		</ul>
 	</dd>

@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>json-fetch-cache Source: lib/component.js</title>
+	<title>json-fetch-cache Global</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -67,84 +67,275 @@
 <div class="row">
 
 	
-	<div class="col-md-12">
+	<div class="col-md-8">
 	
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: lib/component.js</h1>
-    
+	<h1 class="page-title">Global</h1>
 <section>
-    <article>
-        <pre
-            class="sunlight-highlight-javascript linenums">'use strict';
 
-/**
- * Represents an individual component object of an item.
- */
-class Component {
+<header>
+    
+        <h2>
+        
+        </h2>
+        
+    
+</header>
 
-  /**
-   * Represents an individual component object of an item.
-   * @param {json} data the component data to parse into a component
-   * @constructor
-   */
-  constructor(data) {
-    /**
-     * Name of the component, display value
-     * @type {string}
-     */
-    this.name = data.name;
 
-    /**
-     * Average price of the component as a string
-     * @type {string}
-     */
-    this.avgPrice = data.avg;
+<article>
+    <div class="container-overview">
+    
+        
 
-    /**
-     * Raw average price of the component as a number
-     * @type {number}
-     */
-    this.rawAverage = data.comp_val_rt;
+        
+<dl class="details">
+    
 
-    /**
-     * Component data
-     * @type {JSON}
-     */
-    this.data = data.data;
-  }
+	
 
-  /**
-   * The components's string representation
-   * @returns {string}
-   */
-  toString() {
-    return `\u221F${this.padName(this.name)} | average: ${(this.avgPrice !== '' ? this.avgPrice : '0p')}`;
-  }
+	
 
-  /**
-   * Pad the left side of a string so that all componets
-   * have the same string length before the pipe
-   * @param {string} locationString the location string to pad
-   * @returns {string} the padded location string
-   */
-  padName(locationString) {
-    let stringRet;
-    if (locationString.length &lt; 10) {
-      stringRet = this.padName(`${locationString} `);
-    } else {
-      stringRet = locationString;
-    }
-    return stringRet;
-  }
-}
+	
 
-module.exports = Component;
-</pre>
-    </article>
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id="safeGetAmountString"><span class="type-signature"></span>safeGetAmountString( [checkThing])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Safely get the value of a value, default to 0 if undefined
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>checkThing</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    '0'
+                
+                </td>
+            
+
+            <td class="description last">Value of thing to safely check</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="lib_item.js.html">lib/item.js</a>,
+				 <a href="lib_item.js.html#sunlight-1-line-11">line 11</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">*</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+
+    
+</article>
+
 </section>
-
 
 
 
@@ -154,6 +345,10 @@ module.exports = Component;
 
 	<div class="clearfix"></div>
 
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
 	
 
 </div>
