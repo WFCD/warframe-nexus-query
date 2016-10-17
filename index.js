@@ -30,10 +30,11 @@ class WarframeNexusStats {
    * @returns {Promise<Array<Item>>} a Promise of an array of Item objects
    */
   priceCheckQuery(query) {
+    const defaultString = `${md.codeMulti}Operator, there is no such item pricecheck available.${md.blockEnd}`;
     return new Promise((resolve, reject) => {
       this.nexusCache.getData()
         .then((dataCache) => {
-          const results = jsonQuery(`items[*Title~/${query}/i]`, {
+          const results = jsonQuery(`[*Title~/${query}/i]`, {
             data: dataCache,
             allowRegexp: true,
           });
@@ -42,6 +43,11 @@ class WarframeNexusStats {
             reject(new Error('No value for given query - WarframeNexusStats.prototype.priceCheckQuery',
                              'warframe-nexus-query/index.js', 34), null);
           }
+          
+          if(results.value.length === 0){
+            resolve([defaultString]);
+          }
+          
           results.value.slice(0, 4).forEach((item) => {
             componentsToReturn.push(new Item(item));
           });
