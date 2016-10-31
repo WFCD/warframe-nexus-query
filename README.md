@@ -2,6 +2,11 @@
 
 A node project for allowing simple access to the `https://nexus-stats.com/` api.
 
+## Get Help on Discord
+
+[![Contact me on Discord](https://img.shields.io/badge/discord-Tobiah%238452-7289DA.svg)](https://discord.gg/0ycgfahdR8gTzWgM "Contact me on Discord: Tobiah#8452")
+
+
 ## Installation
 ```
 npm install --save warframe-nexus-query
