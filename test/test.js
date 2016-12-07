@@ -1,7 +1,7 @@
 const WFNQ = require('../index.js');
 const nexus = new WFNQ();
 
-let querystring = "V";
+let querystring = "Vauban Prime";
 let query = nexus.priceCheckQueryAttachment(querystring);
 
 query.then(items => {

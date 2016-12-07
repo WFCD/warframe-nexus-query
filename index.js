@@ -93,18 +93,16 @@ class WarframeNexusStats {
       const defaultString = `${md.codeMulti}Operator, there is no such item pricecheck available.${md.blockEnd}`;
       this.priceCheckQuery(query)
         .then((components) => {
-          const attachments = [];
-          let i = 0;
-          components.forEach((component, index) => {
+          let attachments = [];
+          let index = -1;
+          components.forEach((component) => {
+            if (typeof component === "string") resolve([component]);
             component.toAttachment().then((attachment) => {
+              index++;
               attachments.push(attachment);
-              if (index == 0) {
-                let componentsToReturnAttachment = attachments;
-                componentsToReturnAttachment = components.length > 0 ?
-                  attachments : [defaultString];
-                resolve(componentsToReturnAttachment);
+              if (index == components.length-1) {
+                resolve(attachments);
               }
-              i++;
             })
             .catch((error) => {
               reject(error);
