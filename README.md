@@ -1,5 +1,7 @@
 # warframe-nexus-query
 
+[![Supported by Warframe Community Developers](https://github.com/Warframe-Community-Developers/banner/blob/master/banner.png)](https://github.com/Warframe-Community-Developers)
+
 A node project for allowing simple access to the `https://nexus-stats.com/` api.
 
 ## Get Help on Discord
