@@ -43,11 +43,11 @@ class WarframeNexusStats {
             reject(new Error('No value for given query - WarframeNexusStats.prototype.priceCheckQuery',
                              'warframe-nexus-query/index.js', 34), null);
           }
-          
+
           if(results.value.length === 0){
             resolve([defaultString]);
           }
-          
+
           results.value.slice(0, 4).forEach((item) => {
             componentsToReturn.push(new Item(item));
           });
@@ -78,6 +78,36 @@ class WarframeNexusStats {
           componentsToReturnString = components.length > 0 ?
             componentsToReturnString : defaultString;
           resolve(componentsToReturnString);
+        })
+        ;
+    });
+  }
+
+  /**
+   * Lookup a list of results for a query
+   * @param {string} query Query to search the nexus-stats database against
+   * @returns {Promise<Object>} a Promise of an array of attachment objects
+   */
+  priceCheckQueryAttachment(query) {
+    return new Promise((resolve, reject) => {
+      const defaultString = `${md.codeMulti}Operator, there is no such item pricecheck available.${md.blockEnd}`;
+      this.priceCheckQuery(query)
+        .then((components) => {
+          let attachments = [];
+          let index = -1;
+          components.forEach((component) => {
+            if (typeof component === "string") resolve([component]);
+            component.toAttachment().then((attachment) => {
+              index++;
+              attachments.push(attachment);
+              if (index == components.length-1) {
+                resolve(attachments);
+              }
+            })
+            .catch((error) => {
+              reject(error);
+            });
+          });
         })
         .catch((error) => {
           reject(error);
