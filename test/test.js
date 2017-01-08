@@ -1,11 +1,11 @@
 const WFNQ = require('../index.js');
 const nexus = new WFNQ();
 
-let querystring = "Vauban Prime";
-let query = nexus.priceCheckQueryAttachment(querystring);
+const querystring = 'Vauban Prime';
+const query = nexus.priceCheckQueryAttachment(querystring);
 
-query.then(items => {
-	console.log(items);
+query.then((items) => {
+  console.log(items);
 }).catch((error) => {
-	throw error;
+  throw error;
 });

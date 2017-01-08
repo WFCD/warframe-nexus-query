@@ -62,7 +62,7 @@ class WarframeNexusStats {
    * @returns {Promise<string>} a Promise of a string containing the results of the query
    */
   priceCheckQueryString(query) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const defaultString = 'Operator, there is no such item pricecheck available.';
       this.priceCheckQuery(query)
         .then((components) => {
@@ -86,7 +86,6 @@ class WarframeNexusStats {
    */
   priceCheckQueryAttachment(query) {
     return new Promise((resolve, reject) => {
-      const defaultString = 'Operator, there is no such item pricecheck available.';
       this.priceCheckQuery(query)
         .then((components) => {
           const attachments = [];
@@ -94,9 +93,9 @@ class WarframeNexusStats {
           components.forEach((component) => {
             if (typeof component === 'string') resolve([component]);
             component.toAttachment().then((attachment) => {
-              index++;
+              index += 1;
               attachments.push(attachment);
-              if (index == components.length - 1) {
+              if (index === components.length - 1) {
                 resolve(attachments);
               }
             })
