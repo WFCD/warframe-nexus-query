@@ -6,7 +6,7 @@ const url = 'https://nexus-stats.com/api';
 const Item = require('./lib/item.js');
 const md = require('node-md-config');
 const jsonQuery = require('json-query');
-const Cache = require('json-fetch-cache');
+const JSONCache = require('json-fetch-cache');
 
 /**
  * Represents a queryable datastore of information derived from `https://nexus-stats.com/api`
@@ -21,7 +21,7 @@ class WarframeNexusStats {
      * The json cache storing data from nexus-stats.com
      * @type {Cache}
      */
-    this.nexusCache = new Cache(url, maxCacheLength);
+    this.nexusCache = new JSONCache(url, maxCacheLength);
   }
 
   /**
@@ -30,9 +30,9 @@ class WarframeNexusStats {
    * @returns {Promise<Array<Item>>} a Promise of an array of Item objects
    */
   priceCheckQuery(query) {
-    const defaultString = `${md.codeMulti}Operator, there is no such item pricecheck available.${md.blockEnd}`;
+    const defaultString = 'Operator, there is no such item pricecheck available.';
     return new Promise((resolve, reject) => {
-      this.nexusCache.getData()
+      this.nexusCache.getDataJson()
         .then((dataCache) => {
           const results = jsonQuery(`[*Title~/${query}/i]`, {
             data: dataCache,
@@ -43,20 +43,16 @@ class WarframeNexusStats {
             reject(new Error('No value for given query - WarframeNexusStats.prototype.priceCheckQuery',
                              'warframe-nexus-query/index.js', 34), null);
           }
-
-          if(results.value.length === 0){
+          if (results.value === null) {
             resolve([defaultString]);
           }
-
           results.value.slice(0, 4).forEach((item) => {
             componentsToReturn.push(new Item(item));
           });
 
           resolve(componentsToReturn);
         })
-        .catch((error) => {
-          reject(error);
-        });
+        .catch(reject);
     });
   }
 
@@ -67,7 +63,7 @@ class WarframeNexusStats {
    */
   priceCheckQueryString(query) {
     return new Promise((resolve, reject) => {
-      const defaultString = `${md.codeMulti}Operator, there is no such item pricecheck available.${md.blockEnd}`;
+      const defaultString = 'Operator, there is no such item pricecheck available.';
       this.priceCheckQuery(query)
         .then((components) => {
           const tokens = [];
@@ -90,28 +86,24 @@ class WarframeNexusStats {
    */
   priceCheckQueryAttachment(query) {
     return new Promise((resolve, reject) => {
-      const defaultString = `${md.codeMulti}Operator, there is no such item pricecheck available.${md.blockEnd}`;
+      const defaultString = 'Operator, there is no such item pricecheck available.';
       this.priceCheckQuery(query)
         .then((components) => {
-          let attachments = [];
+          const attachments = [];
           let index = -1;
           components.forEach((component) => {
-            if (typeof component === "string") resolve([component]);
+            if (typeof component === 'string') resolve([component]);
             component.toAttachment().then((attachment) => {
               index++;
               attachments.push(attachment);
-              if (index == components.length-1) {
+              if (index == components.length - 1) {
                 resolve(attachments);
               }
             })
-            .catch((error) => {
-              reject(error);
-            });
+            .catch(reject);
           });
         })
-        .catch((error) => {
-          reject(error);
-        });
+        .catch(reject);
     });
   }
 }
