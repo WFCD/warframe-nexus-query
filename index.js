@@ -43,7 +43,7 @@ class WarframeNexusStats {
             reject(new Error('No value for given query - WarframeNexusStats.prototype.priceCheckQuery',
                              'warframe-nexus-query/index.js', 34), null);
           }
-          if (results.value === null) {
+          if (!results.value) {
             resolve([defaultString]);
           }
           results.value.slice(0, 4).forEach((item) => {

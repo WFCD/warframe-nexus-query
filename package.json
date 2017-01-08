@@ -27,11 +27,11 @@
     "bluebird": "^3.4.7",
     "get-image-colors": "^1.5.1",
     "image-downloader": "^2.0.0",
-    "json-fetch-cache": "^0.0.4",
+    "json-fetch-cache": "0.0.5",
     "json-query": "^2.1.1",
     "node-md-config": "^2.0.1"
   },
-  "defDependencies" :{
+  "defDependencies": {
     "eslint": "^3.7.1",
     "eslint-config-airbnb": "^12.0.0",
     "eslint-plugin-import": "^1.16.0",
