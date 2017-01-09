@@ -41,16 +41,22 @@ class WarframeNexusStats {
           const componentsToReturn = [];
           if (typeof results.value === 'undefined') {
             reject(new Error('No value for given query - WarframeNexusStats.prototype.priceCheckQuery',
-                             'warframe-nexus-query/index.js', 34), null);
+                             'warframe-nexus-query/index.js', 34));
+            return;
           }
           if (!results.value) {
             resolve([defaultString]);
           }
-          results.value.slice(0, 4).forEach((item) => {
-            componentsToReturn.push(new Item(item));
-          });
-
-          resolve(componentsToReturn);
+          try {
+            results.value.slice(0, 4).forEach((item) => {
+              if (typeof item !== 'undefined' && item !== null) {
+                componentsToReturn.push(new Item(item));
+              }
+            });
+            resolve(componentsToReturn);
+          } catch (e) {
+            console.error(e);
+          }
         })
         .catch(reject);
     });
