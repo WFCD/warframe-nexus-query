@@ -26,6 +26,7 @@ Require | Module File | Accessor | Description | parameters
 Variable | example | default
 --- | --- | ---
 `NEXUSSTATS_MAX_CACHED_TIME` | `600000` | `30000`
+`NEXUSSTATS_URL_OVERRIDE` | `'https://nexus-stats.com/api'` | `https://nexus-stats.com/api`
 
 ## Objects
 
