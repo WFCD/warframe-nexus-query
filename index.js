@@ -1,7 +1,7 @@
 'use strict';
 
 const maxCacheLength = process.env.NEXUSSTATS_MAX_CACHED_TIME || 60000;
-const url = 'https://nexus-stats.com/api';
+const url = process.env.NEXUSSTATS_URL_OVERRIDE || 'https://nexus-stats.com/api';
 
 const Item = require('./lib/item.js');
 const md = require('node-md-config');
