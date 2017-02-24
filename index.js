@@ -55,6 +55,7 @@ class WarframeNexusStats {
             });
             resolve(componentsToReturn);
           } catch (e) {
+            // eslint-disable-next-line no-console
             console.error(e);
           }
         })
@@ -92,23 +93,39 @@ class WarframeNexusStats {
    */
   priceCheckQueryAttachment(query) {
     return new Promise((resolve, reject) => {
-      this.priceCheckQuery(query)
+      const promises = [];
+      const noResultAttachment = {
+        type: 'rich',
+        title: 'No Pricecheck Result',
+        description: `No result for ${query}`,
+        color: '0xff00ff',
+        url: 'https://nexus-stats.com',
+        fields: [],
+        thumbnail: { url: 'https://nexus-stats.com/img/logo.png' },
+        footer: {
+          icon_url: 'https://cdn.discordapp.com/icons/195582152849620992/4c1fbd47b3e6c8d49b6d2362c79a537b.jpg',
+          text: 'Pricechecks provided by Nexus Stats - https://nexus-stats.com',
+        },
+      };
+      promises.push(this.priceCheckQuery(query)
         .then((components) => {
           const attachments = [];
           let index = -1;
           components.forEach((component) => {
             if (typeof component === 'string') resolve([component]);
-            component.toAttachment().then((attachment) => {
+            promises.push(component.toAttachment().then((attachment) => {
               index += 1;
               attachments.push(attachment);
               if (index === components.length - 1) {
                 resolve(attachments);
               }
-            })
-            .catch(reject);
+            }));
           });
-        })
-        .catch(reject);
+          if (components.length === 0) {
+            resolve([noResultAttachment]);
+          }
+        }));
+      promises.forEach(promise => promise.catch(reject));
     });
   }
 }
