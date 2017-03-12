@@ -34,7 +34,7 @@ class WarframeNexusStats {
     return new Promise((resolve, reject) => {
       this.nexusCache.getDataJson()
         .then((dataCache) => {
-          const results = jsonQuery(`[*Title~/${query}/i]`, {
+          const results = jsonQuery(`[*Title~/^${query}/i]`, {
             data: dataCache,
             allowRegexp: true,
           });
