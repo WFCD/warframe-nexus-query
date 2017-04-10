@@ -1,6 +1,6 @@
 {
   "name": "warframe-nexus-query",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "Query the Warframe Nexus database for price check data.",
   "main": "index.js",
   "scripts": {
@@ -25,8 +25,8 @@
   "homepage": "https://github.com/aliasfalse/warframe-nexus-query#README",
   "dependencies": {
     "bluebird": "^3.4.7",
-    "get-image-colors": "^1.5.1",
-    "image-downloader": "^2.0.0",
+    "get-image-colors": "^1.8.1",
+    "image-downloader": "^3.2.1",
     "json-fetch-cache": "0.0.5",
     "json-query": "^2.1.1",
     "node-md-config": "^2.0.1"
