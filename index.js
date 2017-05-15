@@ -1,12 +1,108 @@
 'use strict';
 
-const maxCacheLength = process.env.NEXUSSTATS_MAX_CACHED_TIME || 60000;
-const url = process.env.NEXUSSTATS_URL_OVERRIDE || 'https://nexus-stats.com/api';
-
-const Item = require('./lib/item.js');
+const JSONCache = require('json-fetch-cache');
+const Promise = require('bluebird');
 const md = require('node-md-config');
 const jsonQuery = require('json-query');
-const JSONCache = require('json-fetch-cache');
+
+const NexusItem = require('./lib/nexus/v1/item.js');
+const MarketFetcher = require('./lib/market/v1/MarketFetcher.js');
+
+const maxCacheLength = process.env.NEXUSSTATS_MAX_CACHED_TIME || 60000;
+
+const urls = {
+  nexus: process.env.NEXUSSTATS_URL_OVERRIDE || 'https://nexus-stats.com/api',
+  market: process.env.MARKET_URL_OVERRIDE || 'http://api.warframe.market/v1/items',
+  marketAssets: process.env.MARKET_ASSETS_URL_OVERRIDE || 'http://warframe.market/static/assets/',
+};
+
+const defaultString = 'Operator, there is no such item pricecheck available.';
+
+const noResultAttachment = {
+  type: 'rich',
+  description: 'No result',
+  color: '0xff55ff',
+  url: 'https://warframe.market',
+  footer: {
+    text: 'Pricechecks from NexusStats and Warframe.Market',
+  },
+};
+
+function attachmentFromComponents(components, query) {
+  const attachment = {
+    type: 'rich',
+    title: query,
+    color: '0xff00ff',
+    url: '',
+    fields: [],
+    thumbnail: { url: '' },
+    footer: {
+      icon_url: '',
+      text: 'Price data provided by Nexus Stats & Warframe.Market',
+    },
+  };
+  const nexusComponents = components
+    .filter(component => component && component.components && component.components[0].type === 'nexus-v1');
+  const marketComponents = components
+    .filter(component => component && component.type === 'market-v1');
+
+  if (nexusComponents.length > 0) {
+    nexusComponents
+      .forEach((nexusComponent) => {
+        attachment.title = nexusComponent.title;
+        nexusComponent.components
+          .forEach((component) => {
+            let found = false;
+            marketComponents
+              .forEach((marketComponent) => {
+                if (!found && marketComponent.name.indexOf(component.name) > -1) {
+                  found = true;
+                  attachment.color = marketComponent.color;
+                  attachment.url = marketComponent.url;
+                  attachment.thumbnail.url = `https://nexus-stats.com/img/items/${encodeURIComponent(nexusComponent.title)}-min.png`;
+                  attachment.description = `Query results for: "${query}"`;
+                  attachment.fields.push({
+                    name: component.name,
+                    value: `**Tradable:** ${marketComponent.tradable ? ':white_check_mark:' : ':redTick:'}\n` +
+                           `**Trade Tax:** ${marketComponent.tradingTax}cr\n` +
+                           `**Prices:**\n` +
+                           `__Nexus Average:__ ${component.avgPrice ? component.avgPrice : 'No data'}\n` +
+                           `__Market Median:__ ${marketComponent.prices.soldCount} sold at ${marketComponent.prices.soldPrice}p\n` +
+                           `__Market Range:__ ${marketComponent.prices.minimum}p - ${marketComponent.prices.maximum}p`,
+                    inline: true,
+                  });
+                }
+              });
+          });
+        attachment.fields.push({
+          name: '_ _',
+          value: `Supply: **${nexusComponent.supplyAmount}** units (${nexusComponent.supplyPercent}%) ` +
+            `- Demand: **${nexusComponent.demandAmount}** units (${nexusComponent.demandPercent}%)`,
+        });
+      });
+  } else if (marketComponents.length > 0) {
+    marketComponents
+      .forEach((marketComponent) => {
+        attachment.color = marketComponent.color;
+        attachment.title = marketComponent.name.replace(/\sset/i, '');
+        attachment.url = marketComponent.url;
+        attachment.thumbnail.url = marketComponent.thumbnail;
+        attachment.description = `Query results for: "${query}"`;
+        attachment.fields.push({
+          name: marketComponent.name,
+          value: `**Tradable:** ${marketComponent.tradable ? ':white_check_mark:' : ':redTick:'}\n` +
+                 `**Trade Tax:** ${marketComponent.tradingTax}cr\n` +
+                 `**Prices:**\n` +
+                 `__Market Median:__ ${marketComponent.prices.soldCount} sold at ${marketComponent.prices.soldPrice}p\n` +
+                 `__Market Range:__ ${marketComponent.prices.minimum}p - ${marketComponent.prices.maximum}p`,
+          inline: true,
+        });
+      });
+  } else {
+    return noResultAttachment;
+  }
+  return attachment;
+}
 
 /**
  * Represents a queryable datastore of information derived from `https://nexus-stats.com/api`
@@ -19,18 +115,25 @@ class WarframeNexusStats {
   constructor() {
     /**
      * The json cache storing data from nexus-stats.com
-     * @type {Cache}
+     * @type {JSONCache}
      */
-    this.nexusCache = new JSONCache(url, maxCacheLength);
+    this.nexusCache = new JSONCache(urls.nexus, maxCacheLength);
+
+    /**
+     * The json cache stpromg data from warframe.market
+     * @type {JSONCache}
+     */
+    this.marketCache = new JSONCache(urls.market, maxCacheLength);
+
+    this.marketFetcher = new MarketFetcher();
   }
 
   /**
    * Lookup a list of results for a query
    * @param {string} query Query to search the nexus-stats database against
-   * @returns {Promise<Array<Item>>} a Promise of an array of Item objects
+   * @returns {Promise<Array<NexusItem>>} a Promise of an array of Item objects
    */
   priceCheckQuery(query) {
-    const defaultString = 'Operator, there is no such item pricecheck available.';
     return new Promise((resolve, reject) => {
       this.nexusCache.getDataJson()
         .then((dataCache) => {
@@ -40,17 +143,18 @@ class WarframeNexusStats {
           });
           const componentsToReturn = [];
           if (typeof results.value === 'undefined') {
-            reject(new Error('No value for given query - WarframeNexusStats.prototype.priceCheckQuery',
-                             'warframe-nexus-query/index.js', 34));
+            resolve({});
             return;
           }
-          if (!results.value) {
+
+          if (!results.value || JSON.stringify(results.value) === '[]') {
             resolve([defaultString]);
           }
+
           try {
             results.value.slice(0, 4).forEach((item) => {
               if (typeof item !== 'undefined' && item !== null) {
-                componentsToReturn.push(new Item(item));
+                componentsToReturn.push(new NexusItem(item));
               }
             });
             resolve(componentsToReturn);
@@ -60,7 +164,29 @@ class WarframeNexusStats {
           }
         })
         .catch(reject);
-    });
+    })
+    .then(nexusComponents => new Promise((resolve) => {
+      this.marketCache.getDataJson()
+        .then((dataCache) => {
+          const results = jsonQuery(`en[*item_name~/^${query}.*/i]`, {
+            data: dataCache.payload.items,
+            allowRegexp: true,
+          }).value;
+          if (results.length < 1) {
+            resolve(nexusComponents);
+          }
+          results.map(result => result.url_name)
+            .map(urlName => this.marketFetcher.resultForItem(urlName)
+                .then((queryResults) => {
+                  const components = nexusComponents.concat(queryResults);
+                  resolve(components);
+                })
+                // eslint-disable-next-line no-console
+                .catch(console.error));
+        })
+        // eslint-disable-next-line no-console
+        .catch(err => console.log(err));
+    }));
   }
 
   /**
@@ -70,7 +196,6 @@ class WarframeNexusStats {
    */
   priceCheckQueryString(query) {
     return new Promise((resolve) => {
-      const defaultString = 'Operator, there is no such item pricecheck available.';
       this.priceCheckQuery(query)
         .then((components) => {
           const tokens = [];
@@ -81,8 +206,7 @@ class WarframeNexusStats {
           componentsToReturnString = components.length > 0 ?
             componentsToReturnString : defaultString;
           resolve(componentsToReturnString);
-        })
-        ;
+        });
     });
   }
 
@@ -92,40 +216,18 @@ class WarframeNexusStats {
    * @returns {Promise<Object>} a Promise of an array of attachment objects
    */
   priceCheckQueryAttachment(query) {
-    return new Promise((resolve, reject) => {
-      const promises = [];
-      const noResultAttachment = {
-        type: 'rich',
-        title: 'No Pricecheck Result',
-        description: `No result for ${query}`,
-        color: '0xff00ff',
-        url: 'https://nexus-stats.com',
-        fields: [],
-        thumbnail: { url: 'https://nexus-stats.com/img/logo.png' },
-        footer: {
-          icon_url: 'https://cdn.discordapp.com/icons/195582152849620992/4c1fbd47b3e6c8d49b6d2362c79a537b.jpg',
-          text: 'Pricechecks provided by Nexus Stats - https://nexus-stats.com',
-        },
-      };
-      promises.push(this.priceCheckQuery(query)
+    return new Promise((resolve) => {
+      this.priceCheckQuery(query)
         .then((components) => {
-          const attachments = [];
-          let index = -1;
-          components.forEach((component) => {
-            if (typeof component === 'string') resolve([component]);
-            promises.push(component.toAttachment().then((attachment) => {
-              index += 1;
-              attachments.push(attachment);
-              if (index === components.length - 1) {
-                resolve(attachments);
-              }
-            }));
-          });
-          if (components.length === 0) {
+          noResultAttachment.description = `No result for ${typeof query !== 'undefined' ? query : 'no search string'}`;
+          if ((components.length > 0 && components[0] === defaultString)
+              || components.length === 0) {
             resolve([noResultAttachment]);
           }
-        }));
-      promises.forEach(promise => promise.catch(reject));
+          resolve([attachmentFromComponents(components, query)]);
+        })
+        // eslint-disable-next-line no-console
+        .catch(console.error);
     });
   }
 }
