@@ -28,6 +28,24 @@ const noResultAttachment = {
   },
 };
 
+/**
+ * Pad the left side of a string so that all componets
+ * have the same string length before the pipe
+ * @param {string} str the location string to pad
+ * @param {number} length to make the string
+ * @returns {string} the padded location string
+ */
+function pad(str, length) {
+  let stringRet;
+  const len = length || 10;
+  if (str.length < len) {
+    stringRet = pad(`${str} `, len);
+  } else {
+    stringRet = str;
+  }
+  return stringRet;
+}
+
 function attachmentFromComponents(components, query) {
   const attachment = {
     type: 'rich',
@@ -63,12 +81,12 @@ function attachmentFromComponents(components, query) {
                   attachment.description = `Query results for: "${query}"`;
                   attachment.fields.push({
                     name: component.name,
-                    value: `**Tradable:** ${marketComponent.tradable ? ':white_check_mark:' : ':redTick:'}\n` +
-                           `**Trade Tax:** ${marketComponent.tradingTax}cr\n` +
-                           `**Prices:**\n` +
-                           `__Nexus Average:__ ${component.avgPrice ? component.avgPrice : 'No data'}\n` +
-                           `__Market Median:__ ${marketComponent.prices.soldCount} sold at ${marketComponent.prices.soldPrice}p\n` +
-                           `__Market Range:__ ${marketComponent.prices.minimum}p - ${marketComponent.prices.maximum}p`,
+                    value: '```haskell\n' +
+                           `${pad('Value', 7)}|${pad(' Nexus', 13)}|${pad(' Market')}\n` +
+                           `${pad('Median', 7)}|${pad(` ${component.avgPrice ? component.avgPrice : 'No data'}`, 13)}|${pad(` ${marketComponent.prices.soldPrice}p`)}\n` +
+                           `${pad('Range', 7)}|${pad(` ${component.min || '000'}p - ${component.max || '000'}p`, 13)}|${pad(` ${marketComponent.prices.minimum}p - ${marketComponent.prices.maximum}p`)}\n\n` +
+                           `Trade Tax: ${marketComponent.tradingTax}cr\n` +
+                           '```\n',
                     inline: true,
                   });
                 }
@@ -90,11 +108,9 @@ function attachmentFromComponents(components, query) {
         attachment.description = `Query results for: "${query}"`;
         attachment.fields.push({
           name: marketComponent.name,
-          value: `**Tradable:** ${marketComponent.tradable ? ':white_check_mark:' : ':redTick:'}\n` +
-                 `**Trade Tax:** ${marketComponent.tradingTax}cr\n` +
-                 `**Prices:**\n` +
-                 `__Market Median:__ ${marketComponent.prices.soldCount} sold at ${marketComponent.prices.soldPrice}p\n` +
-                 `__Market Range:__ ${marketComponent.prices.minimum}p - ${marketComponent.prices.maximum}p`,
+          value: `**Trade Tax:** ${marketComponent.tradingTax}cr\n` +
+                 `Median: ${marketComponent.prices.soldCount} sold at ${marketComponent.prices.soldPrice}p\n` +
+                 `Range: ${marketComponent.prices.minimum}p - ${marketComponent.prices.maximum}p`,
           inline: true,
         });
       });
