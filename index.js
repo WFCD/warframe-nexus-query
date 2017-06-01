@@ -12,8 +12,8 @@ const maxCacheLength = process.env.NEXUSSTATS_MAX_CACHED_TIME || 60000;
 
 const urls = {
   nexus: process.env.NEXUSSTATS_URL_OVERRIDE || 'https://nexus-stats.com/api',
-  market: process.env.MARKET_URL_OVERRIDE || 'http://api.warframe.market/v1/items',
-  marketAssets: process.env.MARKET_ASSETS_URL_OVERRIDE || 'http://warframe.market/static/assets/',
+  market: process.env.MARKET_URL_OVERRIDE || 'https://api.warframe.market/v1/items',
+  marketAssets: process.env.MARKET_ASSETS_URL_OVERRIDE || 'https://warframe.market/static/assets/',
 };
 
 const defaultString = 'Operator, there is no such item pricecheck available.';
