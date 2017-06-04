@@ -4,12 +4,16 @@ const JSONCache = require('json-fetch-cache');
 const Promise = require('bluebird');
 const md = require('node-md-config');
 const jsonQuery = require('json-query');
+const getColors = require('get-image-colors');
+const imageDownloader = require('image-downloader');
 
 const NexusItem = require('./lib/nexus/v1/item.js');
 const NexusFetcher = require('nexus-stats-api');
 const MarketFetcher = require('./lib/market/v1/MarketFetcher.js');
 
 const maxCacheLength = process.env.NEXUSSTATS_MAX_CACHED_TIME || 60000;
+const nexusKey = process.env.NEXUSSTATS_USER_KEY || undefined;
+const nexusSecret = process.env.NEXUSSTATS_USER_SECRET || undefined;
 
 const urls = {
   nexus: process.env.NEXUSSTATS_URL_OVERRIDE || 'https://api.nexus-stats.com/warframe/v1/items',
@@ -46,6 +50,33 @@ function safeValue(value) {
  */
 function safeRange(value1, value2) {
   return value1 ? `${value1}p - ${value2}p` : 'No data';
+}
+
+/**
+ * Set colors for nexus components
+ * @param  {NexusItem} components Array of nexus items
+ * @returns {Array.<NexusItem>}    Array of nexus items with colors
+ */
+function mapNexusColors(components) {
+  return new Promise((resolve) => {
+    const colored = [];
+    Promise.each(components, (component) => {
+      const coloredComponent = component;
+      const imgUrl = `https://nexus-stats.com/img/items/${encodeURIComponent(component.title)}-min.png`;
+      const options = {
+        url: imgUrl,
+        dest: `${__dirname}/tmp/${component.title}.png`,
+      };
+      imageDownloader.image(options)
+        // eslint-disable-next-line no-unused-vars
+        .then(({ fileName, image }) => getColors(image, 'image/png'))
+        .then((colors) => {
+          coloredComponent.color = typeof colors !== 'undefined' ? colors[0].hex().replace('#', '0x') : 0xff0000;
+          colored.push(coloredComponent);
+        });
+    })
+    .then(() => resolve(colored));
+  });
 }
 
 /**
@@ -95,7 +126,7 @@ function attachmentFromComponents(components, query) {
             attachment.description = `Query results for: "${query}"`;
             const nexusMedian = safeValue(component.prices.median);
             const nexusRange = safeRange(component.prices.minimum, component.prices.maximum);
-            if (marketComponents.length > 0 && marketComponents[0].prices.soldCount) {
+            if (marketComponents.length > 0 && marketComponents[0].prices.soldPrice) {
               marketComponents
                 .forEach((marketComponent) => {
                   if (!found && marketComponent.name.indexOf(component.name) > -1) {
@@ -109,9 +140,9 @@ function attachmentFromComponents(components, query) {
                     attachment.fields.push({
                       name: component.name,
                       value: '```haskell\n' +
-                             `${pad('Value', 7)}|${pad(' Nexus', 13)}|${pad(' Market')}\n` +
-                             `${pad('Median', 7)}|${pad(` ${nexusMedian}`, 13)}|${pad(` ${marketMedian}`)}\n` +
-                             `${pad('Range', 7)}|${pad(` ${nexusRange}`, 13)}|${pad(` ${marketRange}`)}\n\n` +
+                             `${pad('Value', 7)}|${pad(' Nexus', 13)}| Market\n` +
+                             `${pad('Median', 7)}|${pad(` ${nexusMedian}`, 13)}| ${marketMedian}\n` +
+                             `${pad('Range', 7)}|${pad(` ${nexusRange}`, 13)}| ${marketRange}\n\n` +
                              `Trade Tax: ${marketComponent.tradingTax}cr\n` +
                              '```\n',
                       inline: true,
@@ -120,6 +151,7 @@ function attachmentFromComponents(components, query) {
                 });
             } else {
               attachment.url = nexusComponent.url;
+              attachment.color = nexusComponent.color;
               attachment.fields.push({
                 name: component.name,
                 value: '```haskell\n' +
@@ -133,8 +165,8 @@ function attachmentFromComponents(components, query) {
           });
         attachment.fields.push({
           name: '_ _',
-          value: `Supply: **${nexusComponent.supply.count}** units (${String(parseFloat(nexusComponent.supply.percentage).toFixed(2))}%) ` +
-            `- Demand: **${nexusComponent.demand.count}** units (${String(parseFloat(nexusComponent.demand.percentage).toFixed(2))}%)`,
+          value: `Supply: **${nexusComponent.supply.count}** units (${String((parseFloat(nexusComponent.supply.percentage) * 100).toFixed(2))}%) ` +
+            `- Demand: **${nexusComponent.demand.count}** units (${String((parseFloat(nexusComponent.demand.percentage) * 100).toFixed(2))}%)`,
         });
       });
   } else if (marketComponents.length > 0) {
@@ -153,7 +185,7 @@ function attachmentFromComponents(components, query) {
         attachment.fields.push({
           name: marketComponent.name,
           value: '```haskell\n' +
-                 `${pad('Value', 7)}|' Market')}\n` +
+                 `${pad('Value', 7)}|' Market\n` +
                  `${pad('Median', 7)}| ${marketMedian}\n` +
                  `${pad('Range', 7)}| ${marketRange}\n\n` +
                  `Trade Tax: ${marketComponent.tradingTax}cr\n` +
@@ -190,7 +222,7 @@ class WarframeNexusStats {
      */
     this.marketCache = new JSONCache(urls.market, maxCacheLength);
 
-    this.marketFetcher = new MarketFetcher();
+    this.marketFetcher = new MarketFetcher({ user_key: nexusKey, user_secret: nexusSecret });
   }
 
   /**
@@ -202,7 +234,7 @@ class WarframeNexusStats {
     return new Promise((resolve, reject) => {
       this.nexusCache.getDataJson()
         .then((dataCache) => {
-          const results = jsonQuery(`[*name~/^${query}/i]`, {
+          const results = jsonQuery(`[*name~/^${query}.*/i]`, {
             data: dataCache,
             allowRegexp: true,
           });
@@ -221,8 +253,9 @@ class WarframeNexusStats {
               if (Object.keys(queryResults).length > 0) {
                 componentsToReturn.push(new NexusItem(queryResults, `/${results.value[0].type}/${encodeURIComponent(results.value[0].name.replace(/\sPrime/ig, ''))}`));
               }
-              resolve(componentsToReturn);
+              return mapNexusColors(componentsToReturn);
             })
+            .then(components => resolve(components))
             // eslint-disable-next-line no-console
             .catch(console.error);
         })
