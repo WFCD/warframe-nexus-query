@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Component.html">Component</a></li><li><a href="Item.html">Item</a></li><li><a href="WarframeNexusStats.html">WarframeNexusStats</a></li>
+					<li><a href="Component.html">Component</a></li><li><a href="Item.html">Item</a></li><li><a href="Summary.html">Summary</a></li><li><a href="WarframeNexusStats.html">WarframeNexusStats</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#safeGetAmountString">safeGetAmountString</a></li>
+					<li><a href="global.html#pad">pad</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li>
 				</ul>
 			</li>
 			
@@ -197,8 +197,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_component.js.html">lib/component.js</a>,
-				 <a href="lib_component.js.html#sunlight-1-line-6">line 6</a>
+				<a href="lib_nexus_v1_component.js.html">lib/nexus/v1/component.js</a>,
+				 <a href="lib_nexus_v1_component.js.html#sunlight-1-line-6">line 6</a>
 			</li>
 		</ul>
 	</dd>
@@ -246,15 +246,15 @@
         <dl>
             
 <hr>
-<dt class="name" id="avgPrice">
-    <h4 id="avgPrice"><span class="type-signature"></span>avgPrice<span class="type-signature"> :string</span></h4>
+<dt class="name" id="demand">
+    <h4 id="demand"><span class="type-signature"></span>demand<span class="type-signature"> :number</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Average price of the component as a string
+        Demand for the component
     </div>
     
 
@@ -263,7 +263,7 @@
         <ul>
             <li>
                 
-<span class="param-type">string</span>
+<span class="param-type">number</span>
 
 
 
@@ -306,89 +306,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_component.js.html">lib/component.js</a>,
-				 <a href="lib_component.js.html#sunlight-1-line-24">line 24</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="data">
-    <h4 id="data"><span class="type-signature"></span>data<span class="type-signature"> :JSON</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Component data
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">JSON</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="lib_component.js.html">lib/component.js</a>,
-				 <a href="lib_component.js.html#sunlight-1-line-36">line 36</a>
+				<a href="lib_nexus_v1_component.js.html">lib/nexus/v1/component.js</a>,
+				 <a href="lib_nexus_v1_component.js.html#sunlight-1-line-30">line 30</a>
 			</li>
 		</ul>
 	</dd>
@@ -468,8 +387,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_component.js.html">lib/component.js</a>,
-				 <a href="lib_component.js.html#sunlight-1-line-18">line 18</a>
+				<a href="lib_nexus_v1_component.js.html">lib/nexus/v1/component.js</a>,
+				 <a href="lib_nexus_v1_component.js.html#sunlight-1-line-18">line 18</a>
 			</li>
 		</ul>
 	</dd>
@@ -489,15 +408,221 @@
         
             
 <hr>
-<dt class="name" id="rawAverage">
-    <h4 id="rawAverage"><span class="type-signature"></span>rawAverage<span class="type-signature"> :number</span></h4>
+<dt class="name" id="prices">
+    <h4 id="prices"><span class="type-signature"></span>prices<span class="type-signature"> :Object</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Raw average price of the component as a number
+        Average prices for the component
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Object</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    <dl>
+
+<table class="props table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>avg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">average value</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>median</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">median value</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>minimum</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">minimum value</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>maximum</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">maximum value</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+</dl>
+
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="lib_nexus_v1_component.js.html">lib/nexus/v1/component.js</a>,
+				 <a href="lib_nexus_v1_component.js.html#sunlight-1-line-40">line 40</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="supply">
+    <h4 id="supply"><span class="type-signature"></span>supply<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Supply for the component
     </div>
     
 
@@ -549,8 +674,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_component.js.html">lib/component.js</a>,
-				 <a href="lib_component.js.html#sunlight-1-line-30">line 30</a>
+				<a href="lib_nexus_v1_component.js.html">lib/nexus/v1/component.js</a>,
+				 <a href="lib_nexus_v1_component.js.html#sunlight-1-line-24">line 24</a>
 			</li>
 		</ul>
 	</dd>
@@ -585,7 +710,8 @@
 
     
     <div class="description">
-        Pad the left side of a string so that all componetshave the same string length before the pipe
+        Pad the left side of a string so that all componets
+have the same string length before the pipe
     </div>
     
 
@@ -681,8 +807,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_component.js.html">lib/component.js</a>,
-				 <a href="lib_component.js.html#sunlight-1-line-53">line 53</a>
+				<a href="lib_nexus_v1_component.js.html">lib/nexus/v1/component.js</a>,
+				 <a href="lib_nexus_v1_component.js.html#sunlight-1-line-64">line 64</a>
 			</li>
 		</ul>
 	</dd>
@@ -793,8 +919,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_component.js.html">lib/component.js</a>,
-				 <a href="lib_component.js.html#sunlight-1-line-43">line 43</a>
+				<a href="lib_nexus_v1_component.js.html">lib/nexus/v1/component.js</a>,
+				 <a href="lib_nexus_v1_component.js.html#sunlight-1-line-54">line 54</a>
 			</li>
 		</ul>
 	</dd>
@@ -893,7 +1019,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a>
 	
-		on Wednesday, October 19th 2016, 17:19:14
+		on Saturday, June 3rd 2017, 22:06:42
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

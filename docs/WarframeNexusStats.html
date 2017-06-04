@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Component.html">Component</a></li><li><a href="Item.html">Item</a></li><li><a href="WarframeNexusStats.html">WarframeNexusStats</a></li>
+					<li><a href="Component.html">Component</a></li><li><a href="Item.html">Item</a></li><li><a href="Summary.html">Summary</a></li><li><a href="WarframeNexusStats.html">WarframeNexusStats</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#safeGetAmountString">safeGetAmountString</a></li>
+					<li><a href="global.html#pad">pad</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li>
 				</ul>
 			</li>
 			
@@ -148,7 +148,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="index.js.html">index.js</a>,
-				 <a href="index.js.html#sunlight-1-line-14">line 14</a>
+				 <a href="index.js.html#sunlight-1-line-153">line 153</a>
 			</li>
 		</ul>
 	</dd>
@@ -196,15 +196,15 @@
         <dl>
             
 <hr>
-<dt class="name" id="nexusCache">
-    <h4 id="nexusCache"><span class="type-signature"></span>nexusCache<span class="type-signature"> :Cache</span></h4>
+<dt class="name" id="marketCache">
+    <h4 id="marketCache"><span class="type-signature"></span>marketCache<span class="type-signature"> :JSONCache</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        The json cache storing data from nexus-stats.com
+        The json cache stpromg data from warframe.market
     </div>
     
 
@@ -213,7 +213,7 @@
         <ul>
             <li>
                 
-<span class="param-type">Cache</span>
+<span class="param-type">JSONCache</span>
 
 
 
@@ -257,7 +257,88 @@
 		<ul class="dummy">
 			<li>
 				<a href="index.js.html">index.js</a>,
-				 <a href="index.js.html#sunlight-1-line-24">line 24</a>
+				 <a href="index.js.html#sunlight-1-line-171">line 171</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="nexusCache">
+    <h4 id="nexusCache"><span class="type-signature"></span>nexusCache<span class="type-signature"> :JSONCache</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The json cache storing data from nexus-stats.com
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">JSONCache</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="index.js.html">index.js</a>,
+				 <a href="index.js.html#sunlight-1-line-163">line 163</a>
 			</li>
 		</ul>
 	</dd>
@@ -389,7 +470,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="index.js.html">index.js</a>,
-				 <a href="index.js.html#sunlight-1-line-32">line 32</a>
+				 <a href="index.js.html#sunlight-1-line-181">line 181</a>
 			</li>
 		</ul>
 	</dd>
@@ -429,7 +510,169 @@
     </dt>
     <dd>
         
-<span class="param-type">Promise.&lt;Array.&lt;<a href="Item.html">Item</a>>></span>
+<span class="param-type">Promise.&lt;Array.&lt;NexusItem>></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="priceCheckQueryAttachment"><span class="type-signature"></span>priceCheckQueryAttachment(query)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Lookup a list of results for a query
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>query</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Query to search the nexus-stats database against</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="index.js.html">index.js</a>,
+				 <a href="index.js.html#sunlight-1-line-262">line 262</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    a Promise of an array of attachment objects
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;Object></span>
 
 
 
@@ -551,7 +794,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="index.js.html">index.js</a>,
-				 <a href="index.js.html#sunlight-1-line-68">line 68</a>
+				 <a href="index.js.html#sunlight-1-line-241">line 241</a>
 			</li>
 		</ul>
 	</dd>
@@ -654,7 +897,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a>
 	
-		on Wednesday, October 19th 2016, 17:19:14
+		on Saturday, June 3rd 2017, 22:06:42
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

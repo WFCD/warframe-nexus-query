@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>warframe-nexus-query Classes</title>
+	<title>warframe-nexus-query Source: lib/nexus/v1/item.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -67,109 +67,91 @@
 <div class="row">
 
 	
-	<div class="col-md-8">
+	<div class="col-md-12">
 	
 		<div id="main">
 			
 
-	<h1 class="page-title">Classes</h1>
+		<h1 class="page-title">Source: lib/nexus/v1/item.js</h1>
+    
 <section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">'use strict';
 
-<header>
-    
-        <h2>
-        
-        </h2>
-        
-    
-</header>
+const md = require('node-md-config');
+const Component = require('./component.js');
 
+/**
+ * Describes an item, such as a prime item, mod, arcane, or syndicate item
+ */
+class Item {
 
-<article>
-    <div class="container-overview">
-    
-        
+  /**
+   * @param {JSON} data to construct an item from
+   */
+  constructor(data) {
+    /**
+     * Array of Component objects
+     * @type {Array&lt;Component>}
+     */
+    this.components = [];
 
-        
-<dl class="details">
-    
+    /**
+     * Title (name) of item
+     * @type {string}
+     */
+    this.title = data.title;
 
-	
+    /**
+     * Type of the item, such as:
+     * * Prime
+     * * Mods
+     * * Arcane
+     * * Syndicate
+     * @type {string}
+     */
+    this.type = data.type;
 
-	
+    /**
+     * Supply for the component
+     * @type {Object.&lt;number>}
+     */
+    this.supply = data.supply;
 
-	
+    /**
+     * Demand for the component
+     * @type {Object.&lt;number>}
+     */
+    this.demand = data.demand;
 
-    
+    data.components.forEach((componentData) => {
+      this.components.push(new Component(componentData));
+    });
+  }
 
-    
+  /**
+  * String representation of this Item.
+  * @returns {string}
+  */
+  toString() {
+    let componentString =
+      `${md.codeMulti}${this.title}${md.lineEnd}\u3000Supply: ${this.supply.count} units - ` +
+      `${String(parseFloat(this.supply.percentage).toFixed(2))}%${md.lineEnd}` +
+      `\u3000Demand: ${this.demand.count} units - ${String(parseFloat(this.demand.percentage).toFixed(2))}%` +
+      `${md.lineEnd}\u3000\u3000`;
+    for (let i = 0; i &lt; this.components.length; i += 1) {
+      componentString += this.components[i].toString() + (i &lt; this.components.length - 1 ? `,${md.lineEnd}\u3000\u3000` : '');
+    }
+    return `${componentString}${md.blockEnd}`;
+  }
+}
 
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Classes</h3>
-
-        <dl>
-            <dt><a href="Component.html">Component</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Item.html">Item</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Summary.html">Summary</a></dt>
-            <dd></dd>
-        
-            <dt><a href="WarframeNexusStats.html">WarframeNexusStats</a></dt>
-            <dd></dd>
-        </dl>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
+module.exports = Item;
+</pre>
+    </article>
 </section>
+
 
 
 
@@ -179,10 +161,6 @@
 
 	<div class="clearfix"></div>
 
-	
-		<div class="col-md-3">
-			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
-		</div>
 	
 
 </div>

@@ -29,6 +29,43 @@ const noResultAttachment = {
   },
 };
 
+/**
+ * Calculate the safe value for a provided value
+ * @param  {string} value provided value
+ * @returns {string}       safe value
+ */
+function safeValue(value) {
+  return value ? `${value}p` : 'No data';
+}
+
+/**
+ * Calculate the safe value for a provided value
+ * @param  {string} value1 provided minimum value
+ * @param  {string} value2 provided maximum value
+ * @returns {string}       safe value
+ */
+function safeRange(value1, value2) {
+  return value1 ? `${value1}p - ${value2}p` : 'No data';
+}
+
+/**
+ * Pad the left side of a string so that all componets
+ * have the same string length before the pipe
+ * @param {string} str the location string to pad
+ * @param {number} length to make the string
+ * @returns {string} the padded location string
+ */
+function pad(str, length) {
+  let stringRet;
+  const len = length || 10;
+  if (str.length < len) {
+    stringRet = pad(`${str} `, len);
+  } else {
+    stringRet = str;
+  }
+  return stringRet;
+}
+
 function attachmentFromComponents(components, query) {
   const attachment = {
     type: 'rich',
@@ -63,10 +100,11 @@ function attachmentFromComponents(components, query) {
                   attachment.thumbnail.url = `https://nexus-stats.com/img/items/${encodeURIComponent(nexusComponent.title)}-min.png`;
                   attachment.description = `Query results for: "${query}"`;
 
-                  let nexusMedian = component.prices.median ? component.prices.median + 'p' : 'No data';
-                  let nexusRange = component.prices.minimum ? component.prices.minimum + 'p - ' + component.prices.maximum + 'p' : 'No data';
-                  let marketMedian = marketComponent.prices.soldPrice ? marketComponent.prices.soldPrice + 'p' : 'No data';
-                  let marketRange = marketComponent.prices.minimum ? marketComponent.prices.minimum + 'p - ' + marketComponent.prices.maximum + 'p' : 'No data';
+                  const nexusMedian = safeValue(component.prices.median);
+                  const nexusRange = safeRange(component.prices.minimum, component.prices.maximum);
+                  const marketMedian = safeValue(marketComponent.prices.soldPrice);
+                  const marketRange = safeRange(marketComponent.prices.minimum,
+                    marketComponent.prices.maximum);
 
                   attachment.fields.push({
                     name: component.name,
@@ -83,8 +121,8 @@ function attachmentFromComponents(components, query) {
           });
         attachment.fields.push({
           name: '_ _',
-          value: `Supply: **${nexusComponent.supply.count}** units (${nexusComponent.supply.percentage}%) ` +
-            `- Demand: **${nexusComponent.demand.count}** units (${nexusComponent.demand.percentage}%)`,
+          value: `Supply: **${nexusComponent.supply.count}** units (${String(parseFloat(nexusComponent.supply.percentage).toFixed(2))}%) ` +
+            `- Demand: **${nexusComponent.demand.count}** units (${String(parseFloat(nexusComponent.demand.percentage).toFixed(2))}%)`,
         });
       });
   } else if (marketComponents.length > 0) {
@@ -168,8 +206,9 @@ class WarframeNexusStats {
               }
               resolve(componentsToReturn);
             })
-            .catch(console.error)
-          })
+            // eslint-disable-next-line no-console
+            .catch(console.error);
+        })
         .catch(reject);
     })
     .then(nexusComponents => new Promise((resolve) => {
@@ -192,7 +231,7 @@ class WarframeNexusStats {
                 .catch(console.error));
         })
         // eslint-disable-next-line no-console
-        .catch(err => console.log(err));
+        .catch(console.error);
     }));
   }
 

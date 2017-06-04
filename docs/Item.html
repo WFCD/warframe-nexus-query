@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Component.html">Component</a></li><li><a href="Item.html">Item</a></li><li><a href="WarframeNexusStats.html">WarframeNexusStats</a></li>
+					<li><a href="Component.html">Component</a></li><li><a href="Item.html">Item</a></li><li><a href="Summary.html">Summary</a></li><li><a href="WarframeNexusStats.html">WarframeNexusStats</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#safeGetAmountString">safeGetAmountString</a></li>
+					<li><a href="global.html#pad">pad</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li>
 				</ul>
 			</li>
 			
@@ -193,8 +193,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_item.js.html">lib/item.js</a>,
-				 <a href="lib_item.js.html#sunlight-1-line-18">line 18</a>
+				<a href="lib_nexus_v1_item.js.html">lib/nexus/v1/item.js</a>,
+				 <a href="lib_nexus_v1_item.js.html#sunlight-1-line-9">line 9</a>
 			</li>
 		</ul>
 	</dd>
@@ -302,8 +302,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_item.js.html">lib/item.js</a>,
-				 <a href="lib_item.js.html#sunlight-1-line-28">line 28</a>
+				<a href="lib_nexus_v1_item.js.html">lib/nexus/v1/item.js</a>,
+				 <a href="lib_nexus_v1_item.js.html#sunlight-1-line-19">line 19</a>
 			</li>
 		</ul>
 	</dd>
@@ -323,15 +323,15 @@
         
             
 <hr>
-<dt class="name" id="demandAmount">
-    <h4 id="demandAmount"><span class="type-signature"></span>demandAmount<span class="type-signature"> :string</span></h4>
+<dt class="name" id="demand">
+    <h4 id="demand"><span class="type-signature"></span>demand<span class="type-signature"> :Object.&lt;number></span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Amount of the available data that is a sell request
+        Demand for the component
     </div>
     
 
@@ -340,7 +340,7 @@
         <ul>
             <li>
                 
-<span class="param-type">string</span>
+<span class="param-type">Object.&lt;number></span>
 
 
 
@@ -383,8 +383,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_item.js.html">lib/item.js</a>,
-				 <a href="lib_item.js.html#sunlight-1-line-74">line 74</a>
+				<a href="lib_nexus_v1_item.js.html">lib/nexus/v1/item.js</a>,
+				 <a href="lib_nexus_v1_item.js.html#sunlight-1-line-47">line 47</a>
 			</li>
 		</ul>
 	</dd>
@@ -404,15 +404,15 @@
         
             
 <hr>
-<dt class="name" id="demandPercent">
-    <h4 id="demandPercent"><span class="type-signature"></span>demandPercent<span class="type-signature"> :string</span></h4>
+<dt class="name" id="supply">
+    <h4 id="supply"><span class="type-signature"></span>supply<span class="type-signature"> :Object.&lt;number></span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Percentage of the available data that is a buy request
+        Supply for the component
     </div>
     
 
@@ -421,7 +421,7 @@
         <ul>
             <li>
                 
-<span class="param-type">string</span>
+<span class="param-type">Object.&lt;number></span>
 
 
 
@@ -464,251 +464,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_item.js.html">lib/item.js</a>,
-				 <a href="lib_item.js.html#sunlight-1-line-62">line 62</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="id">
-    <h4 id="id"><span class="type-signature"></span>id<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Unique identifier for the item
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="lib_item.js.html">lib/item.js</a>,
-				 <a href="lib_item.js.html#sunlight-1-line-34">line 34</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="supplyAmount">
-    <h4 id="supplyAmount"><span class="type-signature"></span>supplyAmount<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Amount of the available data that is a sell request
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="lib_item.js.html">lib/item.js</a>,
-				 <a href="lib_item.js.html#sunlight-1-line-68">line 68</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="supplyPercent">
-    <h4 id="supplyPercent"><span class="type-signature"></span>supplyPercent<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Percentage of the available data that is a sell request
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="lib_item.js.html">lib/item.js</a>,
-				 <a href="lib_item.js.html#sunlight-1-line-56">line 56</a>
+				<a href="lib_nexus_v1_item.js.html">lib/nexus/v1/item.js</a>,
+				 <a href="lib_nexus_v1_item.js.html#sunlight-1-line-41">line 41</a>
 			</li>
 		</ul>
 	</dd>
@@ -788,8 +545,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_item.js.html">lib/item.js</a>,
-				 <a href="lib_item.js.html#sunlight-1-line-40">line 40</a>
+				<a href="lib_nexus_v1_item.js.html">lib/nexus/v1/item.js</a>,
+				 <a href="lib_nexus_v1_item.js.html#sunlight-1-line-25">line 25</a>
 			</li>
 		</ul>
 	</dd>
@@ -817,7 +574,11 @@
 <dd>
     
     <div class="description">
-        Type of the item, such as:* Prime* Mods* Arcane* Syndicate
+        Type of the item, such as:
+* Prime
+* Mods
+* Arcane
+* Syndicate
     </div>
     
 
@@ -869,8 +630,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_item.js.html">lib/item.js</a>,
-				 <a href="lib_item.js.html#sunlight-1-line-50">line 50</a>
+				<a href="lib_nexus_v1_item.js.html">lib/nexus/v1/item.js</a>,
+				 <a href="lib_nexus_v1_item.js.html#sunlight-1-line-35">line 35</a>
 			</li>
 		</ul>
 	</dd>
@@ -951,8 +712,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="lib_item.js.html">lib/item.js</a>,
-				 <a href="lib_item.js.html#sunlight-1-line-85">line 85</a>
+				<a href="lib_nexus_v1_item.js.html">lib/nexus/v1/item.js</a>,
+				 <a href="lib_nexus_v1_item.js.html#sunlight-1-line-58">line 58</a>
 			</li>
 		</ul>
 	</dd>
@@ -1051,7 +812,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a>
 	
-		on Wednesday, October 19th 2016, 17:19:14
+		on Saturday, June 3rd 2017, 22:06:42
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
