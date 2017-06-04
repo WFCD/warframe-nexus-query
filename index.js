@@ -91,33 +91,45 @@ function attachmentFromComponents(components, query) {
         nexusComponent.components
           .forEach((component) => {
             let found = false;
-            marketComponents
-              .forEach((marketComponent) => {
-                if (!found && marketComponent.name.indexOf(component.name) > -1) {
-                  found = true;
-                  attachment.color = marketComponent.color;
-                  attachment.url = marketComponent.url;
-                  attachment.thumbnail.url = `https://nexus-stats.com/img/items/${encodeURIComponent(nexusComponent.title)}-min.png`;
-                  attachment.description = `Query results for: "${query}"`;
+            attachment.thumbnail.url = `https://nexus-stats.com/img/items/${encodeURIComponent(nexusComponent.title)}-min.png`;
+            attachment.description = `Query results for: "${query}"`;
+            const nexusMedian = safeValue(component.prices.median);
+            const nexusRange = safeRange(component.prices.minimum, component.prices.maximum);
+            if (marketComponents.length > 0 && marketComponents[0].prices.soldCount) {
+              marketComponents
+                .forEach((marketComponent) => {
+                  if (!found && marketComponent.name.indexOf(component.name) > -1) {
+                    found = true;
+                    attachment.color = marketComponent.color;
+                    attachment.url = marketComponent.url;
+                    const marketMedian = safeValue(marketComponent.prices.soldPrice);
+                    const marketRange = safeRange(marketComponent.prices.minimum,
+                      marketComponent.prices.maximum);
 
-                  const nexusMedian = safeValue(component.prices.median);
-                  const nexusRange = safeRange(component.prices.minimum, component.prices.maximum);
-                  const marketMedian = safeValue(marketComponent.prices.soldPrice);
-                  const marketRange = safeRange(marketComponent.prices.minimum,
-                    marketComponent.prices.maximum);
-
-                  attachment.fields.push({
-                    name: component.name,
-                    value: '```haskell\n' +
-                           `${pad('Value', 7)}|${pad(' Nexus', 13)}|${pad(' Market')}\n` +
-                           `${pad('Median', 7)}|${pad(` ${nexusMedian}`, 13)}|${pad(` ${marketMedian}`)}\n` +
-                           `${pad('Range', 7)}|${pad(` ${nexusRange}`, 13)}|${pad(` ${marketRange}`)}\n\n` +
-                           `Trade Tax: ${marketComponent.tradingTax}cr\n` +
-                           '```\n',
-                    inline: true,
-                  });
-                }
+                    attachment.fields.push({
+                      name: component.name,
+                      value: '```haskell\n' +
+                             `${pad('Value', 7)}|${pad(' Nexus', 13)}|${pad(' Market')}\n` +
+                             `${pad('Median', 7)}|${pad(` ${nexusMedian}`, 13)}|${pad(` ${marketMedian}`)}\n` +
+                             `${pad('Range', 7)}|${pad(` ${nexusRange}`, 13)}|${pad(` ${marketRange}`)}\n\n` +
+                             `Trade Tax: ${marketComponent.tradingTax}cr\n` +
+                             '```\n',
+                      inline: true,
+                    });
+                  }
+                });
+            } else {
+              attachment.url = nexusComponent.url;
+              attachment.fields.push({
+                name: component.name,
+                value: '```haskell\n' +
+                       `${pad('Value', 7)}| Nexus\n` +
+                       `${pad('Median', 7)}| ${nexusMedian}\n` +
+                       `${pad('Range', 7)}| ${nexusRange}\n\n` +
+                       '```\n',
+                inline: true,
               });
+            }
           });
         attachment.fields.push({
           name: '_ _',
@@ -133,13 +145,19 @@ function attachmentFromComponents(components, query) {
         attachment.url = marketComponent.url;
         attachment.thumbnail.url = marketComponent.thumbnail;
         attachment.description = `Query results for: "${query}"`;
+
+        const marketMedian = safeValue(marketComponent.prices.soldPrice);
+        const marketRange = safeRange(marketComponent.prices.minimum,
+          marketComponent.prices.maximum);
+
         attachment.fields.push({
           name: marketComponent.name,
-          value: `**Tradable:** ${marketComponent.tradable ? ':white_check_mark:' : ':redTick:'}\n` +
-                 `**Trade Tax:** ${marketComponent.tradingTax}cr\n` +
-                 `**Prices:**\n` +
-                 `__Market Median:__ ${marketComponent.prices.soldCount} sold at ${marketComponent.prices.soldPrice}p\n` +
-                 `__Market Range:__ ${marketComponent.prices.minimum}p - ${marketComponent.prices.maximum}p`,
+          value: '```haskell\n' +
+                 `${pad('Value', 7)}|' Market')}\n` +
+                 `${pad('Median', 7)}| ${marketMedian}\n` +
+                 `${pad('Range', 7)}| ${marketRange}\n\n` +
+                 `Trade Tax: ${marketComponent.tradingTax}cr\n` +
+                 '```\n',
           inline: true,
         });
       });
@@ -198,11 +216,10 @@ class WarframeNexusStats {
           if (!results.value || JSON.stringify(results.value) === '[]') {
             resolve([defaultString]);
           }
-
           this.nexusFetcher.getItemStats(results.value[0].name)
             .then((queryResults) => {
               if (Object.keys(queryResults).length > 0) {
-                componentsToReturn.push(new NexusItem(queryResults));
+                componentsToReturn.push(new NexusItem(queryResults, `/${results.value[0].type}/${encodeURIComponent(results.value[0].name.replace(/\sPrime/ig, ''))}`));
               }
               resolve(componentsToReturn);
             })
