@@ -155,9 +155,9 @@ function attachmentFromComponents(components, query) {
               attachment.fields.push({
                 name: component.name,
                 value: '```haskell\n' +
-                       `${pad('Value', 7)}| Nexus\n` +
-                       `${pad('Median', 7)}| ${nexusMedian}\n` +
-                       `${pad('Range', 7)}| ${nexusRange}\n\n` +
+                       `${pad('Value', 7)}| ${pad('Nexus', 13)} | Market\n` +
+                       `${pad('Median', 7)}| ${pad(nexusMedian, 13)} | No data\n` +
+                       `${pad('Range', 7)}| ${pad(nexusRange, 13)} | No data\n\n` +
                        '```\n',
                 inline: true,
               });
@@ -185,9 +185,9 @@ function attachmentFromComponents(components, query) {
         attachment.fields.push({
           name: marketComponent.name,
           value: '```haskell\n' +
-                 `${pad('Value', 7)}|' Market\n` +
-                 `${pad('Median', 7)}| ${marketMedian}\n` +
-                 `${pad('Range', 7)}| ${marketRange}\n\n` +
+                 `${pad('Value', 7)}|${pad(' Nexus', 13)}| Market\n` +
+                 `${pad('Median', 7)}|${pad(' No data', 13)}| ${marketMedian}\n` +
+                 `${pad('Range', 7)}|${pad(' No data', 13)}| ${marketRange}\n\n` +
                  `Trade Tax: ${marketComponent.tradingTax}cr\n` +
                  '```\n',
           inline: true,
@@ -214,7 +214,11 @@ class WarframeNexusStats {
      */
     this.nexusCache = new JSONCache(urls.nexus, maxCacheLength);
 
-    this.nexusFetcher = new NexusFetcher();
+    this.nexusFetcher = new NexusFetcher({
+      user_key: nexusKey,
+      user_secret: nexusSecret,
+      ignore_limiter: true,
+    });
 
     /**
      * The json cache stpromg data from warframe.market
@@ -222,7 +226,7 @@ class WarframeNexusStats {
      */
     this.marketCache = new JSONCache(urls.market, maxCacheLength);
 
-    this.marketFetcher = new MarketFetcher({ user_key: nexusKey, user_secret: nexusSecret });
+    this.marketFetcher = new MarketFetcher();
   }
 
   /**
@@ -319,6 +323,7 @@ class WarframeNexusStats {
           if ((components.length > 0 && components[0] === defaultString)
               || components.length === 0) {
             resolve([noResultAttachment]);
+            return;
           }
           resolve([attachmentFromComponents(components, query)]);
         })
