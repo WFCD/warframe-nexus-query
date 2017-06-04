@@ -1,7 +1,7 @@
 {
   "name": "warframe-nexus-query",
-  "version": "0.1.1",
-  "description": "Query the Warframe Nexus database for price check data.",
+  "version": "1.0.0",
+  "description": "Query prices form nexus-stats.com and warframe.market.",
   "main": "index.js",
   "scripts": {
     "test": "node_modules/.bin/eslint src/ test/ && node_modules/.bin/mocha",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aliasfalse/warframe-nexus-query.git"
+    "url": "git+https://github.com/wfcd/warframe-nexus-query.git"
   },
   "keywords": [
     "warframe",
@@ -20,15 +20,16 @@
   "author": "aliasfalse",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/aliasfalse/warframe-nexus-query/issues"
+    "url": "https://github.com/wfcd/warframe-nexus-query/issues"
   },
-  "homepage": "https://github.com/aliasfalse/warframe-nexus-query#README",
+  "homepage": "https://github.com/wfcd/warframe-nexus-query#README",
   "dependencies": {
     "bluebird": "^3.4.7",
     "get-image-colors": "^1.8.1",
     "image-downloader": "^3.2.1",
     "json-fetch-cache": "^0.1.0",
     "json-query": "^2.1.1",
+    "nexus-stats-api": "0.0.19",
     "node-md-config": "^2.0.1"
   },
   "defDependencies": {

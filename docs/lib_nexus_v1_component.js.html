@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>warframe-nexus-query Classes</title>
+	<title>warframe-nexus-query Source: lib/nexus/v1/component.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -67,109 +67,95 @@
 <div class="row">
 
 	
-	<div class="col-md-8">
+	<div class="col-md-12">
 	
 		<div id="main">
 			
 
-	<h1 class="page-title">Classes</h1>
+		<h1 class="page-title">Source: lib/nexus/v1/component.js</h1>
+    
 <section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">'use strict';
 
-<header>
-    
-        <h2>
-        
-        </h2>
-        
-    
-</header>
+/**
+ * Represents an individual component object of an item.
+ */
+class Component {
 
+  /**
+   * Represents an individual component object of an item.
+   * @param {json} data the component data to parse into a component
+   * @constructor
+   */
+  constructor(data) {
+    /**
+     * Name of the component, display value
+     * @type {string}
+     */
+    this.name = data.name;
 
-<article>
-    <div class="container-overview">
-    
-        
+    /**
+     * Supply for the component
+     * @type {number}
+     */
+    this.supply = data.supply;
 
-        
-<dl class="details">
-    
+    /**
+     * Demand for the component
+     * @type {number}
+     */
+    this.demand = data.demand;
 
-	
+    /**
+     * Average prices for the component
+     * @type {Object}
+     * @property {number} avg     - average value
+     * @property {number} median  - median value
+     * @property {number} minimum - minimum value
+     * @property {number} maximum - maximum value
+     */
+    this.prices = {
+      avg: data.avg,
+      median: data.median,
+      minimum: data.min,
+      maximum: data.max,
+    };
 
-	
+    this.type = 'nexus-v1';
+  }
 
-	
+  /**
+   * The components's string representation
+   * @returns {string}
+   */
+  toString() {
+    return `\u221F${this.padName(this.name)} | average: ${(this.prices.avg ? `${String(parseFloat(this.prices.avg).toFixed(2))}p` : '0p')}`;
+  }
 
-    
+  /**
+   * Pad the left side of a string so that all componets
+   * have the same string length before the pipe
+   * @param {string} locationString the location string to pad
+   * @returns {string} the padded location string
+   */
+  padName(locationString) {
+    let stringRet;
+    if (locationString.length &lt; 10) {
+      stringRet = this.padName(`${locationString} `);
+    } else {
+      stringRet = locationString;
+    }
+    return stringRet;
+  }
+}
 
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Classes</h3>
-
-        <dl>
-            <dt><a href="Component.html">Component</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Item.html">Item</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Summary.html">Summary</a></dt>
-            <dd></dd>
-        
-            <dt><a href="WarframeNexusStats.html">WarframeNexusStats</a></dt>
-            <dd></dd>
-        </dl>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
+module.exports = Component;
+</pre>
+    </article>
 </section>
+
 
 
 
@@ -179,10 +165,6 @@
 
 	<div class="clearfix"></div>
 
-	
-		<div class="col-md-3">
-			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
-		</div>
 	
 
 </div>
