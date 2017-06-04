@@ -29,6 +29,7 @@
     "image-downloader": "^3.2.1",
     "json-fetch-cache": "^0.1.0",
     "json-query": "^2.1.1",
+    "nexus-stats-api": "0.0.19",
     "node-md-config": "^2.0.1"
   },
   "defDependencies": {

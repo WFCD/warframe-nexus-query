@@ -6,14 +6,15 @@ const md = require('node-md-config');
 const jsonQuery = require('json-query');
 
 const NexusItem = require('./lib/nexus/v1/item.js');
+const NexusFetcher = require('nexus-stats-api');
 const MarketFetcher = require('./lib/market/v1/MarketFetcher.js');
 
 const maxCacheLength = process.env.NEXUSSTATS_MAX_CACHED_TIME || 60000;
 
 const urls = {
-  nexus: process.env.NEXUSSTATS_URL_OVERRIDE || 'https://nexus-stats.com/api',
-  market: process.env.MARKET_URL_OVERRIDE || 'http://api.warframe.market/v1/items',
-  marketAssets: process.env.MARKET_ASSETS_URL_OVERRIDE || 'http://warframe.market/static/assets/',
+  nexus: process.env.NEXUSSTATS_URL_OVERRIDE || 'https://api.nexus-stats.com/warframe/v1/items',
+  market: process.env.MARKET_URL_OVERRIDE || 'https://api.warframe.market/v1/items',
+  marketAssets: process.env.MARKET_ASSETS_URL_OVERRIDE || 'https://warframe.market/static/assets/',
 };
 
 const defaultString = 'Operator, there is no such item pricecheck available.';
@@ -61,14 +62,20 @@ function attachmentFromComponents(components, query) {
                   attachment.url = marketComponent.url;
                   attachment.thumbnail.url = `https://nexus-stats.com/img/items/${encodeURIComponent(nexusComponent.title)}-min.png`;
                   attachment.description = `Query results for: "${query}"`;
+
+                  let nexusMedian = component.prices.median ? component.prices.median + 'p' : 'No data';
+                  let nexusRange = component.prices.minimum ? component.prices.minimum + 'p - ' + component.prices.maximum + 'p' : 'No data';
+                  let marketMedian = marketComponent.prices.soldPrice ? marketComponent.prices.soldPrice + 'p' : 'No data';
+                  let marketRange = marketComponent.prices.minimum ? marketComponent.prices.minimum + 'p - ' + marketComponent.prices.maximum + 'p' : 'No data';
+
                   attachment.fields.push({
                     name: component.name,
-                    value: `**Tradable:** ${marketComponent.tradable ? ':white_check_mark:' : ':redTick:'}\n` +
-                           `**Trade Tax:** ${marketComponent.tradingTax}cr\n` +
-                           `**Prices:**\n` +
-                           `__Nexus Average:__ ${component.avgPrice ? component.avgPrice : 'No data'}\n` +
-                           `__Market Median:__ ${marketComponent.prices.soldCount} sold at ${marketComponent.prices.soldPrice}p\n` +
-                           `__Market Range:__ ${marketComponent.prices.minimum}p - ${marketComponent.prices.maximum}p`,
+                    value: '```haskell\n' +
+                           `${pad('Value', 7)}|${pad(' Nexus', 13)}|${pad(' Market')}\n` +
+                           `${pad('Median', 7)}|${pad(` ${nexusMedian}`, 13)}|${pad(` ${marketMedian}`)}\n` +
+                           `${pad('Range', 7)}|${pad(` ${nexusRange}`, 13)}|${pad(` ${marketRange}`)}\n\n` +
+                           `Trade Tax: ${marketComponent.tradingTax}cr\n` +
+                           '```\n',
                     inline: true,
                   });
                 }
@@ -76,8 +83,8 @@ function attachmentFromComponents(components, query) {
           });
         attachment.fields.push({
           name: '_ _',
-          value: `Supply: **${nexusComponent.supplyAmount}** units (${nexusComponent.supplyPercent}%) ` +
-            `- Demand: **${nexusComponent.demandAmount}** units (${nexusComponent.demandPercent}%)`,
+          value: `Supply: **${nexusComponent.supply.count}** units (${nexusComponent.supply.percentage}%) ` +
+            `- Demand: **${nexusComponent.demand.count}** units (${nexusComponent.demand.percentage}%)`,
         });
       });
   } else if (marketComponents.length > 0) {
@@ -119,6 +126,8 @@ class WarframeNexusStats {
      */
     this.nexusCache = new JSONCache(urls.nexus, maxCacheLength);
 
+    this.nexusFetcher = new NexusFetcher();
+
     /**
      * The json cache stpromg data from warframe.market
      * @type {JSONCache}
@@ -137,10 +146,11 @@ class WarframeNexusStats {
     return new Promise((resolve, reject) => {
       this.nexusCache.getDataJson()
         .then((dataCache) => {
-          const results = jsonQuery(`[*Title~/^${query}/i]`, {
+          const results = jsonQuery(`[*name~/^${query}/i]`, {
             data: dataCache,
             allowRegexp: true,
           });
+
           const componentsToReturn = [];
           if (typeof results.value === 'undefined') {
             resolve({});
@@ -151,18 +161,15 @@ class WarframeNexusStats {
             resolve([defaultString]);
           }
 
-          try {
-            results.value.slice(0, 4).forEach((item) => {
-              if (typeof item !== 'undefined' && item !== null) {
-                componentsToReturn.push(new NexusItem(item));
+          this.nexusFetcher.getItemStats(results.value[0].name)
+            .then((queryResults) => {
+              if (Object.keys(queryResults).length > 0) {
+                componentsToReturn.push(new NexusItem(queryResults));
               }
-            });
-            resolve(componentsToReturn);
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error(e);
-          }
-        })
+              resolve(componentsToReturn);
+            })
+            .catch(console.error)
+          })
         .catch(reject);
     })
     .then(nexusComponents => new Promise((resolve) => {
