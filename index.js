@@ -78,17 +78,21 @@ class WarframeNexusStats {
 
           if (!results.value || JSON.stringify(results.value) === '[]') {
             resolve([this.settings.defaultString]);
-          }
+           }
           this.nexusFetcher.getItemStats(results.value[0].name)
             .then((queryResults) => {
               if (Object.keys(queryResults).length > 0) {
                 componentsToReturn.push(new NexusItem(queryResults, `/${results.value[0].type}/${encodeURIComponent(results.value[0].name.replace(/\sPrime/ig, ''))}`));
               }
-              return this.attachmentCreator.mapNexusColors(componentsToReturn);
+              resolve(componentsToReturn);
             })
-            .then(components => resolve(components))
-            // eslint-disable-next-line no-console
-            .catch(console.error);
+            // .then(() => this.attachmentCreator.mapNexusColors(componentsToReturn))
+            // .then(components => resolve(components))
+            .catch((error) => {
+              // eslint-disable-next-line no-console
+              console.error(error);
+              resolve(componentsToReturn);
+            });
         })
         .catch(reject);
     })
