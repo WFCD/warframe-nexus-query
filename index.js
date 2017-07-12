@@ -85,9 +85,7 @@ class PriceCheckQuerier {
           return [noResultAttachment];
         }
         return this.nexusFetcher.getItemStats(results.value[0].name)
-          .then((qResults) => {
-            return { queryResults: qResults, results };
-          })
+          .then(qResults => ({ queryResults: qResults, results }))
           .catch((error) => {
             // eslint-disable-next-line no-console
             console.error(`Error Fetching data from Nexus Stats: ${error.message}`);
@@ -105,23 +103,24 @@ class PriceCheckQuerier {
           this.marketCache.getDataJson()
               .then((dataCache) => {
                 const results = jsonQuery(`en[*item_name~/^${query}.*/i]`, {
-                  data: dataCache.payload.items,
+                  data: dataCache.payload ? dataCache.payload.items : {},
                   allowRegexp: true,
                 }).value;
-                if (results.length < 1) {
+                if (!results || results.length < 1) {
                   resolve(nexusComponents);
+                } else {
+                  results.map(result => result.url_name)
+                    .map(urlName => this.marketFetcher.resultForItem(urlName)
+                        .then((queryResults) => {
+                          const components = nexusComponents.concat(queryResults);
+                          resolve(components);
+                        })
+                        .catch((err) => {
+                          // eslint-disable-next-line no-console
+                          console.log(err);
+                          resolve(nexusComponents);
+                        }));
                 }
-                results.map(result => result.url_name)
-                  .map(urlName => this.marketFetcher.resultForItem(urlName)
-                      .then((queryResults) => {
-                        const components = nexusComponents.concat(queryResults);
-                        resolve(components);
-                      })
-                      .catch((err) => {
-                        // eslint-disable-next-line no-console
-                        console.log(err);
-                        resolve(nexusComponents);
-                      }));
               })
               .catch((err) => {
                 // eslint-disable-next-line no-console
