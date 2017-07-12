@@ -11,11 +11,20 @@ const NexusItem = require('./lib/nexus/v1/item.js');
 const MarketFetcher = require('./lib/market/v1/MarketFetcher.js');
 const AttachmentCreator = require('./lib/AttachmentCreator.js');
 
+const noResultAttachment = {
+  type: 'rich',
+  description: 'No result',
+  color: '0xff55ff',
+  url: 'https://warframe.market',
+  footer: {
+    text: 'Pricechecks from NexusStats and Warframe.Market',
+  },
+};
 
 /**
  * Represents a queryable datastore of information derived from `https://nexus-stats.com/api`
  */
-class WarframeNexusStats {
+class PriceCheckQuerier {
   /**
    * Creates an instance representing a WarframeNexusStats data object
    * @constructor
@@ -62,62 +71,69 @@ class WarframeNexusStats {
    * @returns {Promise<Array<NexusItem>>} a Promise of an array of Item objects
    */
   priceCheckQuery(query) {
-    return new Promise((resolve, reject) => {
-      this.nexusCache.getDataJson()
-        .then((dataCache) => {
-          const results = jsonQuery(`[*name~/^${query}.*/i]`, {
-            data: dataCache,
-            allowRegexp: true,
+    return this.nexusCache.getDataJson()
+      .then((dataCache) => {
+        if (dataCache === []) {
+          return [noResultAttachment];
+        }
+        const results = jsonQuery(`[*name~/^${query}.*/i]`, {
+          data: dataCache,
+          allowRegexp: true,
+        });
+
+        if (!results.value || JSON.stringify(results.value) === '[]' || typeof results.value === 'undefined') {
+          return [noResultAttachment];
+        }
+        return this.nexusFetcher.getItemStats(results.value[0].name)
+          .then(qResults => ({ queryResults: qResults, results }))
+          .catch((error) => {
+            // eslint-disable-next-line no-console
+            console.error(`Error Fetching data from Nexus Stats: ${error.message}`);
+            return {};
           });
-
-          const componentsToReturn = [];
-          if (typeof results.value === 'undefined') {
-            resolve({});
-            return;
-          }
-
-          if (!results.value || JSON.stringify(results.value) === '[]') {
-            resolve([this.settings.defaultString]);
-           }
-          this.nexusFetcher.getItemStats(results.value[0].name)
-            .then((queryResults) => {
-              if (Object.keys(queryResults).length > 0) {
-                componentsToReturn.push(new NexusItem(queryResults, `/${results.value[0].type}/${encodeURIComponent(results.value[0].name.replace(/\sPrime/ig, ''))}`));
-              }
-              resolve(componentsToReturn);
-            })
-            // .then(() => this.attachmentCreator.mapNexusColors(componentsToReturn))
-            // .then(components => resolve(components))
-            .catch((error) => {
-              // eslint-disable-next-line no-console
-              console.error(error);
-              resolve(componentsToReturn);
-            });
-        })
-        .catch(reject);
-    })
-    .then(nexusComponents => new Promise((resolve) => {
-      this.marketCache.getDataJson()
-        .then((dataCache) => {
-          const results = jsonQuery(`en[*item_name~/^${query}.*/i]`, {
-            data: dataCache.payload.items,
-            allowRegexp: true,
-          }).value;
-          if (results.length < 1) {
-            resolve(nexusComponents);
-          }
-          results.map(result => result.url_name)
-            .map(urlName => this.marketFetcher.resultForItem(urlName)
-                .then((queryResults) => {
-                  const components = nexusComponents.concat(queryResults);
-                  resolve(components);
-                })
+      })
+      .then(({ queryResults, results }) => {
+        if (queryResults && Object.keys(queryResults).length > 0) {
+          return [new NexusItem(queryResults, `/${results.value[0].type}/${encodeURIComponent(results.value[0].name.replace(/\sPrime/ig, ''))}`)];
+        }
+        return [noResultAttachment];
+      })
+      .then((nexusComponents) => {
+        return new Promise((resolve) => {
+          this.marketCache.getDataJson()
+              .then((dataCache) => {
+                const results = jsonQuery(`en[*item_name~/^${query}.*/i]`, {
+                  data: dataCache.payload ? dataCache.payload.items : {},
+                  allowRegexp: true,
+                }).value;
+                if (!results || results.length < 1) {
+                  resolve(nexusComponents);
+                } else {
+                  results.map(result => result.url_name)
+                    .map(urlName => this.marketFetcher.resultForItem(urlName)
+                        .then((queryResults) => {
+                          const components = nexusComponents.concat(queryResults);
+                          resolve(components);
+                        })
+                        .catch((err) => {
+                          // eslint-disable-next-line no-console
+                          console.log(err);
+                          resolve(nexusComponents);
+                        }));
+                }
+              })
+              .catch((err) => {
                 // eslint-disable-next-line no-console
-                .catch(console.error));
-        })
+                console.log(err);
+                return [noResultAttachment];
+              });
+        });
+      })
+      .catch((err) => {
         // eslint-disable-next-line no-console
-        .catch(console.error);
-    }));
+        console.log(err);
+        return [noResultAttachment];
+      });
   }
 
   /**
@@ -158,4 +174,4 @@ class WarframeNexusStats {
   }
 }
 
-module.exports = WarframeNexusStats;
+module.exports = PriceCheckQuerier;
