@@ -93,7 +93,7 @@ class PriceCheckQuerier {
           });
       })
       .then(({ queryResults, results }) => {
-        if (queryResults && Object.keys(queryResults).length > 0) {
+        if (queryResults && !queryResults.error) {
           return [new NexusItem(queryResults, `/${results.value[0].type}/${encodeURIComponent(results.value[0].name.replace(/\sPrime/ig, ''))}`)];
         }
         return [noResultAttachment];
