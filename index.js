@@ -29,7 +29,7 @@ class PriceCheckQuerier {
    * Creates an instance representing a WarframeNexusStats data object
    * @constructor
    */
-  constructor() {
+  constructor({ nexusFetcher = undefined }) {
     this.settings = new Settings();
 
     /**
@@ -43,7 +43,7 @@ class PriceCheckQuerier {
       ignore_limiter: true,
     };
 
-    this.nexusFetcher = new NexusFetcher(this.settings.nexusKey &&
+    this.nexusFetcher = nexusFetcher || new NexusFetcher(this.settings.nexusKey &&
       this.settings.nexusSecret ? nexusOptions : {});
 
     /**
