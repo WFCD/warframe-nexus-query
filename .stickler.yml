@@ -1,3 +1,9 @@
+linters:
+     eslint:
+         config: './.eslintrc.json'
+     flake8:
+         enable: false
+ 
 files:
   ignore:
     - 'bower_components/*'
