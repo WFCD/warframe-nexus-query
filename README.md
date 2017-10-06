@@ -8,6 +8,9 @@ A node project for allowing simple access to the `https://nexus-stats.com/` api.
 
 [![Contact me on Discord](https://img.shields.io/badge/discord-Tobiah%238452-7289DA.svg)](https://discord.gg/0ycgfahdR8gTzWgM "Contact me on Discord: Tobiah#8452")
 
+## Metrics
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/93c7b05147124147acb64c7117dc87b1)](https://www.codacy.com/app/aliasfalse/warframe-nexus-query?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=WFCD/warframe-nexus-query&amp;utm_campaign=Badge_Grade)
 
 ## Installation
 ```
