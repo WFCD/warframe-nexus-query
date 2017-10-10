@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>warframe-nexus-query Source: index.js</title>
+	<title>warframe-nexus-query Class: Settings</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -67,172 +67,260 @@
 <div class="row">
 
 	
-	<div class="col-md-12">
+	<div class="col-md-8">
 	
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: index.js</h1>
-    
+	<h1 class="page-title">Class: Settings</h1>
 <section>
-    <article>
-        <pre
-            class="sunlight-highlight-javascript linenums">'use strict';
 
-const JSONCache = require('json-fetch-cache');
-const md = require('node-md-config');
-const jsonQuery = require('json-query');
-const NexusFetcher = require('nexus-stats-api');
+<header>
+    
+        <h2>
+        Settings
+        </h2>
+        
+            <div class="class-description">Settings storage for nexus query</div>
+        
+    
+</header>
 
-const Settings = require('./lib/Settings.js');
-const NexusItem = require('./lib/nexus/v1/item.js');
-const MarketFetcher = require('./lib/market/v1/MarketFetcher.js');
-const AttachmentCreator = require('./lib/AttachmentCreator.js');
 
-const noResultAttachment = {
-  type: 'rich',
-  description: 'No result',
-  color: '0xff55ff',
-  url: 'https://warframe.market',
-  footer: {
-    text: 'Pricechecks from NexusStats and Warframe.Market',
-  },
-};
+<article>
+    <div class="container-overview">
+    
+        
+<hr>
+<dt>
+    <h4 class="name" id="Settings"><span class="type-signature"></span>new Settings()</h4>
+    
+    
+</dt>
+<dd>
 
-/**
- * Represents a queryable datastore of information derived from `https://nexus-stats.com/api`
- */
-class PriceCheckQuerier {
-  /**
-   * Creates an instance representing a WarframeNexusStats data object
-   * @constructor
-   */
-  constructor({ nexusFetcher = undefined, logger = console }) {
-    this.settings = new Settings();
+    
 
-    if (!nexusFetcher) {
-      const nexusOptions = {
-        user_key: this.settings.nexusKey,
-        user_secret: this.settings.nexusSecret,
-        api_url: this.settings.urls.nexusApi,
-        auth_url: this.settings.urls.nexusAuth,
-        ignore_limiter: true,
-      };
-      this.nexusFetcher = new NexusFetcher(this.settings.nexusKey &amp;&amp;
-        this.settings.nexusSecret ? nexusOptions : {});
-    } else {
-      this.nexusFetcher = nexusFetcher;
-    }
+    
 
-    /**
-     * The json cache stpromg data from warframe.market
-     * @type {JSONCache}
-     */
-    this.marketCache = new JSONCache(this.settings.urls.market, this.settings.maxCacheLength);
+    
 
-    /**
-     * Fetch market data
-     * @type {MarketFetcher}
-     */
-    this.marketFetcher = new MarketFetcher();
+    
+    
 
-    /**
-     * Attachment creator for generating attachments
-     * @type {AttachmentCreator}
-     */
-    this.attachmentCreator = new AttachmentCreator();
+    
+<dl class="details">
+    
 
-    this.logger = logger;
-  }
+    <h5 class="subsection-title">Properties:</h5>
 
-  /**
-   * Lookup a list of results for a query
-   * @param {string} query Query to search the nexus-stats database against
-   * @returns {Promise&lt;Array&lt;NexusItem>>} a Promise of an array of Item objects
-   */
-  async priceCheckQuery(query) {
-    let attachments = [];
-    const nexusResults = await this.nexusFetcher.get(`/warframe/v1/search?query=${encodeURIComponent(query)}`);
-    const nexusItem = await this.nexusFetcher.get(nexusResults[0].apiUrl);
-    // if there's no results, do no result attachment
-    if (typeof nexusItem === 'undefined') {
-      attachments = [noResultAttachment];
-    }
-    try {
-      const today = Date.now();
-      const priorDate = today - 2592000000;
-      // if there is, get some item stats
-      const queryResults = await this.nexusFetcher.get(`${nexusResults[0].apiUrl}/statistics?timestart=${today}&amp;timeend=${priorDate}`);
-      if (queryResults &amp;&amp; !queryResults.body) {
-        queryResults.type = nexusItem.type;
-        queryResults.parts = nexusItem.components
-          .map(component => ({ name: component.name, ducats: component.ducats }));
-        queryResults.item = nexusItem;
-        attachments = [new NexusItem(queryResults, nexusItem.webUrl, this.settings)];
-      } else {
-        // if no results, no result attachment
-        attachments = [noResultAttachment];
-      }
-    } catch (error) {
-      this.logger.info(`Error Fetching data from Nexus Stats: ${error.message}`);
-      attachments = [];
-    }
+    <dl>
 
-    // get market data
-    const marketCache = await this.marketCache.getDataJson();
-    const marketResults = jsonQuery(`en[*item_name~/^${query}.*/i]`, {
-      data: marketCache.payload ? marketCache.payload.items : {},
-      allowRegexp: true,
-    }).value;
-    if (!marketResults || marketResults.length &lt; 1) {
-      return attachments;
-    }
-    try {
-      marketResults.map(result => result.url_name).map(async (urlName) => {
-        const queryResults = await this.marketFetcher.resultForItem(urlName);
-        attachments = attachments.concat(queryResults);
-      });
-      return attachments;
-    } catch (err) {
-      this.logger.info(err);
-      return attachments;
-    }
-  }
+<table class="props table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-  /**
-   * Lookup a list of results for a query
-   * @param {string} query Query to search the nexus-stats database against
-   * @returns {Promise&lt;string>} a Promise of a string containing the results of the query
-   */
-  async priceCheckQueryString(query) {
-    const components = await this.priceCheckQuery(query);
-    const tokens = [];
-    components.slice(0, 4).forEach((component) => {
-      tokens.push(`${md.lineEnd}${component.toString()}`);
-    });
-    let componentsToReturnString = `${md.codeMulti}${tokens.join()}${md.blockEnd}`;
-    componentsToReturnString = components.length > 0 ?
-      componentsToReturnString : this.settings.defaultString;
-    return componentsToReturnString;
-  }
+        <th>Type</th>
 
-  /**
-   * Lookup a list of results for a query
-   * @param {string} query Query to search the nexus-stats database against
-   * @returns {Array&lt;Object>} a Promise of an array of attachment objects
-   */
-  async priceCheckQueryAttachment(query) {
-    const components = await this.priceCheckQuery(query);
-    const attachments = [this.attachmentCreator.attachmentFromComponents(components, query)];
-    return attachments;
-  }
-}
+        
 
-module.exports = PriceCheckQuerier;
-</pre>
-    </article>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>maxCacheLength</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">maximum length to store cached data</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>nexusKey</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">User Key for Nexus-Stats</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>nexusSecret</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">User Secret for Nexus-Stats</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>urls</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">URL list for nexus stats</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+</dl>
+
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="lib_Settings.js.html">lib/Settings.js</a>,
+				 <a href="lib_Settings.js.html#sunlight-1-line-11">line 11</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
 </section>
-
 
 
 
@@ -242,6 +330,10 @@ module.exports = PriceCheckQuerier;
 
 	<div class="clearfix"></div>
 
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
 	
 
 </div>
@@ -270,7 +362,7 @@ module.exports = PriceCheckQuerier;
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
 	
-		on Tuesday, October 10th 2017, 00:54:03
+		on Tuesday, October 10th 2017, 00:54:04
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
