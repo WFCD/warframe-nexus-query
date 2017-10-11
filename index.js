@@ -1,7 +1,6 @@
 'use strict';
 
 const JSONCache = require('json-fetch-cache');
-const Promise = require('bluebird');
 const md = require('node-md-config');
 const jsonQuery = require('json-query');
 const NexusFetcher = require('nexus-stats-api');
@@ -29,22 +28,22 @@ class PriceCheckQuerier {
    * Creates an instance representing a WarframeNexusStats data object
    * @constructor
    */
-  constructor({ nexusFetcher = undefined }) {
+  constructor({ nexusFetcher = undefined, logger = console }) {
     this.settings = new Settings();
 
-    /**
-     * The json cache storing data from nexus-stats.com
-     * @type {JSONCache}
-     */
-    this.nexusCache = new JSONCache(this.settings.urls.nexus, this.settings.maxCacheLength);
-    const nexusOptions = {
-      user_key: this.settings.nexusKey,
-      user_secret: this.settings.nexusSecret,
-      ignore_limiter: true,
-    };
-
-    this.nexusFetcher = nexusFetcher || new NexusFetcher(this.settings.nexusKey &&
-      this.settings.nexusSecret ? nexusOptions : {});
+    if (!nexusFetcher) {
+      const nexusOptions = {
+        user_key: this.settings.nexusKey,
+        user_secret: this.settings.nexusSecret,
+        api_url: this.settings.urls.nexusApi,
+        auth_url: this.settings.urls.nexusAuth,
+        ignore_limiter: true,
+      };
+      this.nexusFetcher = new NexusFetcher(this.settings.nexusKey &&
+        this.settings.nexusSecret ? nexusOptions : {});
+    } else {
+      this.nexusFetcher = nexusFetcher;
+    }
 
     /**
      * The json cache stpromg data from warframe.market
@@ -63,6 +62,8 @@ class PriceCheckQuerier {
      * @type {AttachmentCreator}
      */
     this.attachmentCreator = new AttachmentCreator();
+
+    this.logger = logger;
   }
 
   /**
@@ -70,70 +71,53 @@ class PriceCheckQuerier {
    * @param {string} query Query to search the nexus-stats database against
    * @returns {Promise<Array<NexusItem>>} a Promise of an array of Item objects
    */
-  priceCheckQuery(query) {
-    return this.nexusCache.getDataJson()
-      .then((dataCache) => {
-        if (dataCache === []) {
-          return [noResultAttachment];
-        }
-        const results = jsonQuery(`[*name~/^${query}.*/i]`, {
-          data: dataCache,
-          allowRegexp: true,
-        });
+  async priceCheckQuery(query) {
+    let attachments = [];
+    const nexusResults = await this.nexusFetcher.get(`/warframe/v1/search?query=${encodeURIComponent(query)}`);
+    const nexusItem = await this.nexusFetcher.get(nexusResults[0].apiUrl);
+    // if there's no results, do no result attachment
+    if (typeof nexusItem === 'undefined') {
+      attachments = [noResultAttachment];
+    }
+    try {
+      const today = Date.now();
+      const priorDate = today - 2592000000;
+      // if there is, get some item stats
+      const queryResults = await this.nexusFetcher.get(`${nexusResults[0].apiUrl}/statistics?timestart=${today}&timeend=${priorDate}`);
+      if (queryResults && !queryResults.body) {
+        queryResults.type = nexusItem.type;
+        queryResults.parts = nexusItem.components
+          .map(component => ({ name: component.name, ducats: component.ducats }));
+        queryResults.item = nexusItem;
+        attachments = [new NexusItem(queryResults, nexusItem.webUrl, this.settings)];
+      } else {
+        // if no results, no result attachment
+        attachments = [noResultAttachment];
+      }
+    } catch (error) {
+      this.logger.info(`Error Fetching data from Nexus Stats: ${error.message}`);
+      attachments = [];
+    }
 
-        if (!results.value || JSON.stringify(results.value) === '[]' || typeof results.value === 'undefined') {
-          return [noResultAttachment];
-        }
-        return this.nexusFetcher.getItemStats(results.value[0].name)
-          .then(qResults => ({ queryResults: qResults, results }))
-          .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(`Error Fetching data from Nexus Stats: ${error.message}`);
-            return {};
-          });
-      })
-      .then(({ queryResults, results }) => {
-        if (queryResults && !queryResults.error) {
-          return [new NexusItem(queryResults, `/${results.value[0].type}/${encodeURIComponent(results.value[0].name.replace(/\sPrime/ig, ''))}`)];
-        }
-        return [noResultAttachment];
-      })
-      .then((nexusComponents) => {
-        return new Promise((resolve) => {
-          this.marketCache.getDataJson()
-              .then((dataCache) => {
-                const results = jsonQuery(`en[*item_name~/^${query}.*/i]`, {
-                  data: dataCache.payload ? dataCache.payload.items : {},
-                  allowRegexp: true,
-                }).value;
-                if (!results || results.length < 1) {
-                  resolve(nexusComponents);
-                } else {
-                  results.map(result => result.url_name)
-                    .map(urlName => this.marketFetcher.resultForItem(urlName)
-                        .then((queryResults) => {
-                          const components = nexusComponents.concat(queryResults);
-                          resolve(components);
-                        })
-                        .catch((err) => {
-                          // eslint-disable-next-line no-console
-                          console.log(err);
-                          resolve(nexusComponents);
-                        }));
-                }
-              })
-              .catch((err) => {
-                // eslint-disable-next-line no-console
-                console.log(err);
-                return [noResultAttachment];
-              });
-        });
-      })
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.log(err);
-        return [noResultAttachment];
+    // get market data
+    const marketCache = await this.marketCache.getDataJson();
+    const marketResults = jsonQuery(`en[*item_name~/^${query}.*/i]`, {
+      data: marketCache.payload ? marketCache.payload.items : {},
+      allowRegexp: true,
+    }).value;
+    if (!marketResults || marketResults.length < 1) {
+      return attachments;
+    }
+    try {
+      marketResults.map(result => result.url_name).map(async (urlName) => {
+        const queryResults = await this.marketFetcher.resultForItem(urlName);
+        attachments = attachments.concat(queryResults);
       });
+      return attachments;
+    } catch (err) {
+      this.logger.info(err);
+      return attachments;
+    }
   }
 
   /**
@@ -141,36 +125,27 @@ class PriceCheckQuerier {
    * @param {string} query Query to search the nexus-stats database against
    * @returns {Promise<string>} a Promise of a string containing the results of the query
    */
-  priceCheckQueryString(query) {
-    return new Promise((resolve) => {
-      this.priceCheckQuery(query)
-        .then((components) => {
-          const tokens = [];
-          components.slice(0, 4).forEach((component) => {
-            tokens.push(`${md.lineEnd}${component.toString()}`);
-          });
-          let componentsToReturnString = `${md.codeMulti}${tokens.join()}${md.blockEnd}`;
-          componentsToReturnString = components.length > 0 ?
-            componentsToReturnString : this.settings.defaultString;
-          resolve(componentsToReturnString);
-        });
+  async priceCheckQueryString(query) {
+    const components = await this.priceCheckQuery(query);
+    const tokens = [];
+    components.slice(0, 4).forEach((component) => {
+      tokens.push(`${md.lineEnd}${component.toString()}`);
     });
+    let componentsToReturnString = `${md.codeMulti}${tokens.join()}${md.blockEnd}`;
+    componentsToReturnString = components.length > 0 ?
+      componentsToReturnString : this.settings.defaultString;
+    return componentsToReturnString;
   }
 
   /**
    * Lookup a list of results for a query
    * @param {string} query Query to search the nexus-stats database against
-   * @returns {Promise<Object>} a Promise of an array of attachment objects
+   * @returns {Array<Object>} a Promise of an array of attachment objects
    */
-  priceCheckQueryAttachment(query) {
-    return new Promise((resolve) => {
-      this.priceCheckQuery(query)
-        .then((components) => {
-          resolve([this.attachmentCreator.attachmentFromComponents(components, query)]);
-        })
-        // eslint-disable-next-line no-console
-        .catch(console.error);
-    });
+  async priceCheckQueryAttachment(query) {
+    const components = await this.priceCheckQuery(query);
+    const attachments = [this.attachmentCreator.attachmentFromComponents(components, query)];
+    return attachments;
   }
 }
 
