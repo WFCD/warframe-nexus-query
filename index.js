@@ -74,29 +74,33 @@ class PriceCheckQuerier {
   async priceCheckQuery(query) {
     let attachments = [];
     const nexusResults = await this.nexusFetcher.get(`/warframe/v1/search?query=${encodeURIComponent(query)}`);
-    const nexusItem = await this.nexusFetcher.get(nexusResults[0].apiUrl);
-    // if there's no results, do no result attachment
-    if (typeof nexusItem === 'undefined') {
-      attachments = [noResultAttachment];
-    }
-    try {
-      const today = Date.now();
-      const priorDate = today - 2592000000;
-      // if there is, get some item stats
-      const queryResults = await this.nexusFetcher.get(`${nexusResults[0].apiUrl}/statistics?timestart=${today}&timeend=${priorDate}`);
-      if (queryResults && !queryResults.body) {
-        queryResults.type = nexusItem.type;
-        queryResults.parts = nexusItem.components
-          .map(component => ({ name: component.name, ducats: component.ducats }));
-        queryResults.item = nexusItem;
-        attachments = [new NexusItem(queryResults, nexusItem.webUrl, this.settings)];
-      } else {
-        // if no results, no result attachment
+    if (nexusResults.length) {
+      const nexusItem = await this.nexusFetcher.get(nexusResults[0].apiUrl);
+      // if there's no results, do no result attachment
+      if (typeof nexusItem === 'undefined') {
         attachments = [noResultAttachment];
       }
-    } catch (error) {
-      this.logger.info(`Error Fetching data from Nexus Stats: ${error.message}`);
-      attachments = [];
+      try {
+        const today = Date.now();
+        const priorDate = today - 2592000000;
+        // if there is, get some item stats
+        const queryResults = await this.nexusFetcher.get(`${nexusResults[0].apiUrl}/statistics`);
+        if (queryResults && !queryResults.body) {
+          queryResults.type = nexusItem.type;
+          queryResults.parts = nexusItem.components
+            .map(component => ({ name: component.name, ducats: component.ducats }));
+          queryResults.item = nexusItem;
+          attachments = [new NexusItem(queryResults, nexusItem.webUrl, this.settings)];
+        } else {
+          // if no results, no result attachment
+          attachments = [noResultAttachment];
+        }
+      } catch (error) {
+        this.logger.info(`Error Fetching data from Nexus Stats: ${error.message}`);
+        attachments = [noResultAttachment];
+      }
+    } else {
+      attachments = [noResultAttachment];
     }
 
     // get market data
