@@ -30,40 +30,48 @@ class PriceCheckQuerier {
    */
   constructor({ nexusFetcher = undefined, logger = console }) {
     this.settings = new Settings();
+    this.logger = logger;
 
-    if (!nexusFetcher) {
-      const nexusOptions = {
-        user_key: this.settings.nexusKey,
-        user_secret: this.settings.nexusSecret,
-        api_url: this.settings.urls.nexusApi,
-        auth_url: this.settings.urls.nexusAuth,
-        ignore_limiter: true,
-      };
-      this.nexusFetcher = new NexusFetcher(this.settings.nexusKey &&
+    try {
+      if (!nexusFetcher) {
+        const nexusOptions = {
+          user_key: this.settings.nexusKey,
+          user_secret: this.settings.nexusSecret,
+          api_url: this.settings.urls.nexusApi,
+          auth_url: this.settings.urls.nexusAuth,
+          ignore_limiter: true,
+        };
+        this.nexusFetcher = new NexusFetcher(this.settings.nexusKey &&
         this.settings.nexusSecret ? nexusOptions : {});
-    } else {
-      this.nexusFetcher = nexusFetcher;
+      } else {
+        this.nexusFetcher = nexusFetcher;
+      }
+    } catch (e) {
+      this.logger.error(`couldn't set up nexus fetcher: ${e.message}`);
     }
 
-    /**
-     * The json cache stpromg data from warframe.market
-     * @type {JSONCache}
-     */
-    this.marketCache = new JSONCache(this.settings.urls.market, this.settings.maxCacheLength);
 
-    /**
+    try {
+      /**
+         * The json cache stpromg data from warframe.market
+         * @type {JSONCache}
+         */
+      this.marketCache = new JSONCache(this.settings.urls.market, this.settings.maxCacheLength);
+
+      /**
      * Fetch market data
      * @type {MarketFetcher}
      */
-    this.marketFetcher = new MarketFetcher({ logger });
+      this.marketFetcher = new MarketFetcher({ logger });
+    } catch (e) {
+      this.logger.error(`couldn't set up market fetcher: ${e.message}`);
+    }
 
     /**
      * Attachment creator for generating attachments
      * @type {AttachmentCreator}
      */
     this.attachmentCreator = new AttachmentCreator();
-
-    this.logger = logger;
   }
 
   /**
@@ -72,15 +80,15 @@ class PriceCheckQuerier {
    * @returns {Promise<Array<NexusItem>>} a Promise of an array of Item objects
    */
   async priceCheckQuery(query) {
-    let attachments = [];
-    const nexusResults = await this.nexusFetcher.get(`/warframe/v1/search?query=${encodeURIComponent(query)}`);
-    if (nexusResults.length) {
-      const nexusItem = await this.nexusFetcher.get(nexusResults[0].apiUrl);
-      // if there's no results, do no result attachment
-      if (typeof nexusItem === 'undefined') {
-        attachments = [noResultAttachment];
-      }
-      try {
+    let attachments = [noResultAttachment];
+    try {
+      const nexusResults = await this.nexusFetcher.get(`/warframe/v1/search?query=${encodeURIComponent(query)}`);
+      if (nexusResults.length) {
+        const nexusItem = await this.nexusFetcher.get(nexusResults[0].apiUrl);
+        // if there's no results, do no result attachment
+        if (typeof nexusItem === 'undefined') {
+          attachments = [noResultAttachment];
+        }
         // if there is, get some item stats
         const queryResults = await this.nexusFetcher.get(`${nexusResults[0].apiUrl}/statistics`);
         if (queryResults && !queryResults.body) {
@@ -93,34 +101,33 @@ class PriceCheckQuerier {
           // if no results, no result attachment
           attachments = [noResultAttachment];
         }
-      } catch (error) {
-        this.logger.info(`Error Fetching data from Nexus Stats: ${error.message}`);
+      } else {
         attachments = [noResultAttachment];
       }
-    } else {
+    } catch (e) {
+      this.logger.error(`Couldn't fetch nexus data: ${e.message}`);
       attachments = [noResultAttachment];
     }
 
-    // get market data
-    const marketCache = await this.marketCache.getDataJson();
-    const marketResults = jsonQuery(`en[*item_name~/^${query}.*/i]`, {
-      data: marketCache.payload ? marketCache.payload.items : {},
-      allowRegexp: true,
-    }).value;
-    if (!marketResults || marketResults.length < 1) {
-      return attachments;
-    }
     try {
+      // get market data
+      const marketData = await this.marketCache.getDataJson();
+      const marketResults = jsonQuery(`en[*item_name~/^${query}.*/i]`, {
+        data: marketData.payload ? marketData.payload.items : {},
+        allowRegexp: true,
+      }).value;
+      if (!marketResults || marketResults.length < 1) {
+        return attachments;
+      }
       const marketComponents = await Promise.all(marketResults
         .map(result => this.marketFetcher.resultForItem(result.url_name)));
       if (marketComponents.length > 0) {
         attachments = attachments.concat(marketComponents[0]);
       }
-      return attachments;
     } catch (err) {
       this.logger.error(err);
-      return attachments;
     }
+    return attachments;
   }
 
   /**
