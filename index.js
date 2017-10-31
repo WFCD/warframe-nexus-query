@@ -55,7 +55,7 @@ class PriceCheckQuerier {
      * Fetch market data
      * @type {MarketFetcher}
      */
-    this.marketFetcher = new MarketFetcher();
+    this.marketFetcher = new MarketFetcher({ logger });
 
     /**
      * Attachment creator for generating attachments
@@ -81,8 +81,6 @@ class PriceCheckQuerier {
         attachments = [noResultAttachment];
       }
       try {
-        const today = Date.now();
-        const priorDate = today - 2592000000;
         // if there is, get some item stats
         const queryResults = await this.nexusFetcher.get(`${nexusResults[0].apiUrl}/statistics`);
         if (queryResults && !queryResults.body) {
@@ -113,13 +111,14 @@ class PriceCheckQuerier {
       return attachments;
     }
     try {
-      marketResults.map(result => result.url_name).map(async (urlName) => {
-        const queryResults = await this.marketFetcher.resultForItem(urlName);
-        attachments = attachments.concat(queryResults);
-      });
+      const marketComponents = await Promise.all(marketResults
+        .map(result => this.marketFetcher.resultForItem(result.url_name)));
+      if (marketComponents.length > 0) {
+        attachments = attachments.concat(marketComponents[0]);
+      }
       return attachments;
     } catch (err) {
-      this.logger.info(err);
+      this.logger.error(err);
       return attachments;
     }
   }
