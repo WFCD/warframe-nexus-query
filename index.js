@@ -82,7 +82,7 @@ class PriceCheckQuerier {
   async priceCheckQuery(query) {
     let attachments = [noResultAttachment];
     try {
-      const nexusResults = await this.nexusFetcher.get(`/warframe/v1/search?query=${encodeURIComponent(query)}`);
+      const nexusResults = await this.nexusFetcher.get(`/warframe/v1/search?query=${encodeURIComponent(query)}&fuzzy=true&category=items`);
       if (nexusResults.length) {
         const nexusItem = await this.nexusFetcher.get(nexusResults[0].apiUrl);
         // if there's no results, do no result attachment
