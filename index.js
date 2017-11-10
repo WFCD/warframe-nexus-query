@@ -81,6 +81,7 @@ class PriceCheckQuerier {
    */
   async priceCheckQuery(query) {
     let attachments = [noResultAttachment];
+    let successfulQuery;
     try {
       const nexusResults = await this.nexusFetcher.get(`/warframe/v1/search?query=${encodeURIComponent(query)}&fuzzy=true&category=items`);
       if (nexusResults.length) {
@@ -92,11 +93,12 @@ class PriceCheckQuerier {
         // if there is, get some item stats
         const queryResults = await this.nexusFetcher.get(`${nexusResults[0].apiUrl}/statistics`);
         if (queryResults && !queryResults.body) {
+          successfulQuery = queryResults.name;
           queryResults.type = nexusItem.type;
           queryResults.parts = nexusItem.components
             .map(component => ({ name: component.name, ducats: component.ducats }));
           queryResults.item = nexusItem;
-          attachments = [new NexusItem(queryResults, nexusItem.webUrl, this.settings)];
+          attachments = [new NexusItem(queryResults, nexusResults[0].webUrl, this.settings)];
         } else {
           // if no results, no result attachment
           attachments = [noResultAttachment];
@@ -112,7 +114,7 @@ class PriceCheckQuerier {
     try {
       // get market data
       const marketData = await this.marketCache.getDataJson();
-      const marketResults = jsonQuery(`en[*item_name~/^${query}.*/i]`, {
+      const marketResults = jsonQuery(`en[*item_name~/^${successfulQuery || query}.*/i]`, {
         data: marketData.payload ? marketData.payload.items : {},
         allowRegexp: true,
       }).value;
