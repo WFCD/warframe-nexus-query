@@ -121,10 +121,9 @@ class PriceCheckQuerier {
       if (!marketResults || marketResults.length < 1) {
         return attachments;
       }
-      const marketComponents = await Promise.all(marketResults
-        .map(result => this.marketFetcher.resultForItem(result.url_name)));
+      const marketComponents = await this.marketFetcher.resultForItem(marketResults[0].url_name);
       if (marketComponents.length > 0) {
-        attachments = attachments.concat(marketComponents[0]);
+        attachments = attachments.concat(marketComponents);
       }
     } catch (err) {
       this.logger.error(err);
