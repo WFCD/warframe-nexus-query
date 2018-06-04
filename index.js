@@ -28,7 +28,7 @@ class PriceCheckQuerier {
    * Creates an instance representing a WarframeNexusStats data object
    * @constructor
    */
-  constructor({ nexusFetcher = undefined, logger = console }) {
+  constructor({ nexusFetcher = undefined, logger = console } = {}) {
     this.settings = new Settings();
     this.logger = logger;
 
@@ -80,6 +80,10 @@ class PriceCheckQuerier {
    * @returns {Promise<Array<NexusItem>>} a Promise of an array of Item objects
    */
   async priceCheckQuery(query) {
+    if (!query) {
+      throw new Error('This funcion requires a query to be provided');
+    }
+
     let attachments = [noResultAttachment];
     let successfulQuery;
     try {
