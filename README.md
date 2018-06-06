@@ -11,6 +11,7 @@ A node project for allowing simple access to the `https://nexus-stats.com/` api.
 ## Metrics
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/93c7b05147124147acb64c7117dc87b1)](https://www.codacy.com/app/wfcd/warframe-nexus-query?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=WFCD/warframe-nexus-query&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.com/WFCD/warframe-nexus-query.svg?branch=master)](https://travis-ci.com/WFCD/warframe-nexus-query)
 
 ## Installation
 ```
