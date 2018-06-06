@@ -4,7 +4,7 @@
   "description": "Query prices form nexus-stats.com and warframe.market.",
   "main": "index.js",
   "scripts": {
-    "test": "eslint src/ && mocha",
+    "test": "eslint src/ && mocha --exit",
     "build-docs": "node_modules/.bin/jsdoc -t ./node_modules/ink-docstrap/template -c jsdoc.conf -R README.md -r index.js lib/. -d docs"
   },
   "repository": {
@@ -32,7 +32,8 @@
     "json-query": "^2.2.2",
     "nexus-stats-api": "^0.2.4",
     "node-md-config": "^2.0.1",
-    "requestretry": "^1.13.0"
+    "requestretry": "^1.13.0",
+    "why-is-node-running": "^2.0.2"
   },
   "devDependencies": {
     "chai": "^4.1.2",
