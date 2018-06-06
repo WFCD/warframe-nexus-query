@@ -19,8 +19,8 @@
     "warframe-nexus",
     "warframe-trading"
   ],
-  "author": "aliasfalse",
-  "license": "ISC",
+  "author": "tobitenno",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/wfcd/warframe-nexus-query/issues"
   },
