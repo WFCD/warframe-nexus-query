@@ -42,6 +42,6 @@ describe('Nexus Query', () => {
       } catch (error) {
         should.not.exist(error);
       }
-    }).timeout(5000);
+    }).timeout(10000);
   });
 });
