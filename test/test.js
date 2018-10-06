@@ -6,7 +6,7 @@ const decache = require('decache');
 let WFNQ = require('../index.js');
 
 const should = chai.should();
-const querystring = 'Vauban Prime';
+const querystring = 'Limbo Prime';
 
 describe('Nexus Query', () => {
   let nexus;
