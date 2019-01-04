@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>warframe-nexus-query Source: lib/nexus/v1/component.js</title>
+	<title>warframe-nexus-query Source: lib/nexus/v2/item.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -72,105 +72,86 @@
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: lib/nexus/v1/component.js</h1>
+		<h1 class="page-title">Source: lib/nexus/v2/item.js</h1>
     
 <section>
     <article>
         <pre
             class="sunlight-highlight-javascript linenums">'use strict';
 
-const median = (values) => {
-  values.sort((a, b) => a - b);
-  const half = Math.floor(values.length / 2);
-  if (values.length % 2) { return values[half]; }
-  return (values[half - 1] + values[half]) / 2.0;
-};
+const md = require('node-md-config');
+const Component = require('./component.js');
 
 /**
- * Represents an individual component object of an item.
+ * Describes an item, such as a prime item, mod, arcane, or syndicate item
  */
-class Component {
+class NexusItem {
   /**
-   * Represents an individual component object of an item.
-   * @param {json} data the component data to parse into a component
-   * @param {Array&lt;Ojbect>} items objects with data for ducats
-   * @constructor
+   * @param {JSON} data to construct an item from
+   * @param {string} path for item on nexus-stats.com
+   * @param {Object} settings a settings object
    */
-  constructor(data, items) {
+  constructor(data, path, settings) {
     /**
-     * Name of the component, display value
+     * Array of Component objects
+     * @type {Array&lt;Component>}
+     */
+    this.components = [];
+
+    /**
+     * Title (name) of item
      * @type {string}
      */
-    this.name = data.name;
+    this.title = data.name;
+
+    /**
+     * Type of the item, such as:
+     * * Prime
+     * * Mods
+     * * Arcane
+     * * Syndicate
+     * @type {string}
+     */
+    this.type = data.type;
 
     /**
      * Supply for the component
-     * @type {number}
+     * @type {Object.&lt;number>}
      */
     this.supply = data.supply;
 
     /**
      * Demand for the component
-     * @type {number}
+     * @type {Object.&lt;number>}
      */
     this.demand = data.demand;
 
-    /**
-     * Average prices for the component
-     * @type {Object}
-     * @property {number} avg     - average value
-     * @property {number} median  - median value
-     * @property {number} minimum - minimum value
-     * @property {number} maximum - maximum value
-     */
-    this.prices = {
-      buying: {
-        avg: data.buying.avg,
-        median: data.buying.median,
-        minimum: data.buying.min,
-        maximum: data.buying.max,
-      },
-      selling: {
-        avg: data.selling.avg,
-        median: data.selling.median,
-        minimum: data.selling.min,
-        maximum: data.selling.max,
-      },
-      avg: (data.buying.avg + data.selling.avg) / 2,
-      median: median([data.buying.median, data.selling.median]),
-      minimum: Math.min(data.buying.min, data.selling.max),
-      maximum: Math.max(data.buying.max, data.selling.max),
-    };
-    this.ducats = (items.filter(item => item.name === data.name)[0] || { ducats: 0 }).ducats;
-    this.type = 'nexus-v1';
+    data.components.forEach((componentData) => {
+      this.components.push(new Component(componentData, data.parts));
+    });
+
+    this.url = `${settings.urls.nexusWeb}${path}`;
+    this.thumbnail = `${settings.urls.nexusWeb}${data.item.components[0].imgUrl}`;
   }
 
   /**
-   * The components's string representation
-   * @returns {string}
-   */
+  * String representation of this Item.
+  * @returns {string}
+  */
   toString() {
-    return `\u221F${this.padName(this.name)} | average: ${(this.prices.avg &amp;&amp; !isNaN(this.prices.avg) ? `${String(parseFloat(this.prices.avg).toFixed(2))}p` : '0p')}`;
-  }
-
-  /**
-   * Pad the left side of a string so that all componets
-   * have the same string length before the pipe
-   * @param {string} locationString the location string to pad
-   * @returns {string} the padded location string
-   */
-  padName(locationString) {
-    let stringRet;
-    if (locationString.length &lt; 10) {
-      stringRet = this.padName(`${locationString} `);
-    } else {
-      stringRet = locationString;
+    let componentString =
+      `${md.codeMulti}${this.title}${md.lineEnd}\u3000Supply: ${this.supply.count} units - ` +
+      `${String((parseFloat(this.supply.percentage || 0) * 100).toFixed())}%${md.lineEnd}` +
+      `\u3000Demand: ${this.demand.count} units - ${String((parseFloat(this.demand.percentage || 0) * 100).toFixed(2))}%` +
+      `${md.lineEnd}\u3000\u3000`;
+    for (let i = 0; i &lt; this.components.length; i += 1) {
+      componentString += this.components[i].toString() + (i &lt; this.components.length - 1 ? `,${md.lineEnd}\u3000\u3000` : '');
     }
-    return stringRet;
+    return `${componentString}${md.blockEnd}`;
   }
 }
 
-module.exports = Component;
+module.exports = NexusItem;
 </pre>
     </article>
 </section>

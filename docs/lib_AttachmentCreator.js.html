@@ -85,10 +85,11 @@ const imageDownloader = require('image-downloader');
 const noResultAttachment = {
   type: 'rich',
   description: 'No result',
-  color: '0xff55ff',
+  color: 0xff55ff,
   url: 'https://warframe.market',
   footer: {
-    text: 'Pricechecks from NexusStats and Warframe.Market',
+    text: 'Pricechecks from NexusHub and Warframe.Market',
+    icon_url: 'https://warframestat.us/wfcd_logo_color.png',
   },
 };
 
@@ -110,7 +111,6 @@ function safeValue(value) {
 function safeRange(value1, value2) {
   return value1 ? `${value1}p - ${value2}p` : 'No data';
 }
-
 
 /**
  * Pad the left side of a string so that all componets
@@ -135,7 +135,7 @@ class AttachmentCreator {
     this.attachment = {
       type: 'rich',
       title: '',
-      color: '0xff00ff',
+      color: 0xff00ff,
       url: '',
       fields: [],
       thumbnail: { url: '' },
@@ -153,75 +153,79 @@ class AttachmentCreator {
     attachment.title = `Query results for: "${query}"`;
 
     const nexusComponents = components
-      .filter(component => component &amp;&amp; component.components &amp;&amp; component.components[0].type === 'nexus-v1');
+      .filter(component => component &amp;&amp; component.components &amp;&amp; component.components[0].type === 'nexus-v2');
     const marketComponents = components
-      .filter(component => component &amp;&amp; component.type === 'market-v1' &amp;&amp; component.prices.soldPrice);
+      .filter(component => component &amp;&amp; component.type === 'market-v1' &amp;&amp; typeof component.prices.soldPrice !== 'undefined');
 
     if (nexusComponents.length > 0) {
-      nexusComponents
-        .forEach((nexusComponent) => {
-          attachment.title = nexusComponent.title;
-          nexusComponent.components
-            .forEach((component) => {
-              let found = false;
-              attachment.thumbnail.url = nexusComponent.thumbnail;
-              attachment.description = `Query results for: "${query}"`;
-              const nexusMedian = safeValue(component.prices.median);
-              const nexusRange = safeRange(component.prices.minimum, component.prices.maximum);
-              if (marketComponents.length > 0 &amp;&amp; marketComponents[0].prices.soldPrice) {
-                marketComponents
-                  .forEach((marketComponent) => {
-                    if (!found &amp;&amp; marketComponent.name.indexOf(component.name) > -1) {
-                      found = true;
-                      attachment.color = marketComponent.color;
-                      attachment.url = marketComponent.url;
-                      const marketMedian = safeValue(marketComponent.prices.soldPrice);
-                      const marketRange = safeRange(marketComponent.prices.minimum,
-                        marketComponent.prices.maximum);
-                      attachment.fields.push({
-                        name: `${component.name}${component.ducats ? ` | ${component.ducats}` : ''}`,
-                        value: '```haskell\n' +
-                               `${pad('Value', 7)}|${pad(' Nexus', 13)}| Market\n` +
-                               `${pad('Median', 7)}|${pad(` ${nexusMedian}`, 13)}| ${marketMedian}\n` +
-                               `${pad('Range', 7)}|${pad(` ${nexusRange}`, 13)}| ${marketRange}\n\n` +
-                               `Trade Tax: ${marketComponent.tradingTax}cr\n` +
-                               '```\n',
-                        inline: true,
-                      });
-                    }
-                  });
-              } else {
-                attachment.url = nexusComponent.url;
-                attachment.color = nexusComponent.color;
+      nexusComponents.forEach((nexusComponent) => {
+        attachment.title = nexusComponent.title;
+        nexusComponent.components.forEach((component) => {
+          let found = false;
+          attachment.thumbnail.url = nexusComponent.thumbnail;
+          attachment.description = `Query results for: "${query}"`;
+          const nexusMedian = safeValue(component.prices.median);
+          const nexusRange = safeRange(component.prices.minimum, component.prices.maximum);
+          if (marketComponents.length > 0 &amp;&amp; marketComponents[0].prices.soldPrice) {
+            marketComponents.forEach((marketComponent) => {
+              if (!found &amp;&amp; (marketComponent.name.indexOf(component.name) > -1 ||
+                (nexusComponents.length === 1 &amp;&amp; marketComponents.length === 1))) {
+                found = true;
+                attachment.color = parseInt(marketComponent.color, 16);
+                attachment.url = marketComponent.url;
+                attachment.thumbnail.url = marketComponent.thumbnail;
+                const marketMedian = safeValue(marketComponent.prices.soldPrice);
+                const marketRange = safeRange(
+                  marketComponent.prices.minimum,
+                  marketComponent.prices.maximum,
+                );
                 attachment.fields.push({
-                  name: `${component.name}${component.ducats ? ` | ${component.ducats}` : ''}`,
+                  name: `${marketComponents.length &lt; 2 ? '_ _' : marketComponent.name.replace(nexusComponent.title, '')}${component.ducats ? ` - ${component.ducats} ducats` : ''}`,
                   value: '```haskell\n' +
-                         `${pad('Value', 7)}| ${pad('Nexus', 13)} | Market\n` +
-                         `${pad('Median', 7)}| ${pad(nexusMedian, 13)} | No data\n` +
-                         `${pad('Range', 7)}| ${pad(nexusRange, 13)} | No data\n\n` +
-                         '```\n',
+                           `${pad('Value', 7)}|${pad(' Nexus', 13)}| Market\n` +
+                           `${pad('Median', 7)}|${pad(` ${nexusMedian}`, 13)}| ${marketMedian}\n` +
+                           `${pad('Range', 7)}|${pad(` ${nexusRange}`, 13)}| ${marketRange}\n\n` +
+                           `Trade Tax: ${marketComponent.tradingTax}cr\n` +
+                           '```\n',
                   inline: true,
                 });
               }
             });
-          attachment.fields.push({
-            name: '_ _',
-            value: `Supply: **${nexusComponent.supply.count}** units (${String((parseFloat(nexusComponent.supply.percentage || 0) * 100).toFixed(2))}%) ` +
-              `- Demand: **${nexusComponent.demand.count}** units (${String((parseFloat(nexusComponent.demand.percentage || 0) * 100).toFixed(2))}%)`,
-          });
+          } else {
+            attachment.url = nexusComponent.url;
+            attachment.color = parseInt(nexusComponent.color, 16);
+            attachment.fields.push({
+              name: `${component.name}${component.ducats ? ` - ${component.ducats} ducats` : ''}`,
+              value: '```haskell\n' +
+                         `${pad('Value', 7)}| ${pad('Nexus', 13)} | Market\n` +
+                         `${pad('Median', 7)}| ${pad(nexusMedian, 13)} | No data\n` +
+                         `${pad('Range', 7)}| ${pad(nexusRange, 13)} | No data\n\n` +
+                         '```\n',
+              inline: true,
+            });
+          }
         });
+        attachment.fields.push({
+          name: '_ _',
+          value: `Supply: **${nexusComponent.supply.count}** units (${String((parseFloat(nexusComponent.supply.percentage || 0) * 100).toFixed(2))}%) ` +
+              `- Demand: **${nexusComponent.demand.count}** units (${String((parseFloat(nexusComponent.demand.percentage || 0) * 100).toFixed(2))}%)`,
+        });
+      });
     } else if (marketComponents.length > 0) {
       marketComponents
         .forEach((marketComponent) => {
-          attachment.color = marketComponent.color;
+          attachment.color = parseInt(marketComponent.color, 16);
           attachment.title = marketComponent.name.replace(/\sset/i, '');
           attachment.url = marketComponent.url;
           attachment.thumbnail.url = marketComponent.thumbnail;
           attachment.description = `Query results for: "${query}"`;
 
+
           const marketMedian = safeValue(marketComponent.prices.soldPrice);
-          const marketRange = safeRange(marketComponent.prices.minimum,
-            marketComponent.prices.maximum);
+          const marketRange = safeRange(
+            marketComponent.prices.minimum,
+            marketComponent.prices.maximum,
+          );
 
           attachment.fields.push({
             name: marketComponent.name,
@@ -255,8 +259,7 @@ class AttachmentCreator {
           url: imgUrl,
           dest: `${__dirname}/../tmp/${component.title}.png`,
         };
-        // eslint-disable-next-line no-unused-vars
-        const { fileName, image } = await imageDownloader.image(options);
+        const { image } = await imageDownloader.image(options);
         const colors = await getColors(image, 'image/png');
         coloredComponent.color = typeof colors !== 'undefined' ? colors[0].hex().replace('#', '0x') : 0xff0000;
         colored.push(coloredComponent);
@@ -311,7 +314,7 @@ module.exports = AttachmentCreator;
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
 	
-		on Tuesday, October 10th 2017, 00:54:03
+		on Friday, January 4th 2019, 19:11:39
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

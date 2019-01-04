@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>warframe-nexus-query Source: lib/nexus/v1/component.js</title>
+	<title>warframe-nexus-query Source: lib/nexus/v2/component.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -72,7 +72,7 @@
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: lib/nexus/v1/component.js</h1>
+		<h1 class="page-title">Source: lib/nexus/v2/component.js</h1>
     
 <section>
     <article>
@@ -101,7 +101,7 @@ class Component {
      * Name of the component, display value
      * @type {string}
      */
-    this.name = data.name;
+    this.name = data.name.replace(/(pc|ps4|xb1|switch)/ig, '');
 
     /**
      * Supply for the component
@@ -123,26 +123,17 @@ class Component {
      * @property {number} minimum - minimum value
      * @property {number} maximum - maximum value
      */
+    const p = data.prices;
     this.prices = {
-      buying: {
-        avg: data.buying.avg,
-        median: data.buying.median,
-        minimum: data.buying.min,
-        maximum: data.buying.max,
-      },
-      selling: {
-        avg: data.selling.avg,
-        median: data.selling.median,
-        minimum: data.selling.min,
-        maximum: data.selling.max,
-      },
-      avg: (data.buying.avg + data.selling.avg) / 2,
-      median: median([data.buying.median, data.selling.median]),
-      minimum: Math.min(data.buying.min, data.selling.max),
-      maximum: Math.max(data.buying.max, data.selling.max),
+      buying: p.buying.current,
+      selling: p.selling.current,
+      avg: (p.buying.current.avg + p.selling.current.avg) / 2,
+      median: median([p.buying.current.median, p.selling.current.median]),
+      minimum: Math.min(p.buying.current.min, p.selling.current.max),
+      maximum: Math.max(p.buying.current.max, p.selling.current.max),
     };
     this.ducats = (items.filter(item => item.name === data.name)[0] || { ducats: 0 }).ducats;
-    this.type = 'nexus-v1';
+    this.type = 'nexus-v2';
   }
 
   /**
