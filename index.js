@@ -59,13 +59,13 @@ class PriceCheckQuerier {
    */
   async priceCheckQuery(query) {
     if (!query) {
-      throw new Error('This funcion requires a query to be provided');
+      throw new Error('This funtcion requires a query to be provided');
     }
 
-    let attachments;
+    let attachments = [];
     let successfulQuery;
-    const nexusResults = await this.nexusFetcher.queryNexus(query);
-    ({ attachments, successfulQuery } = nexusResults); // eslint-disable-line prefer-const
+    // const nexusResults = await this.nexusFetcher.queryNexus(query);
+    // ({ attachments, successfulQuery } = nexusResults); // eslint-disable-line prefer-const
     if (this.marketFetcher) {
       attachments = await this.marketFetcher.queryMarket(query, { attachments, successfulQuery });
     }
