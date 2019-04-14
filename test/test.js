@@ -58,7 +58,7 @@ describe('Nexus Query', () => {
       } finally {
         nexus.stopUpdating();
       }
-    });
+    }).timeout(6200);
 
     it('should create an no results for attachment query', async () => {
       try {
