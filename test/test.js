@@ -40,7 +40,7 @@ describe('Nexus Query', () => {
       } finally {
         nexus.stopUpdating();
       }
-    }).timeout(2200);
+    }).timeout(6200);
 
     it('should create an attachment when called with attachment query', async () => {
       try {
