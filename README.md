@@ -2,11 +2,11 @@
 
 [![Supported by Warframe Community Developers](https://warframestat.us/wfcd.png)](https://github.com/Warframe-Community-Developers "Supported by Warframe Community Developers")
 
-A node project for allowing simple access to the `https://nexus-stats.com/` api.
+A node project for allowing simple access to the `https://nexushub.co/` api.
 
 ## Get Help on Discord
 
-[![Contact me on Discord](https://img.shields.io/badge/discord-Tobiah%230001-7289DA.svg)](https://discord.gg/0ycgfahdR8gTzWgM "Contact me on Discord: Tobiah#0001")
+[![Contact me on Discord](https://img.shields.io/badge/discord-Tobiah%230001-7289DA.svg)](https://discord.gg/jGZxH9f "Contact me on Discord: Tobiah#0001")
 
 ## Metrics
 
