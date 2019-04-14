@@ -5,7 +5,7 @@ const md = require('node-md-config');
 const Settings = require('./lib/Settings.js');
 const AttachmentCreator = require('./lib/AttachmentCreator.js');
 const MarketFetcher = require('./lib/market/v1/MarketFetcher.js');
-const NexusFetcher = require('./lib/nexus/v1/NexusFetcher');
+const NexusFetcher = require('./lib/nexus/v2/NexusFetcher');
 
 const noResultAttachment = {
   type: 'rich',
@@ -37,9 +37,9 @@ class PriceCheckQuerier {
 
     try {
       /**
-     * Fetch market data
-     * @type {MarketFetcher}
-     */
+       * Fetch market data
+       * @type {MarketFetcher}
+       */
       this.marketFetcher = new MarketFetcher({ logger, settings: this.settings });
     } catch (e) {
       this.logger.error(`couldn't set up market fetcher: ${e.message}`);
@@ -62,10 +62,10 @@ class PriceCheckQuerier {
       throw new Error('This funtcion requires a query to be provided');
     }
 
-    let attachments = [];
-    let successfulQuery;
-    // const nexusResults = await this.nexusFetcher.queryNexus(query);
-    // ({ attachments, successfulQuery } = nexusResults); // eslint-disable-line prefer-const
+    const nexusResults = await this.nexusFetcher.queryNexus(query);
+    const { successfulQuery } = nexusResults;
+    let { attachments } = nexusResults;
+
     if (this.marketFetcher) {
       attachments = await this.marketFetcher.queryMarket(query, { attachments, successfulQuery });
     }
@@ -76,27 +76,30 @@ class PriceCheckQuerier {
   /**
    * Lookup a list of results for a query
    * @param {string} query Query to search the nexus-stats database against
+   * @param {Object[]} priorResults results provided from a prior search
    * @returns {Promise<string>} a Promise of a string containing the results of the query
    */
-  async priceCheckQueryString(query) {
-    const components = await this.priceCheckQuery(query);
+  async priceCheckQueryString(query, priorResults) {
+    const components = priorResults || await this.priceCheckQuery(query);
     const tokens = [];
     components.slice(0, 4).forEach((component) => {
       tokens.push(`${md.lineEnd}${component.toString()}`);
     });
     let componentsToReturnString = `${md.codeMulti}${tokens.join()}${md.blockEnd}`;
-    componentsToReturnString = components.length > 0 ?
-      componentsToReturnString : this.settings.defaultString;
+    componentsToReturnString = components.length > 0
+      ? componentsToReturnString
+      : this.settings.defaultString;
     return componentsToReturnString;
   }
 
   /**
    * Lookup a list of results for a query
    * @param {string} query Query to search the nexus-stats database against
+   * @param {Object[]} priorResults results provided from a prior search
    * @returns {Array<Object>} a Promise of an array of attachment objects
    */
-  async priceCheckQueryAttachment(query) {
-    const components = await this.priceCheckQuery(query);
+  async priceCheckQueryAttachment(query, priorResults) {
+    const components = priorResults || await this.priceCheckQuery(query);
     const attachments = [this.attachmentCreator.attachmentFromComponents(components, query)];
     return attachments;
   }

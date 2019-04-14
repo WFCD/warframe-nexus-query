@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>warframe-nexus-query Source: lib/nexus/v1/component.js</title>
+	<title>warframe-nexus-query Source: lib/market/v1/MarketFetcher.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -72,105 +72,104 @@
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: lib/nexus/v1/component.js</h1>
+		<h1 class="page-title">Source: lib/market/v1/MarketFetcher.js</h1>
     
 <section>
     <article>
         <pre
             class="sunlight-highlight-javascript linenums">'use strict';
 
-const median = (values) => {
-  values.sort((a, b) => a - b);
-  const half = Math.floor(values.length / 2);
-  if (values.length % 2) { return values[half]; }
-  return (values[half - 1] + values[half]) / 2.0;
-};
+const getColors = require('get-image-colors');
+const imageDownloader = require('image-downloader');
+const jsonQuery = require('json-query');
+const JSONCache = require('json-fetch-cache');
 
-/**
- * Represents an individual component object of an item.
- */
-class Component {
-  /**
-   * Represents an individual component object of an item.
-   * @param {json} data the component data to parse into a component
-   * @param {Array&lt;Ojbect>} items objects with data for ducats
-   * @constructor
-   */
-  constructor(data, items) {
-    /**
-     * Name of the component, display value
-     * @type {string}
-     */
-    this.name = data.name;
+const request = require('requestretry').defaults({ fullResponse: false });
 
-    /**
-     * Supply for the component
-     * @type {number}
-     */
-    this.supply = data.supply;
+const MarketSummary = require('./summary.js');
 
+class MarketFetcher {
+  constructor({ logger = console, settings }) {
     /**
-     * Demand for the component
-     * @type {number}
-     */
-    this.demand = data.demand;
+       * The json cache stpromg data from warframe.market
+       * @type {JSONCache}
+       */
+    this.marketCache = new JSONCache(settings.urls.market, settings.maxCacheLength);
 
-    /**
-     * Average prices for the component
-     * @type {Object}
-     * @property {number} avg     - average value
-     * @property {number} median  - median value
-     * @property {number} minimum - minimum value
-     * @property {number} maximum - maximum value
-     */
-    this.prices = {
-      buying: {
-        avg: data.buying.avg,
-        median: data.buying.median,
-        minimum: data.buying.min,
-        maximum: data.buying.max,
-      },
-      selling: {
-        avg: data.selling.avg,
-        median: data.selling.median,
-        minimum: data.selling.min,
-        maximum: data.selling.max,
-      },
-      avg: (data.buying.avg + data.selling.avg) / 2,
-      median: median([data.buying.median, data.selling.median]),
-      minimum: Math.min(data.buying.min, data.selling.max),
-      maximum: Math.max(data.buying.max, data.selling.max),
+    this.settings = settings;
+    this.urls = {
+      market: process.env.MARKET_URL_OVERRIDE || 'https://api.warframe.market',
+      marketAssets: process.env.MARKET_ASSETS_URL_OVERRIDE || 'https://warframe.market/static/assets/',
+      marketBasePath: '/v1/items/',
     };
-    this.ducats = (items.filter(item => item.name === data.name)[0] || { ducats: 0 }).ducats;
-    this.type = 'nexus-v1';
+
+    this.logger = logger;
   }
 
-  /**
-   * The components's string representation
-   * @returns {string}
-   */
-  toString() {
-    return `\u221F${this.padName(this.name)} | average: ${(this.prices.avg &amp;&amp; !isNaN(this.prices.avg) ? `${String(parseFloat(this.prices.avg).toFixed(2))}p` : '0p')}`;
+  async averagesForItem(urlName) {
+    const data = JSON.parse(await request.get(`${this.urls.market}${this.urls.marketBasePath}${urlName}/statistics`));
+    const deepData = data.payload.statistics_live['48hours'][0];
+    const summary = {
+      soldCount: deepData ? deepData.volume : null,
+      soldPrice: deepData ? deepData.median : null,
+      maximum: deepData ? deepData.max_price : null,
+      minimum: deepData ? deepData.min_price : null,
+    };
+    return summary;
   }
 
-  /**
-   * Pad the left side of a string so that all componets
-   * have the same string length before the pipe
-   * @param {string} locationString the location string to pad
-   * @returns {string} the padded location string
-   */
-  padName(locationString) {
-    let stringRet;
-    if (locationString.length &lt; 10) {
-      stringRet = this.padName(`${locationString} `);
-    } else {
-      stringRet = locationString;
+  async resultForItem(urlName) {
+    const res = JSON.parse(await request.get(`${this.urls.market}${this.urls.marketBasePath}${urlName}`));
+    const data = res.payload ? await Promise.all(res.payload.item.items_in_set
+      .map(item => this.summaryForItem(item))) : {};
+    return data;
+  }
+
+  async summaryForItem(item) {
+    const summary = new MarketSummary(item);
+    const prices = await this.averagesForItem(item.url_name);
+    summary.prices = prices;
+    const options = {
+      url: summary.thumbnail,
+      dest: `${__dirname}/../../../tmp/${summary.name}.png`,
+    };
+    try {
+      const { image } = await imageDownloader.image(options);
+      if (image) {
+        const colors = await getColors(image, 'image/png');
+        summary.color = typeof colors !== 'undefined' ? colors[0].hex().replace('#', '0x') : 0xff0000;
+      }
+    } catch (e) {
+      this.logger.error(e);
     }
-    return stringRet;
+    return summary;
+  }
+
+  async queryMarket(query, { attachments, successfulQuery }) {
+    let combinedAttachments = [].concat(attachments);
+    try {
+      // get market data
+      const marketData = await this.marketCache.getDataJson();
+      const marketResults = jsonQuery(`en[*item_name~/^${successfulQuery || query}.*/i]`, {
+        data: marketData.payload ? marketData.payload.items : {},
+        allowRegexp: true,
+      }).value;
+      if (!marketResults || marketResults.length &lt; 1) {
+        return attachments;
+      }
+      const marketComponents = await this.resultForItem(marketResults[0].url_name);
+      if (marketComponents.length > 0) {
+        combinedAttachments = combinedAttachments.concat(marketComponents);
+      }
+    } catch (err) {
+      // swallow market errors
+      this.logger.error(err);
+    }
+    return combinedAttachments;
   }
 }
 
-module.exports = Component;
+module.exports = MarketFetcher;
 </pre>
     </article>
 </section>
