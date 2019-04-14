@@ -86,8 +86,9 @@ class PriceCheckQuerier {
       tokens.push(`${md.lineEnd}${component.toString()}`);
     });
     let componentsToReturnString = `${md.codeMulti}${tokens.join()}${md.blockEnd}`;
-    componentsToReturnString = components.length > 0 ?
-      componentsToReturnString : this.settings.defaultString;
+    componentsToReturnString = components.length > 0
+      ? componentsToReturnString
+      : this.settings.defaultString;
     return componentsToReturnString;
   }
 
