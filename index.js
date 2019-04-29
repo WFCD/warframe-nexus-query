@@ -17,6 +17,8 @@ const noResultAttachment = {
   },
 };
 
+global.__basedir = __dirname;
+
 /**
  * Represents a queryable datastore of information derived from `https://nexus-stats.com/api`
  */
