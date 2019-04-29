@@ -12,7 +12,8 @@ describe('Nexus Query', () => {
 
   const testQueryWithPlatform = async (platform) => {
     try {
-      const result = await nexus.priceCheckQuery(querystring, undefined, platform);
+      const result = await nexus.priceCheckQuery(querystring, platform);
+
       result.should.be.an('array');
       result[0].should.be.an('object');
     } catch (error) {

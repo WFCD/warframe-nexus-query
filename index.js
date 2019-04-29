@@ -62,11 +62,17 @@ class PriceCheckQuerier {
     if (!query) {
       throw new Error('This funtcion requires a query to be provided');
     }
+    // eslint-disable-next-line no-param-reassign
+    platform = this.settings.platforms[platform.toLowerCase()];
 
-    const nexusResults = await this.nexusFetcher.queryNexus(query,
-      this.settings.platforms[platform.toLowerCase()]);
-    const { successfulQuery } = nexusResults;
-    let { attachments } = nexusResults;
+    let nexusResults;
+    let successfulQuery;
+    let attachments = [];
+
+    if (platform !== 'switch') {
+      nexusResults = await this.nexusFetcher.queryNexus(query, platform);
+      ({ successfulQuery, attachments } = nexusResults);
+    }
 
     if (this.marketFetcher) {
       attachments = await this.marketFetcher.queryMarket(query, {
