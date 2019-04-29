@@ -33,7 +33,7 @@
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Component.html">Component</a></li><li><a href="NexusItem.html">NexusItem</a></li><li><a href="PriceCheckQuerier.html">PriceCheckQuerier</a></li><li><a href="Settings.html">Settings</a></li><li><a href="Summary.html">Summary</a></li>
+					<li><a href="Component.html">Component</a></li><li><a href="NexusFetcher.html">NexusFetcher</a></li><li><a href="NexusItem.html">NexusItem</a></li><li><a href="PriceCheckQuerier.html">PriceCheckQuerier</a></li><li><a href="Settings.html">Settings</a></li><li><a href="Summary.html">Summary</a></li>
 				</ul>
 			</li>
 			
@@ -365,7 +365,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="priceCheckQuery"><span class="type-signature">&lt;async> </span>priceCheckQuery(query)</h4>
+    <h4 class="name" id="priceCheckQuery"><span class="type-signature">&lt;async> </span>priceCheckQuery(query, platform)</h4>
     
     
 </dt>
@@ -398,6 +398,8 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -424,8 +426,42 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">Query to search the nexus-stats database against</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>platform</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    pc
+                
+                </td>
+            
+
+            <td class="description last">Platform to query price data for. One of 'pc', 'ps4', 'xb1'</td>
         </tr>
 
     
@@ -470,7 +506,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="index.js.html">index.js</a>,
-				 <a href="index.js.html#sunlight-1-line-60">line 60</a>
+				 <a href="index.js.html#sunlight-1-line-61">line 61</a>
 			</li>
 		</ul>
 	</dd>
@@ -527,7 +563,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="priceCheckQueryAttachment"><span class="type-signature">&lt;async> </span>priceCheckQueryAttachment(query)</h4>
+    <h4 class="name" id="priceCheckQueryAttachment"><span class="type-signature">&lt;async> </span>priceCheckQueryAttachment(query, priorResults, platform)</h4>
     
     
 </dt>
@@ -560,6 +596,8 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -586,8 +624,70 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">Query to search the nexus-stats database against</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>priorResults</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Object></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">results provided from a prior search</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>platform</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    pc
+                
+                </td>
+            
+
+            <td class="description last">Platform to query price data for. One of 'pc', 'ps4', 'xb1'</td>
         </tr>
 
     
@@ -632,7 +732,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="index.js.html">index.js</a>,
-				 <a href="index.js.html#sunlight-1-line-98">line 98</a>
+				 <a href="index.js.html#sunlight-1-line-108">line 108</a>
 			</li>
 		</ul>
 	</dd>
@@ -689,7 +789,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="priceCheckQueryString"><span class="type-signature">&lt;async> </span>priceCheckQueryString(query)</h4>
+    <h4 class="name" id="priceCheckQueryString"><span class="type-signature">&lt;async> </span>priceCheckQueryString(query, priorResults, platform)</h4>
     
     
 </dt>
@@ -722,6 +822,8 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -748,8 +850,70 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">Query to search the nexus-stats database against</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>priorResults</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Object></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">results provided from a prior search</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>platform</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    pc
+                
+                </td>
+            
+
+            <td class="description last">Platform to query price data for. One of 'pc', 'ps4', 'xb1'</td>
         </tr>
 
     
@@ -794,7 +958,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="index.js.html">index.js</a>,
-				 <a href="index.js.html#sunlight-1-line-81">line 81</a>
+				 <a href="index.js.html#sunlight-1-line-87">line 87</a>
 			</li>
 		</ul>
 	</dd>
@@ -897,7 +1061,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
 	
-		on Friday, January 4th 2019, 19:11:39
+		on Monday, April 29th 2019, 10:27:23
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

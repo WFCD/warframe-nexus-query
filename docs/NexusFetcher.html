@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>warframe-nexus-query Source: index.js</title>
+	<title>warframe-nexus-query Class: NexusFetcher</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -67,142 +67,144 @@
 <div class="row">
 
 	
-	<div class="col-md-12">
+	<div class="col-md-8">
 	
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: index.js</h1>
-    
+	<h1 class="page-title">Class: NexusFetcher</h1>
 <section>
-    <article>
-        <pre
-            class="sunlight-highlight-javascript linenums">'use strict';
 
-const md = require('node-md-config');
+<header>
+    
+        <h2>
+        NexusFetcher
+        </h2>
+        
+            <div class="class-description">Fetch nexus-stats-api data</div>
+        
+    
+</header>
 
-const Settings = require('./lib/Settings.js');
-const AttachmentCreator = require('./lib/AttachmentCreator.js');
-const MarketFetcher = require('./lib/market/v1/MarketFetcher.js');
-const NexusFetcher = require('./lib/nexus/v2/NexusFetcher');
 
-const noResultAttachment = {
-  type: 'rich',
-  description: 'No result',
-  color: '0xff55ff',
-  url: 'https://warframe.market',
-  footer: {
-    text: 'Pricechecks from NexusStats and Warframe.Market',
-  },
-};
+<article>
+    <div class="container-overview">
+    
+        
+<hr>
+<dt>
+    <h4 class="name" id="NexusFetcher"><span class="type-signature"></span>new NexusFetcher()</h4>
+    
+    
+</dt>
+<dd>
 
-/**
- * Represents a queryable datastore of information derived from `https://nexus-stats.com/api`
- */
-class PriceCheckQuerier {
-  /**
-   * Creates an instance representing a WarframeNexusStats data object
-   * @constructor
-   */
-  constructor({ logger = console, nexusApi = undefined } = {}) {
-    this.settings = new Settings();
-    this.logger = logger;
+    
 
-    try {
-      this.nexusFetcher = new NexusFetcher({ settings: this.settings, nexusApi, logger });
-    } catch (e) {
-      this.logger.error(`couldn't set up nexus fetcher: ${e.message}`);
-    }
+    
 
-    try {
-      /**
-       * Fetch market data
-       * @type {MarketFetcher}
-       */
-      this.marketFetcher = new MarketFetcher({ logger, settings: this.settings });
-    } catch (e) {
-      this.logger.error(`couldn't set up market fetcher: ${e.message}`);
-    }
+    
 
-    /**
-     * Attachment creator for generating attachments
-     * @type {AttachmentCreator}
-     */
-    this.attachmentCreator = new AttachmentCreator();
-  }
+    
+    
 
-  /**
-   * Lookup a list of results for a query
-   * @param {string} query Query to search the nexus-stats database against
-   * @param {string} platform Platform to query price data for. One of 'pc', 'ps4', 'xb1'
-   * @returns {Promise&lt;Array&lt;NexusItem>>} a Promise of an array of Item objects
-   */
-  async priceCheckQuery(query, platform = 'pc') {
-    if (!query) {
-      throw new Error('This funtcion requires a query to be provided');
-    }
+    
+<dl class="details">
+    
 
-    const nexusResults = await this.nexusFetcher.queryNexus(query,
-      this.settings.platforms[platform.toLowerCase()]);
-    const { successfulQuery } = nexusResults;
-    let { attachments } = nexusResults;
+	
 
-    if (this.marketFetcher) {
-      attachments = await this.marketFetcher.queryMarket(query, {
-        attachments, successfulQuery, platform,
-      });
-    }
+	
 
-    return attachments.length ? attachments : [noResultAttachment];
-  }
+	
 
-  /**
-   * Lookup a list of results for a query
-   * @param {string} query Query to search the nexus-stats database against
-   * @param {Object[]} priorResults results provided from a prior search
-   * @param {string} platform Platform to query price data for. One of 'pc', 'ps4', 'xb1'
-   * @returns {Promise&lt;string>} a Promise of a string containing the results of the query
-   */
-  async priceCheckQueryString(query, priorResults, platform = 'pc') {
-    const components = priorResults
-      || await this.priceCheckQuery(query, this.settings.platforms[platform.toLowerCase()]);
-    const tokens = [];
-    components.slice(0, 4).forEach((component) => {
-      tokens.push(`${md.lineEnd}${component.toString()}`);
-    });
-    let componentsToReturnString = `${md.codeMulti}${tokens.join()}${md.blockEnd}`;
-    componentsToReturnString = components.length > 0
-      ? componentsToReturnString
-      : this.settings.defaultString;
-    return componentsToReturnString;
-  }
+    
 
-  /**
-   * Lookup a list of results for a query
-   * @param {string} query Query to search the nexus-stats database against
-   * @param {Object[]} priorResults results provided from a prior search
-   * @param {string} platform Platform to query price data for. One of 'pc', 'ps4', 'xb1'
-   * @returns {Array&lt;Object>} a Promise of an array of attachment objects
-   */
-  async priceCheckQueryAttachment(query, priorResults, platform = 'pc') {
-    const components = priorResults
-      || await this.priceCheckQuery(query, this.settings.platforms[platform.toLowerCase()]);
-    const attachments = [this.attachmentCreator.attachmentFromComponents(components, query)];
-    return attachments;
-  }
+    
 
-  stopUpdating() {
-    if (this.marketCache) {
-      this.marketCache.stop();
-    }
-  }
-}
+    
 
-module.exports = PriceCheckQuerier;
-</pre>
-    </article>
+    
+
+	
+	<dt class="important tag-deprecated method-doc-label method-doc-details-label">Deprecated:</dt>
+	
+    <dd class="yes-def tag-deprecated">
+        <ul class="dummy">
+            <li>Yes</li>
+        </ul>
+    </dd>
+    
+    
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="lib_nexus_v1_NexusFetcher.js.html">lib/nexus/v1/NexusFetcher.js</a>,
+				 <a href="lib_nexus_v1_NexusFetcher.js.html#sunlight-1-line-10">line 10</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
 </section>
-
 
 
 
@@ -212,6 +214,10 @@ module.exports = PriceCheckQuerier;
 
 	<div class="clearfix"></div>
 
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
 	
 
 </div>
@@ -240,7 +246,7 @@ module.exports = PriceCheckQuerier;
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
 	
-		on Monday, April 29th 2019, 10:27:22
+		on Monday, April 29th 2019, 10:27:23
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
