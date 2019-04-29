@@ -5,16 +5,14 @@ cache:
 notifications:
   email: false
 node_js:
-  - 'node'
-  - '9'
-  - '8'
+  - 'lts/*'
 before_script:
   - greenkeeper-lockfile-update
 
 after_script: greenkeeper-lockfile-upload
 
-after_success:
-  - npm run travis-deploy-once "npm run semantic-release"
+# after_success:
+#   - npm run travis-deploy-once "npm run semantic-release"
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/

@@ -55,19 +55,23 @@ class PriceCheckQuerier {
   /**
    * Lookup a list of results for a query
    * @param {string} query Query to search the nexus-stats database against
+   * @param {string} platform Platform to query price data for. One of 'pc', 'ps4', 'xb1'
    * @returns {Promise<Array<NexusItem>>} a Promise of an array of Item objects
    */
-  async priceCheckQuery(query) {
+  async priceCheckQuery(query, platform = 'pc') {
     if (!query) {
       throw new Error('This funtcion requires a query to be provided');
     }
 
-    const nexusResults = await this.nexusFetcher.queryNexus(query);
+    const nexusResults = await this.nexusFetcher.queryNexus(query,
+      this.settings.platforms[platform.toLowerCase()]);
     const { successfulQuery } = nexusResults;
     let { attachments } = nexusResults;
 
     if (this.marketFetcher) {
-      attachments = await this.marketFetcher.queryMarket(query, { attachments, successfulQuery });
+      attachments = await this.marketFetcher.queryMarket(query, {
+        attachments, successfulQuery, platform,
+      });
     }
 
     return attachments.length ? attachments : [noResultAttachment];
@@ -77,10 +81,12 @@ class PriceCheckQuerier {
    * Lookup a list of results for a query
    * @param {string} query Query to search the nexus-stats database against
    * @param {Object[]} priorResults results provided from a prior search
+   * @param {string} platform Platform to query price data for. One of 'pc', 'ps4', 'xb1'
    * @returns {Promise<string>} a Promise of a string containing the results of the query
    */
-  async priceCheckQueryString(query, priorResults) {
-    const components = priorResults || await this.priceCheckQuery(query);
+  async priceCheckQueryString(query, priorResults, platform = 'pc') {
+    const components = priorResults
+      || await this.priceCheckQuery(query, this.settings.platforms[platform.toLowerCase()]);
     const tokens = [];
     components.slice(0, 4).forEach((component) => {
       tokens.push(`${md.lineEnd}${component.toString()}`);
@@ -96,10 +102,12 @@ class PriceCheckQuerier {
    * Lookup a list of results for a query
    * @param {string} query Query to search the nexus-stats database against
    * @param {Object[]} priorResults results provided from a prior search
+   * @param {string} platform Platform to query price data for. One of 'pc', 'ps4', 'xb1'
    * @returns {Array<Object>} a Promise of an array of attachment objects
    */
-  async priceCheckQueryAttachment(query, priorResults) {
-    const components = priorResults || await this.priceCheckQuery(query);
+  async priceCheckQueryAttachment(query, priorResults, platform = 'pc') {
+    const components = priorResults
+      || await this.priceCheckQuery(query, this.settings.platforms[platform.toLowerCase()]);
     const attachments = [this.attachmentCreator.attachmentFromComponents(components, query)];
     return attachments;
   }
