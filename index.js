@@ -75,7 +75,6 @@ class PriceCheckQuerier {
     let nexusResults;
     let successfulQuery;
     let attachments = [];
-
     if (platform !== 'switch') {
       nexusResults = await this.nexusFetcher.queryNexus(query, platform);
       ({ successfulQuery, attachments } = nexusResults);
@@ -98,8 +97,7 @@ class PriceCheckQuerier {
    * @returns {Promise<string>} a Promise of a string containing the results of the query
    */
   async priceCheckQueryString(query, priorResults, platform = 'pc') {
-    const components = priorResults
-      || await this.priceCheckQuery(query, this.settings.platforms[platform.toLowerCase()]);
+    const components = priorResults || await this.priceCheckQuery(query, platform);
     const tokens = [];
     components.slice(0, 4).forEach((component) => {
       tokens.push(`${md.lineEnd}${component.toString()}`);
@@ -119,9 +117,10 @@ class PriceCheckQuerier {
    * @returns {Array<Object>} a Promise of an array of attachment objects
    */
   async priceCheckQueryAttachment(query, priorResults, platform = 'pc') {
-    const components = priorResults
-      || await this.priceCheckQuery(query, this.settings.platforms[platform.toLowerCase()]);
-    const attachments = [this.attachmentCreator.attachmentFromComponents(components, query)];
+    const components = priorResults || await this.priceCheckQuery(query, platform);
+    const attachments = [this.attachmentCreator.attachmentFromComponents(
+      components, query, this.settings.platforms[platform.toLowerCase()],
+    )];
 
     return attachments;
   }
