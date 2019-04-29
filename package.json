@@ -1,6 +1,6 @@
 {
   "name": "warframe-nexus-query",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "Query prices form nexus-stats.com and warframe.market.",
   "main": "index.js",
   "scripts": {
