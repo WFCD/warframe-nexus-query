@@ -10,6 +10,18 @@ const querystring = 'Akbolto';
 describe('Nexus Query', () => {
   let nexus;
 
+  const testQueryWithPlatform = async (platform) => {
+    try {
+      const result = await nexus.priceCheckQuery(querystring, undefined, platform);
+      result.should.be.an('array');
+      result[0].should.be.an('object');
+    } catch (error) {
+      should.not.exist(error);
+    } finally {
+      nexus.stopUpdating();
+    }
+  };
+
   beforeEach(async () => {
     nexus = new WFNQ();
   });
@@ -30,17 +42,15 @@ describe('Nexus Query', () => {
       }
     });
 
-    it('should create an array of objects when called with query', async () => {
-      try {
-        const result = await nexus.priceCheckQuery(querystring);
-        result.should.be.an('array');
-        result[0].should.be.an('object');
-      } catch (error) {
-        should.not.exist(error);
-      } finally {
-        nexus.stopUpdating();
-      }
-    }).timeout(6200);
+    describe('when providing a platform', () => {
+      it('should accomodate DE-formatted platforms', async () => {
+        await testQueryWithPlatform('ps4');
+      }).timeout(6200);
+
+      it('should accomodate some non-DE-formatted platforms', async () => {
+        await testQueryWithPlatform('switch');
+      }).timeout(6200);
+    });
 
     it('should create an attachment when called with attachment query', async () => {
       try {
