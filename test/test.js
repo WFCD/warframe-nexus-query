@@ -18,8 +18,6 @@ describe('Nexus Query', () => {
       result[0].should.be.an('object');
     } catch (error) {
       should.not.exist(error);
-    } finally {
-      nexus.stopUpdating();
     }
   };
 
@@ -27,8 +25,8 @@ describe('Nexus Query', () => {
     nexus = new WFNQ();
   });
 
-  afterEach(() => {
-    nexus.stopUpdating();
+  afterEach(async () => {
+    await nexus.stopUpdating();
     nexus = undefined;
   });
 
@@ -38,8 +36,6 @@ describe('Nexus Query', () => {
         await nexus.priceCheckQueryAttachment();
       } catch (error) {
         should.exist(error);
-      } finally {
-        nexus.stopUpdating();
       }
     });
 
@@ -66,8 +62,6 @@ describe('Nexus Query', () => {
         // eslint-disable-next-line no-console
         console.error(error);
         should.not.exist(error);
-      } finally {
-        nexus.stopUpdating();
       }
     }).timeout(6200);
 
@@ -81,8 +75,6 @@ describe('Nexus Query', () => {
         // eslint-disable-next-line no-console
         console.error(error);
         should.not.exist(error);
-      } finally {
-        nexus.stopUpdating();
       }
     });
   });

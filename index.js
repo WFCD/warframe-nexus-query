@@ -1,6 +1,9 @@
 'use strict';
 
 const md = require('node-md-config');
+const fs = require('fs').promises;
+const fss = require('fs');
+const path = require('path');
 
 const Settings = require('./lib/Settings.js');
 const AttachmentCreator = require('./lib/AttachmentCreator.js');
@@ -17,7 +20,9 @@ const noResultAttachment = {
   },
 };
 
-global.__basedir = __dirname;
+if (!global.__basedir) {
+  global.__basedir = __dirname;
+}
 
 /**
  * Represents a queryable datastore of information derived from `https://nexus-stats.com/api`
@@ -117,12 +122,30 @@ class PriceCheckQuerier {
     const components = priorResults
       || await this.priceCheckQuery(query, this.settings.platforms[platform.toLowerCase()]);
     const attachments = [this.attachmentCreator.attachmentFromComponents(components, query)];
+
     return attachments;
   }
 
-  stopUpdating() {
+  async stopUpdating() {
     if (this.marketCache) {
       this.marketCache.stop();
+    }
+
+    if (fss.existsSync(`${global.__basedir}/tmp`)) {
+      const files = await fs.readdir(`${global.__basedir}/tmp`);
+      let allSuccess = true;
+      for (const file of files) {
+        try {
+          await fs.unlink(path.join(global.__basedir, 'tmp', file));
+        } catch (e) {
+          allSuccess = false;
+          this.logger.debug(`Couldn't delete ${file}`);
+        }
+      }
+
+      if (allSuccess) {
+        await fs.rmdir(`${global.__basedir}/tmp`);
+      }
     }
   }
 }
