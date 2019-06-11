@@ -76,6 +76,6 @@ describe('Nexus Query', () => {
         console.error(error);
         should.not.exist(error);
       }
-    });
+    }).timeout(4000);
   });
 });
