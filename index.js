@@ -84,6 +84,8 @@ class PriceCheckQuerier {
       attachments = await this.marketFetcher.queryMarket(query, {
         attachments, successfulQuery, platform,
       });
+    } else {
+      this.logger.error('Warframe.Market not initialized for fetching');
     }
 
     return attachments.length ? attachments : [noResultAttachment];
