@@ -5,17 +5,40 @@ cache:
 notifications:
   email: false
 node_js:
-  - 'lts/*'
+  - "10.15.3"
+  - "10.16.0"
+  - "11.15.0"
+  - "12.13.1"
+  - "13.3.0"
+  - "lts/*"
+  - node
 before_script:
   - greenkeeper-lockfile-update
-
 after_script: greenkeeper-lockfile-upload
+install: npm install
 
-# after_success:
-#   - npm run travis-deploy-once "npm run semantic-release"
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/
 
-#override npm ci for now
-install: npm install
+stages:
+  - lint
+  - test
+  - coverage
+  - release
+
+jobs:
+  include:
+    - stage: lint
+      script: npm run lint
+    - stage: test
+      script: npm test
+    - stage: coverage
+      script: npm run coverage
+    - stage: release
+      node_js: node
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script:
+          - npx semantic-release

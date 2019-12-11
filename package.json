@@ -4,16 +4,15 @@
   "description": "Query prices form nexus-stats.com and warframe.market.",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && npx mocha --exit",
+    "test": "npx nyc --reporter=text mocha --exit",
+    "coverage": "npm test && npx nyc report --reporter=text-lcov | npx coveralls",
     "build-docs": "npx jsdoc -t ./node_modules/ink-docstrap/template -c jsdoc.conf -R README.md -r index.js lib/. -d docs",
-    "travis-deploy-once": "travis-deploy-once --pro",
-    "semantic-release": "semantic-release",
     "lint": "npx eslint index.js lib/ test/",
     "lint:fix": "npx eslint index.js lib/ test/ --fix"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/wfcd/warframe-nexus-query.git"
+    "url": "https://github.com/WFCD/warframe-nexus-query.git"
   },
   "keywords": [
     "warframe",
@@ -24,9 +23,9 @@
   "author": "tobitenno",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/wfcd/warframe-nexus-query/issues"
+    "url": "https://github.com/WFCD/warframe-nexus-query/issues"
   },
-  "homepage": "https://github.com/wfcd/warframe-nexus-query#README",
+  "homepage": "https://github.com/WFCD/warframe-nexus-query#README",
   "dependencies": {
     "get-image-colors": "^1.8.1",
     "greenkeeper-lockfile": "^1.15.1",
@@ -40,19 +39,18 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "eslint": "^5.16.0",
-    "eslint-config-airbnb": "^17.1.0",
-    "eslint-import-resolver-node": "^0.3.2",
-    "eslint-plugin-import": "^2.17.1",
-    "eslint-plugin-jsx-a11y": "^6.2.1",
-    "eslint-plugin-react": "^7.12.4",
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.19.1",
     "ink-docstrap": "^1.3.2",
-    "jsdoc": "^3.5.5",
-    "mocha": "^5.2.0",
-    "semantic-release": "^15.13.12"
+    "jsdoc": "^3.6.3",
+    "mocha": "^5.2.0"
   },
   "engines": {
     "node": ">=10.15.3",
     "npm": ">=6.1.0"
+  },
+  "release": {
+    "branch": "master"
   }
 }
