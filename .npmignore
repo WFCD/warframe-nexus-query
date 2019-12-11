@@ -1,5 +1,8 @@
-# JSDoc
 docs
-
-# tmp
 tmp/
+test/
+.nyc_output/
+.gitattributes
+jsdoc.conf
+.eslintrc.json
+.travis.yml
