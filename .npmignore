@@ -6,3 +6,4 @@ test/
 jsdoc.conf
 .eslintrc.json
 .travis.yml
+.codeclimate.yml
