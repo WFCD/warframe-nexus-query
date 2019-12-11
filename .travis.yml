@@ -5,10 +5,11 @@ cache:
 notifications:
   email: false
 node_js:
-  - "8.9.0"
-  - "8.16.0"
-  - "9.11.2"
+  - "10.15.3"
   - "10.16.0"
+  - "11.15.0"
+  - "12.13.1"
+  - "13.3.0"
   - "lts/*"
   - node
 before_script:
