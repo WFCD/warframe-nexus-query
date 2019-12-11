@@ -1,0 +1,10 @@
+version: 2
+exclude_patterns:
+  - .nyc_output/
+  - docs/
+  - test/
+  - **/node_modules/
+  - 
+plugins:
+  eslint:
+    enabled: true
