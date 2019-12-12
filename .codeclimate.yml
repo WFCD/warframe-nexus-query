@@ -7,3 +7,12 @@ exclude_patterns:
 plugins:
   eslint:
     enabled: true
+checks:
+  method-lines:
+    enabled: false
+  complex-logic:
+    config:
+      threshold: 10
+  similar-code:
+    config:
+      threshold: 20
