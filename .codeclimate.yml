@@ -3,8 +3,7 @@ exclude_patterns:
   - .nyc_output/
   - docs/
   - test/
-  - **/node_modules/
-  - 
+  - '**/node_modules/'
 plugins:
   eslint:
     enabled: true
