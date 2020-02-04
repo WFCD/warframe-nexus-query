@@ -11,8 +11,8 @@ checks:
   method-lines:
     enabled: false
   complex-logic:
-    config:
-      threshold: 10
+    enabled: false
   similar-code:
-    config:
-      threshold: 20
+    enabled: false
+  method-complexity:
+    enabled: false

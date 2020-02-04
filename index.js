@@ -5,8 +5,9 @@ const fs = require('fs').promises;
 const fss = require('fs');
 const path = require('path');
 
+const promiseTimeout = require('./lib/promiseTimeout');
 const Settings = require('./lib/Settings.js');
-const AttachmentCreator = require('./lib/AttachmentCreator.js');
+const Creator = require('./lib/AttachmentCreator.js');
 const MarketFetcher = require('./lib/market/v1/MarketFetcher.js');
 const NexusFetcher = require('./lib/nexus/v2/NexusFetcher');
 
@@ -54,9 +55,9 @@ class PriceCheckQuerier {
 
     /**
      * Attachment creator for generating attachments
-     * @type {AttachmentCreator}
+     * @type {Creator}
      */
-    this.attachmentCreator = new AttachmentCreator();
+    this.creator = new Creator();
   }
 
   /**
@@ -76,16 +77,24 @@ class PriceCheckQuerier {
     let successfulQuery;
     let attachments = [];
     if (platform !== 'switch') {
-      nexusResults = await this.nexusFetcher.queryNexus(query, platform);
-      ({ successfulQuery, attachments } = nexusResults);
+      try {
+        const nexusPromise = this.nexusFetcher.queryNexus(query, platform);
+        nexusResults = await promiseTimeout(this.settings.timeouts.nexus, nexusPromise);
+        ({ successfulQuery, attachments } = nexusResults);
+      } catch (e) {
+        this.logger.error(`Couldn't process ${query} on nexus-hub... time out.`);
+      }
     }
 
     if (this.marketFetcher) {
-      attachments = await this.marketFetcher.queryMarket(query, {
-        attachments, successfulQuery, platform,
-      });
-    } else {
-      this.logger.error('Warframe.Market not initialized for fetching');
+      try {
+        const marketPromise = this.marketFetcher.queryMarket(query, {
+          attachments, successfulQuery, platform,
+        });
+        attachments = await promiseTimeout(this.settings.timeouts.market, marketPromise);
+      } catch (e) {
+        this.logger.error(`Couldn't process ${query} on warframe.market... time out.`);
+      }
     }
 
     return attachments.length ? attachments : [noResultAttachment];
@@ -120,16 +129,17 @@ class PriceCheckQuerier {
    */
   async priceCheckQueryAttachment(query, priorResults, platform = 'pc') {
     const components = priorResults || await this.priceCheckQuery(query, platform);
-    const attachments = [this.attachmentCreator.attachmentFromComponents(
-      components, query, this.settings.platforms[platform.toLowerCase()],
-    )];
-
-    return attachments;
+    const realPlatform = this.settings.lookupAlias(platform);
+    const attachment = this.creator.attachmentFromComponents(components, query, realPlatform);
+    return [].concat(attachment);
   }
 
+  /**
+   * Stop updating caches
+   */
   async stopUpdating() {
-    if (this.marketCache) {
-      this.marketCache.stop();
+    if (this.marketFetcher.marketCache) {
+      this.marketFetcher.marketCache.stop();
     }
 
     if (fss.existsSync(`${global.__basedir}/tmp`)) {

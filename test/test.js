@@ -3,6 +3,11 @@
 /* modules */
 const chai = require('chai');
 const WFNQ = require('../index.js');
+const Settings = require('../lib/Settings');
+
+process.env.NEXUS_TIMEOUT = 5000;
+
+const settings = new Settings();
 
 const should = chai.should();
 const querystring = 'Akbolto';
@@ -11,14 +16,14 @@ describe('Nexus Query', () => {
   let nexus;
 
   const testQueryWithPlatform = async (platform) => {
-    try {
-      const result = await nexus.priceCheckQuery(querystring, platform);
+    const result = await nexus.priceCheckQueryAttachment(querystring, null, platform);
 
-      result.should.be.an('array');
-      result[0].should.be.an('object');
-    } catch (error) {
-      should.not.exist(error);
-    }
+    result.should.be.an('array');
+    const embed = result[0];
+    embed.should.be.an('object');
+    embed.type.should.equal('rich');
+    embed.title.should.have.string(`[${settings.lookupAlias(platform).toUpperCase()}]`);
+    embed.description.should.have.string(querystring);
   };
 
   beforeEach(async () => {
@@ -40,13 +45,11 @@ describe('Nexus Query', () => {
     });
 
     describe('when providing a platform', () => {
-      it('should accomodate DE-formatted platforms', async () => {
-        await testQueryWithPlatform('ps4');
-      }).timeout(6200);
-
-      it('should accomodate some non-DE-formatted platforms', async () => {
-        await testQueryWithPlatform('switch');
-      }).timeout(6200);
+      Object.keys(settings.platforms).forEach(async (platform) => {
+        it(`should accomodate ${platform}`, async () => {
+          await testQueryWithPlatform(platform);
+        });
+      });
     });
 
     it('should create an attachment when called with attachment query', async () => {
@@ -57,13 +60,24 @@ describe('Nexus Query', () => {
 
         should.exist(result[0].fields);
         result[0].fields.should.be.an('array');
-        result[0].fields.length.should.equal(5);
+        result[0].fields.length.should.equal(1);
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
         should.not.exist(error);
       }
-    }).timeout(6200);
+    });
+
+    it('should create an attachment when querying for a mod', async () => {
+      try {
+        const modString = 'Vermillion Storm';
+        const result = await nexus.priceCheckQueryAttachment(modString);
+        result.should.be.an('array');
+        const embed = result[0];
+        embed.should.be.an('object');
+        embed.description.should.have.string(modString);
+      } catch (error) {
+        should.not.exist(error);
+      }
+    });
 
     it('should create an no results for attachment query', async () => {
       try {
@@ -72,10 +86,8 @@ describe('Nexus Query', () => {
         result[0].should.be.an('object');
         should.not.exist(result[0].fields);
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
         should.not.exist(error);
       }
-    }).timeout(4000);
+    });
   });
 });
