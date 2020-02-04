@@ -4,6 +4,9 @@
 const chai = require('chai');
 const WFNQ = require('../index.js');
 const Settings = require('../lib/Settings');
+
+process.env.NEXUS_TIMEOUT = 5000;
+
 const settings = new Settings();
 
 const should = chai.should();
@@ -44,7 +47,7 @@ describe('Nexus Query', () => {
     describe('when providing a platform', () => {
       Object.keys(settings.platforms).forEach(async (platform) => {
         it(`should accomodate ${platform}`, async () => {
-          await testQueryWithPlatform(platform); //.catch(e => console.error);
+          await testQueryWithPlatform(platform);
         });
       });
     });
@@ -59,12 +62,10 @@ describe('Nexus Query', () => {
         result[0].fields.should.be.an('array');
         result[0].fields.length.should.equal(1);
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
         should.not.exist(error);
       }
     });
-    
+
     it('should create an attachment when querying for a mod', async () => {
       try {
         const modString = 'Vermillion Storm';
@@ -74,7 +75,6 @@ describe('Nexus Query', () => {
         embed.should.be.an('object');
         embed.description.should.have.string(modString);
       } catch (error) {
-        console.error(error);
         should.not.exist(error);
       }
     });
@@ -86,8 +86,6 @@ describe('Nexus Query', () => {
         result[0].should.be.an('object');
         should.not.exist(result[0].fields);
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
         should.not.exist(error);
       }
     });

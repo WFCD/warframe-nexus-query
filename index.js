@@ -93,7 +93,7 @@ class PriceCheckQuerier {
         });
         attachments = await promiseTimeout(this.settings.timeouts.market, marketPromise);
       } catch (e) {
-        this.logger.error(`Couldn't process ${query} on warframe.market... time out.`)
+        this.logger.error(`Couldn't process ${query} on warframe.market... time out.`);
       }
     }
 
@@ -129,7 +129,7 @@ class PriceCheckQuerier {
    */
   async priceCheckQueryAttachment(query, priorResults, platform = 'pc') {
     const components = priorResults || await this.priceCheckQuery(query, platform);
-    const realPlatform = this.settings.lookupAlias(platform)
+    const realPlatform = this.settings.lookupAlias(platform);
     const attachment = this.creator.attachmentFromComponents(components, query, realPlatform);
     return [].concat(attachment);
   }
@@ -138,8 +138,8 @@ class PriceCheckQuerier {
    * Stop updating caches
    */
   async stopUpdating() {
-    if (this.marketCache) {
-      this.marketCache.stop();
+    if (this.marketFetcher.marketCache) {
+      this.marketFetcher.marketCache.stop();
     }
 
     if (fss.existsSync(`${global.__basedir}/tmp`)) {
