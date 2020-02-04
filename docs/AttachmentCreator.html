@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>warframe-nexus-query Source: lib/nexus/v2/component.js</title>
+	<title>warframe-nexus-query Class: AttachmentCreator</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -67,104 +67,393 @@
 <div class="row">
 
 	
-	<div class="col-md-12">
+	<div class="col-md-8">
 	
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: lib/nexus/v2/component.js</h1>
-    
+	<h1 class="page-title">Class: AttachmentCreator</h1>
 <section>
-    <article>
-        <pre
-            class="sunlight-highlight-javascript linenums">'use strict';
 
-const BaseComponent = require('../base/Component');
+<header>
+    
+        <h2>
+        AttachmentCreator
+        </h2>
+        
+            <div class="class-description">Cr</div>
+        
+    
+</header>
 
-/**
- * Represents an individual component object of an item.
- */
-class Component extends BaseComponent {
-  /**
-   * Represents an individual component object of an item.
-   * @param {json} data the component data to parse into a component
-   * @param {Array&lt;Ojbect>} items objects with data for ducats
-   * @constructor
-   */
-  constructor(data) {
-    super();
 
-    /**
-     * Name of the component, display value
-     * @type {string}
-     */
-    this.name = data.name.replace(/(pc|ps4|xb1|switch)/ig, '').trim();
+<article>
+    <div class="container-overview">
+    
+        
+<hr>
+<dt>
+    <h4 class="name" id="AttachmentCreator"><span class="type-signature"></span>new AttachmentCreator()</h4>
+    
+    
+</dt>
+<dd>
 
-    const suppTotal = data.prices.selling.current.orders || 0;
-    const demandTotal = data.prices.buying.current.orders || 0;
+    
 
-    const oTotal = (suppTotal + demandTotal) || 1;
+    
 
-    /**
-     * Supply for the component
-     * @type {number}
-     */
-    this.supply = {
-      percentage: Number(suppTotal / oTotal).toFixed(2),
-      count: suppTotal,
-    };
+    
 
-    /**
-     * Demand for the component
-     * @type {number}
-     */
-    this.demand = {
-      percentage: Number(demandTotal / oTotal).toFixed(2),
-      count: demandTotal,
-    };
+    
+    
 
-    const { buying, selling } = this.buildStats(data);
-    this.prices = {
-      buying,
-      selling,
-      avg: (buying.avg + selling.avg) / 2,
-      median: this.median([buying.median, selling.median]),
-      minimum: Math.min(buying.min, selling.min),
-      maximum: Math.max(buying.max, selling.max),
-    };
-    this.ducats = data.ducats;
-    this.type = 'nexus-v2';
-  }
+    
+<dl class="details">
+    
 
-  /**
-   * Build statistics data from nexus data
-   * @param  {Object} data Wrapped object to destructure
-   * @return {Object}   destructured object
-   */
-  // eslint-disable-next-line class-methods-use-this
-  buildStats(data) {
-    return {
-      buying: {
-        avg: data.prices.buying.current.avg || 0,
-        median: data.prices.buying.median || 0,
-        max: data.prices.buying.max || 0,
-        min: data.prices.buying.min || 0,
-      },
-      selling: {
-        avg: data.prices.selling.current.avg || 0,
-        median: data.prices.selling.median || 0,
-        max: data.prices.selling.max || 0,
-        min: data.prices.selling.min || 0,
-      },
-    };
-  }
-}
+	
 
-module.exports = Component;
-</pre>
-    </article>
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="lib_AttachmentCreator.js.html">lib/AttachmentCreator.js</a>,
+				 <a href="lib_AttachmentCreator.js.html#sunlight-1-line-132">line 132</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id="attachmentFromComponents"><span class="type-signature"></span>attachmentFromComponents(components, query [, platform])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Build an attachment from the provided components
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>components</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;(NexusComponent|MarketComponent)></span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">collected array of components with market data</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>query</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Search query that these components match</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>platform</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'pc'
+                
+                </td>
+            
+
+            <td class="description last">Platform for the request, defaults to 'pc'</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="lib_AttachmentCreator.js.html">lib/AttachmentCreator.js</a>,
+				 <a href="lib_AttachmentCreator.js.html#sunlight-1-line-144">line 144</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    Discord-ready attachment describing the item
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+
+    
+</article>
+
 </section>
-
 
 
 
@@ -174,6 +463,10 @@ module.exports = Component;
 
 	<div class="clearfix"></div>
 
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
 	
 
 </div>

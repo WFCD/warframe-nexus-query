@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>warframe-nexus-query Source: lib/nexus/v2/component.js</title>
+	<title>warframe-nexus-query Source: lib/nexus/base/Item.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -72,95 +72,67 @@
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: lib/nexus/v2/component.js</h1>
+		<h1 class="page-title">Source: lib/nexus/base/Item.js</h1>
     
 <section>
     <article>
         <pre
             class="sunlight-highlight-javascript linenums">'use strict';
 
-const BaseComponent = require('../base/Component');
-
-/**
- * Represents an individual component object of an item.
- */
-class Component extends BaseComponent {
+class Item {
   /**
-   * Represents an individual component object of an item.
-   * @param {json} data the component data to parse into a component
-   * @param {Array&lt;Ojbect>} items objects with data for ducats
-   * @constructor
+   * @param {JSON} data to construct an item from
+   * @param {string} path for item on site
+   * @param {Object} settings a settings object
+   * @param {Component} Component class to construct
    */
-  constructor(data) {
-    super();
+  constructor(data, path, settings, Component) {
+    /**
+     * Array of Component objects
+     * @type {Array&lt;Component>}
+     */
+    this.components = [];
 
     /**
-     * Name of the component, display value
+     * Title (name) of item
      * @type {string}
      */
-    this.name = data.name.replace(/(pc|ps4|xb1|switch)/ig, '').trim();
+    this.title = data.name;
 
-    const suppTotal = data.prices.selling.current.orders || 0;
-    const demandTotal = data.prices.buying.current.orders || 0;
-
-    const oTotal = (suppTotal + demandTotal) || 1;
+    /**
+     * Type of the item, such as:
+     * * Prime
+     * * Mods
+     * * Arcane
+     * * Syndicate
+     * @type {string}
+     */
+    this.type = data.type;
 
     /**
      * Supply for the component
-     * @type {number}
+     * @unused on v2
+     * @type {Object.&lt;number>}
      */
-    this.supply = {
-      percentage: Number(suppTotal / oTotal).toFixed(2),
-      count: suppTotal,
-    };
+    this.supply = data.supply;
 
     /**
      * Demand for the component
-     * @type {number}
+     * @unused on v2
+     * @type {Object.&lt;number>}
      */
-    this.demand = {
-      percentage: Number(demandTotal / oTotal).toFixed(2),
-      count: demandTotal,
-    };
+    this.demand = data.demand;
 
-    const { buying, selling } = this.buildStats(data);
-    this.prices = {
-      buying,
-      selling,
-      avg: (buying.avg + selling.avg) / 2,
-      median: this.median([buying.median, selling.median]),
-      minimum: Math.min(buying.min, selling.min),
-      maximum: Math.max(buying.max, selling.max),
-    };
-    this.ducats = data.ducats;
-    this.type = 'nexus-v2';
-  }
+    data.components.forEach((componentData) => {
+      this.components.push(new Component(componentData, data.parts));
+    });
 
-  /**
-   * Build statistics data from nexus data
-   * @param  {Object} data Wrapped object to destructure
-   * @return {Object}   destructured object
-   */
-  // eslint-disable-next-line class-methods-use-this
-  buildStats(data) {
-    return {
-      buying: {
-        avg: data.prices.buying.current.avg || 0,
-        median: data.prices.buying.median || 0,
-        max: data.prices.buying.max || 0,
-        min: data.prices.buying.min || 0,
-      },
-      selling: {
-        avg: data.prices.selling.current.avg || 0,
-        median: data.prices.selling.median || 0,
-        max: data.prices.selling.max || 0,
-        min: data.prices.selling.min || 0,
-      },
-    };
+    this.url = `${settings.urls.nexusWeb}${path}`;
+    this.thumbnail = `${settings.urls.nexusWeb}${data.item.components[0].imgUrl}`;
   }
 }
 
-module.exports = Component;
+module.exports = Item;
 </pre>
     </article>
 </section>

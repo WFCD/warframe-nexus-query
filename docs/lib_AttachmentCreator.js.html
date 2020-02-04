@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Component.html">Component</a></li><li><a href="NexusFetcher.html">NexusFetcher</a></li><li><a href="NexusItem.html">NexusItem</a></li><li><a href="PriceCheckQuerier.html">PriceCheckQuerier</a></li><li><a href="Settings.html">Settings</a></li><li><a href="Summary.html">Summary</a></li>
+					<li><a href="AttachmentCreator.html">AttachmentCreator</a></li><li><a href="Component.html">Component</a></li><li><a href="Item.html">Item</a></li><li><a href="NexusItem.html">NexusItem</a></li><li><a href="PriceCheckQuerier.html">PriceCheckQuerier</a></li><li><a href="Settings.html">Settings</a></li><li><a href="Summary.html">Summary</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#pad">pad</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li>
+					<li><a href="global.html#fieldValue">fieldValue</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li><li><a href="global.html#truncPercentage">truncPercentage</a></li>
 				</ul>
 			</li>
 			
@@ -79,6 +79,13 @@
         <pre
             class="sunlight-highlight-javascript linenums">'use strict';
 
+/* eslint-disable class-methods-use-this, no-param-reassign */
+
+const NexusComponent = require('./nexus/base/Component'); // eslint-disable-line no-unused-vars
+const MarketComponent = require('./market/v1/summary'); // eslint-disable-line no-unused-vars
+
+const wfcdLogo = 'https://warframestat.us/wfcd_logo_color.png';
+
 const noResultAttachment = {
   type: 'rich',
   description: 'No result',
@@ -86,7 +93,20 @@ const noResultAttachment = {
   url: 'https://warframe.market',
   footer: {
     text: 'Price data provided by NexusHub.co &amp; Warframe.Market',
-    icon_url: 'https://warframestat.us/wfcd_logo_color.png',
+    icon_url: wfcdLogo,
+  },
+};
+
+const baseAttachment = {
+  type: 'rich',
+  title: '',
+  color: 0xff00ff,
+  url: '',
+  fields: [],
+  thumbnail: { url: '' },
+  footer: {
+    icon_url: wfcdLogo,
+    text: 'Data by NexusHub.co &amp; Warframe.Market',
   },
 };
 
@@ -96,7 +116,7 @@ const noResultAttachment = {
  * @returns {string}       safe value
  */
 function safeValue(value) {
-  return value ? `${Number.parseInt(value, 10)}p` : 'No data';
+  return value ? `${Number.parseInt(value, 10)}p` : 'No Data';
 }
 
 /**
@@ -106,140 +126,152 @@ function safeValue(value) {
  * @returns {string}       safe value
  */
 function safeRange(value1, value2) {
-  return value1 ? `${Number.parseInt(value1, 10)}p - ${Number.parseInt(value2, 10)}p` : 'No data';
+  return value1 ? `${Number.parseInt(value1, 10)}p - ${Number.parseInt(value2, 10)}p` : 'No Data';
 }
 
 /**
- * Pad the left side of a string so that all componets
- * have the same string length before the pipe
- * @param {string} str the location string to pad
- * @param {number} length to make the string
- * @returns {string} the padded location string
+ * Safely truncate the percentage value to a readable length
+ * @param  {number|undefined} value percentage value
+ * @returns {string}       readable percentage value (no suffix)
  */
-function pad(str, length) {
-  let stringRet;
-  const len = length || 10;
-  if (str.length &lt; len) {
-    stringRet = pad(`${str} `, len);
-  } else {
-    stringRet = str;
-  }
-  return stringRet;
+function truncPercentage(value) {
+  return String((parseFloat(value || 0) * 100).toFixed(2));
 }
 
+/**
+ * Build a field from provided nexus &amp; market components
+ * @param  {NexusComponent} nComponent nexus component
+ * @param  {MarketComponent} mComponent market component
+ * @param  {number} nCount     count of total nexus components
+ * @param  {number} mCount     count of total market components
+ * @returns {Object}            built field
+ */
+function fieldValue(nComponent, mComponent, nCount, mCount) {
+  let nMedian;
+  let nRange;
+  let snD;
+
+  let mMedian;
+  let mRange;
+
+  if (nComponent) {
+    nMedian = safeValue(nComponent.prices.median);
+    nRange = safeRange(nComponent.prices.minimum, nComponent.prices.maximum);
+    snD = `Supply: **${nComponent.supply.count}** units (${truncPercentage(nComponent.supply.percentage)}%) `
+    + `- Demand: **${nComponent.demand.count}** units (${truncPercentage(nComponent.demand.percentage)}%)\n\n\u200B`;
+  }
+
+  if (mComponent) {
+    mMedian = safeValue(mComponent.prices.soldPrice);
+    mRange = safeRange(
+      mComponent.prices.minimum,
+      mComponent.prices.maximum,
+    );
+  }
+
+  if (nComponent &amp;&amp; mComponent) {
+    return {
+      name: `${mCount.length &lt; 2 ? '_ _' : mComponent.name.replace(nComponent.title, '')}${nComponent.ducats ? ` - ${nComponent.ducats} ducats` : ''}`,
+      value: '```haskell\n'
+        + `${'Source'.padEnd(6, ' ')}| ${'Nexus'.padEnd(13, ' ')}| Market\n`
+        + `${'Median'.padEnd(6, ' ')}| ${nMedian.padEnd(13, ' ')}| ${mMedian}\n`
+        + `${'Range'.padEnd(6, ' ')}| ${nRange.padEnd(13, ' ')}| ${mRange}\n\n`
+        + `Trade Tax: ${mComponent.tradingTax}cr`
+        + `\`\`\`\n${snD}`,
+      inline: false,
+    };
+  } if (nComponent) {
+    return {
+      name: `${nComponent.name}${nComponent.ducats ? ` - ${nComponent.ducats} ducats` : ''}`,
+      value: `${'```haskell\n'
+        + `${'Source'.padEnd(6, ' ')}| 'Nexus'\n`
+        + `${'Median'.padEnd(6, ' ')}| ${nMedian}\n`
+        + `${'Range'.padEnd(6, ' ')}| ${nRange}\n`
+        + '```\n'}${
+        snD}`,
+      inline: false,
+    };
+  }
+  return {
+    name: mComponent.name,
+    value: '```haskell\n'
+            + `${'Value'.padEnd(6, ' ')}| Market\n`
+            + `${'Median'.padEnd(6, ' ')}| ${mMedian}\n`
+            + `${'Range'.padEnd(6, ' ')}| ${mRange}\n`
+            + '```\n'
+            + `Trade Tax: ${mComponent.tradingTax}cr\n`,
+    inline: false,
+  };
+}
+
+/**
+ * Cr
+ */
 class AttachmentCreator {
   constructor(logger = console) {
-    this.attachment = {
-      type: 'rich',
-      title: '',
-      color: 0xff00ff,
-      url: '',
-      fields: [],
-      thumbnail: { url: '' },
-      footer: {
-        icon_url: 'https://warframestat.us/wfcd_logo_color.png',
-        text: 'Price data provided by NexusHub.co &amp; Warframe.Market',
-      },
-    };
-
     this.logger = logger;
   }
 
+  /**
+   * Build an attachment from the provided components
+   * @param  {Array.&lt;NexusComponent|MarketComponent>} components -
+   * collected array of components with market data
+   * @param  {string} query           Search query that these components match
+   * @param  {string} [platform='pc'] Platform for the request, defaults to 'pc'
+   * @returns {Object}                 Discord-ready attachment describing the item
+   */
   attachmentFromComponents(components, query, platform = 'pc') {
-    const attachment = JSON.parse(JSON.stringify(this.attachment));
-    attachment.title = `[${platform.toUpperCase()}] Query results for: "${query}"`;
+    const attachment = JSON.parse(JSON.stringify(baseAttachment));
+    attachment.title = `[${platform.toUpperCase()}] Results for: "${query}"`;
 
     const nexusComponents = components
       .filter((component) => component &amp;&amp; component.components &amp;&amp; component.components[0].type === 'nexus-v2');
 
     const marketComponents = components
       .filter((component) => component &amp;&amp; component.type === 'market-v1' &amp;&amp; typeof component.prices.soldPrice !== 'undefined');
+
     if (nexusComponents.length > 0) {
       nexusComponents.forEach((nexusComponent) => {
         attachment.title = `[${platform.toUpperCase()}] ${nexusComponent.title}`;
+
         nexusComponent.components.forEach((component) => {
-          let found = false;
           attachment.thumbnail.url = nexusComponent.thumbnail;
           attachment.description = `Query results for: "${query}"`;
 
-          const nexusMedian = safeValue(component.prices.median);
-          const nexusRange = safeRange(component.prices.minimum, component.prices.maximum);
+          const marketMatch = marketComponents.find((mk) => mk.prices &amp;&amp; mk.prices.soldPrice
+              &amp;&amp; mk.name.toLowerCase().includes(component.name.toLowerCase()));
 
-          const sameLen = nexusComponents.length === 1 &amp;&amp; marketComponents.length === 1;
+          component.title = nexusComponent.title;
+          fieldValue(component, marketMatch, nexusComponents.length, marketComponents.length);
 
-          if (marketComponents.length > 0 &amp;&amp; marketComponents[0].prices.soldPrice) {
-            marketComponents.forEach((marketComponent) => {
-              const nameMatch = marketComponent.name.toLowerCase()
-                .includes(component.name.toLowerCase());
-              if (!found &amp;&amp; (nameMatch || sameLen)) {
-                found = true;
-                attachment.color = parseInt(marketComponent.color, 16);
-                attachment.url = marketComponent.url;
-                attachment.thumbnail.url = marketComponent.thumbnail;
-                const marketMedian = safeValue(marketComponent.prices.soldPrice);
-                const marketRange = safeRange(
-                  marketComponent.prices.minimum,
-                  marketComponent.prices.maximum,
-                );
-
-                const snD = `Supply: **${component.supply.count}** units (${String((parseFloat(component.supply.percentage || 0) * 100).toFixed(2))}%) `
-                    + `- Demand: **${component.demand.count}** units (${String((parseFloat(component.demand.percentage || 0) * 100).toFixed(2))}%)\n\n\u200B`;
-
-                attachment.fields.push({
-                  name: `${marketComponents.length &lt; 2 ? '_ _' : marketComponent.name.replace(nexusComponent.title, '')}${component.ducats ? ` - ${component.ducats} ducats` : ''}`,
-                  value: '```haskell\n'
-                    + `${pad('Source', 6)}| ${pad('Nexus', 13)}| Market\n`
-                    + `${pad('Median', 6)}| ${pad(`${nexusMedian}`, 13)}| ${marketMedian}\n`
-                    + `${pad('Range', 6)}| ${pad(`${nexusRange}`, 13)}| ${marketRange}\n\n`
-                    + `Trade Tax: ${marketComponent.tradingTax}cr`
-                    + `\`\`\`\n${snD}`,
-                  inline: false,
-                });
-              }
-            });
+          if (marketMatch) {
+            attachment.url = marketMatch.url;
+            attachment.color = parseInt(marketMatch.color, 16);
+            attachment.thumbnail.url = marketMatch.thumbnail;
           } else {
             attachment.url = nexusComponent.url;
             attachment.color = parseInt(nexusComponent.color, 16);
-            attachment.fields.push({
-              name: `${component.name}${component.ducats ? ` - ${component.ducats} ducats` : ''}`,
-              value: '```haskell\n'
-                + `${pad('Source', 6)}| ${pad('Nexus', 13)} | Market\n`
-                + `${pad('Median', 6)}| ${pad(nexusMedian, 13)} | No data\n`
-                + `${pad('Range', 6)}| ${pad(nexusRange, 13)} | No data\n`
-                + '```',
-              inline: false,
-            });
+            attachment.fields.push(fieldValue(component, undefined, nexusComponents.length, 0));
           }
         });
       });
     } else if (marketComponents.length > 0) {
+      const mCLen = marketComponents.length;
       marketComponents
-        .forEach((marketComponent) => {
-          attachment.color = parseInt(marketComponent.color, 16);
-          attachment.title = `[${platform.toUpperCase()}] ${marketComponent.name.replace(/\sset/i, '')}`;
-          attachment.url = marketComponent.url;
-          attachment.thumbnail.url = marketComponent.thumbnail;
-          attachment.description = `Query results for: "${query}"`;
+        .forEach((marketComponent, index) => {
+          if (!index) {
+            attachment.color = parseInt(marketComponent.color, 16);
+            attachment.title = `[${platform.toUpperCase()}] ${marketComponent.name.replace(/\sset/i, '')}`;
+            attachment.url = marketComponent.url;
+            attachment.thumbnail.url = marketComponent.thumbnail;
+            attachment.description = `Results for: "${query}"`;
+          }
 
-          const marketMedian = safeValue(marketComponent.prices.soldPrice);
-          const marketRange = safeRange(
-            marketComponent.prices.minimum,
-            marketComponent.prices.maximum,
-          );
-
-          attachment.fields.push({
-            name: marketComponent.name,
-            value: '```haskell\n'
-                  + `${pad('Value', 7)}| Market\n`
-                  + `${pad('Median', 7)}| ${marketMedian}\n`
-                  + `${pad('Range', 7)}| ${marketRange}\n`
-                  + '```\n'
-                  + `Trade Tax: ${marketComponent.tradingTax}cr\n`,
-            inline: false,
-          });
+          attachment.fields.push(fieldValue(undefined, marketComponent, 0, mCLen));
         });
+
       attachment.footer = {
-        icon_url: 'https://warframestat.us/wfcd_logo_color.png',
+        icon_url: wfcdLogo,
         text: 'Price data provided by Warframe.Market',
       };
     } else {
@@ -294,7 +326,7 @@ module.exports = AttachmentCreator;
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Wednesday, December 11th 2019, 12:00:35
+		on Tuesday, February 4th 2020, 05:14:47
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

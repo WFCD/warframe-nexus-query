@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Component.html">Component</a></li><li><a href="NexusFetcher.html">NexusFetcher</a></li><li><a href="NexusItem.html">NexusItem</a></li><li><a href="PriceCheckQuerier.html">PriceCheckQuerier</a></li><li><a href="Settings.html">Settings</a></li><li><a href="Summary.html">Summary</a></li>
+					<li><a href="AttachmentCreator.html">AttachmentCreator</a></li><li><a href="Component.html">Component</a></li><li><a href="Item.html">Item</a></li><li><a href="NexusItem.html">NexusItem</a></li><li><a href="PriceCheckQuerier.html">PriceCheckQuerier</a></li><li><a href="Settings.html">Settings</a></li><li><a href="Summary.html">Summary</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#pad">pad</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li>
+					<li><a href="global.html#fieldValue">fieldValue</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li><li><a href="global.html#truncPercentage">truncPercentage</a></li>
 				</ul>
 			</li>
 			
@@ -153,7 +153,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="pad"><span class="type-signature"></span>pad(str, length)</h4>
+    <h4 class="name" id="fieldValue"><span class="type-signature"></span>fieldValue(nComponent, mComponent, nCount, mCount)</h4>
     
     
 </dt>
@@ -161,8 +161,7 @@
 
     
     <div class="description">
-        Pad the left side of a string so that all componets
-have the same string length before the pipe
+        Build a field from provided nexus & market components
     </div>
     
 
@@ -197,13 +196,13 @@ have the same string length before the pipe
 
         <tr>
             
-                <td class="name"><code>str</code></td>
+                <td class="name"><code>nComponent</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">NexusComponent</span>
 
 
 
@@ -214,14 +213,38 @@ have the same string length before the pipe
 
             
 
-            <td class="description last">the location string to pad</td>
+            <td class="description last">nexus component</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>length</code></td>
+                <td class="name"><code>mComponent</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">MarketComponent</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">market component</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>nCount</code></td>
             
 
             <td class="type">
@@ -238,7 +261,31 @@ have the same string length before the pipe
 
             
 
-            <td class="description last">to make the string</td>
+            <td class="description last">count of total nexus components</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mCount</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">count of total market components</td>
         </tr>
 
     
@@ -283,7 +330,7 @@ have the same string length before the pipe
 		<ul class="dummy">
 			<li>
 				<a href="lib_AttachmentCreator.js.html">lib/AttachmentCreator.js</a>,
-				 <a href="lib_AttachmentCreator.js.html#sunlight-1-line-40">line 40</a>
+				 <a href="lib_AttachmentCreator.js.html#sunlight-1-line-70">line 70</a>
 			</li>
 		</ul>
 	</dd>
@@ -312,7 +359,7 @@ have the same string length before the pipe
     
             
 <div class="param-desc">
-    the padded location string
+    built field
 </div>
 
 
@@ -323,7 +370,7 @@ have the same string length before the pipe
     </dt>
     <dd>
         
-<span class="param-type">string</span>
+<span class="param-type">Object</span>
 
 
 
@@ -469,7 +516,7 @@ have the same string length before the pipe
 		<ul class="dummy">
 			<li>
 				<a href="lib_AttachmentCreator.js.html">lib/AttachmentCreator.js</a>,
-				 <a href="lib_AttachmentCreator.js.html#sunlight-1-line-29">line 29</a>
+				 <a href="lib_AttachmentCreator.js.html#sunlight-1-line-49">line 49</a>
 			</li>
 		</ul>
 	</dd>
@@ -631,7 +678,7 @@ have the same string length before the pipe
 		<ul class="dummy">
 			<li>
 				<a href="lib_AttachmentCreator.js.html">lib/AttachmentCreator.js</a>,
-				 <a href="lib_AttachmentCreator.js.html#sunlight-1-line-19">line 19</a>
+				 <a href="lib_AttachmentCreator.js.html#sunlight-1-line-39">line 39</a>
 			</li>
 		</ul>
 	</dd>
@@ -661,6 +708,171 @@ have the same string length before the pipe
             
 <div class="param-desc">
     safe value
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="truncPercentage"><span class="type-signature"></span>truncPercentage(value)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Safely truncate the percentage value to a readable length
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">percentage value</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="lib_AttachmentCreator.js.html">lib/AttachmentCreator.js</a>,
+				 <a href="lib_AttachmentCreator.js.html#sunlight-1-line-58">line 58</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    readable percentage value (no suffix)
 </div>
 
 
@@ -734,7 +946,7 @@ have the same string length before the pipe
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Wednesday, December 11th 2019, 12:00:36
+		on Tuesday, February 4th 2020, 05:14:47
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
