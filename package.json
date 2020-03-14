@@ -31,7 +31,7 @@
     "image-downloader": "^3.4.2",
     "json-fetch-cache": "^1.2.3",
     "json-query": "^2.2.2",
-    "nexushub-client": "^1.1.1",
+    "nexushub-client": "^1.2.0",
     "node-fetch": "^2.6.0",
     "node-md-config": "^2.0.1"
   },
