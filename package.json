@@ -29,7 +29,7 @@
   "dependencies": {
     "get-image-colors": "^1.8.1",
     "image-downloader": "^3.4.2",
-    "json-fetch-cache": "^1.2.1",
+    "json-fetch-cache": "^1.2.3",
     "json-query": "^2.2.2",
     "nexushub-client": "^1.1.1",
     "node-fetch": "^2.6.0",
