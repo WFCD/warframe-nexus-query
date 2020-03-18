@@ -33,7 +33,7 @@ class PriceCheckQuerier {
    * Creates an instance representing a WarframeNexusStats data object
    * @constructor
    */
-  constructor({ logger = console, nexusApi = undefined } = {}) {
+  constructor({ logger = console, nexusApi = undefined, marketCache } = {}) {
     this.settings = new Settings();
     this.logger = logger;
 
@@ -48,7 +48,7 @@ class PriceCheckQuerier {
        * Fetch market data
        * @type {MarketFetcher}
        */
-      this.marketFetcher = new MarketFetcher({ logger, settings: this.settings });
+      this.marketFetcher = new MarketFetcher({ logger, settings: this.settings, marketCache });
     } catch (e) {
       this.logger.error(`couldn't set up market fetcher: ${e.message}`);
     }
@@ -88,10 +88,9 @@ class PriceCheckQuerier {
 
     if (this.marketFetcher) {
       try {
-        const marketPromise = this.marketFetcher.queryMarket(query, {
-          attachments, successfulQuery, platform,
-        });
-        attachments = await promiseTimeout(this.settings.timeouts.market, marketPromise);
+        const marketPromise = this.marketFetcher.queryMarket(query, { successfulQuery, platform });
+        const marketResults = await promiseTimeout(this.settings.timeouts.market, marketPromise);
+        attachments = [...attachments, ...marketResults];
       } catch (e) {
         this.logger.error(`Couldn't process ${query} on warframe.market... time out.`);
       }
@@ -130,8 +129,9 @@ class PriceCheckQuerier {
   async priceCheckQueryAttachment(query, priorResults, platform = 'pc') {
     const components = priorResults || await this.priceCheckQuery(query, platform);
     const realPlatform = this.settings.lookupAlias(platform);
+
     const attachment = this.creator.attachmentFromComponents(components, query, realPlatform);
-    return [].concat(attachment);
+    return [attachment];
   }
 
   /**

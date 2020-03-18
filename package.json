@@ -4,7 +4,7 @@
   "description": "Query prices form nexus-stats.com and warframe.market.",
   "main": "index.js",
   "scripts": {
-    "test": "npx nyc --reporter=text mocha --exit",
+    "test": "npx nyc mocha --exit",
     "coverage": "npm test && npx nyc report --reporter=text-lcov | npx coveralls",
     "build-docs": "npx jsdoc -t ./node_modules/ink-docstrap/template -c jsdoc.conf -R README.md -r index.js lib/. -d docs",
     "lint": "npx eslint index.js lib/ test/",

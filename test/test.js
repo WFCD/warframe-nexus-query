@@ -2,19 +2,37 @@
 
 /* modules */
 const chai = require('chai');
+const Cache = require('json-fetch-cache');
+
 const WFNQ = require('../index.js');
 const Settings = require('../lib/Settings');
 
-process.env.NEXUS_TIMEOUT = 5000;
+// process.env.NEXUS_TIMEOUT = 10000;
+process.env.MARKET_TIMEOUT = 3000;
+
+// dumb logger to grab any logging output that would clog the test log
+const logger = {
+  debug: () => {},
+  log: () => {},
+  info: () => {},
+  // eslint-disable-next-line no-console
+  // turn on to debug error: (e) => console.error(e),
+  error: () => {},
+  silly: () => {},
+};
 
 const settings = new Settings();
+const marketCache = new Cache(settings.urls.market, settings.maxCacheLength, {
+  logger,
+  delayStart: true,
+});
 
 const should = chai.should();
 const querystring = 'Akbolto';
 
-describe('Nexus Query', () => {
-  let nexus;
+const nexus = new WFNQ({ logger, marketCache });
 
+describe('Nexus Query', () => {
   const testQueryWithPlatform = async (platform) => {
     const result = await nexus.priceCheckQueryAttachment(querystring, null, platform);
 
@@ -22,18 +40,10 @@ describe('Nexus Query', () => {
     const embed = result[0];
     embed.should.be.an('object');
     embed.type.should.equal('rich');
+    embed.should.have.own.property('title');
     embed.title.should.have.string(`[${settings.lookupAlias(platform).toUpperCase()}]`);
     embed.description.should.have.string(querystring);
   };
-
-  beforeEach(async () => {
-    nexus = new WFNQ();
-  });
-
-  afterEach(async () => {
-    await nexus.stopUpdating();
-    nexus = undefined;
-  });
 
   describe('price check query attachment', () => {
     it('should throw errors when called without query', async () => {
@@ -53,17 +63,13 @@ describe('Nexus Query', () => {
     });
 
     it('should create an attachment when called with attachment query', async () => {
-      try {
-        const result = await nexus.priceCheckQueryAttachment(querystring);
-        result.should.be.an('array');
-        result[0].should.be.an('object');
+      const result = await nexus.priceCheckQueryAttachment(querystring);
+      result.should.be.an('array');
+      result[0].should.be.an('object');
 
-        should.exist(result[0].fields);
-        result[0].fields.should.be.an('array');
-        result[0].fields.length.should.equal(1);
-      } catch (error) {
-        should.not.exist(error);
-      }
+      should.exist(result[0].fields);
+      result[0].fields.should.be.an('array');
+      result[0].fields.length.should.equal(5);
     });
 
     it('should create an attachment when querying for a mod', async () => {
