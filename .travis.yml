@@ -20,8 +20,6 @@ stages:
   - name: lint
   - name: test
   - name: coverage
-  - name: greenkeeper
-    if: branch =~ /^greenkeeper.*$/
   - name: release
     if: branch = master && type NOT IN (pull_request)
   - name: docs
@@ -35,12 +33,6 @@ jobs:
       script: npm test
     - stage: coverage
       script: npm run coverage
-    - stage: greenkeeper
-      before_install: npm i -g greenkeeper-lockfile
-      install: npm i
-      script:
-        - greenkeeper-lockfile-update
-        - greenkeeper-lockfile-upload
     - stage: release
       node_js: node
       deploy:
