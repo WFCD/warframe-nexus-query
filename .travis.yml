@@ -6,13 +6,12 @@ cache:
 notifications:
   email: false
 node_js:
-  - "10.15.3"
-  - "10.16.0"
-  - "11.15.0"
-  - "12.13.1"
-  - "13.3.0"
-  - "lts/*"
   - node
+  - "lts/*"
+  - "13.3.0"
+  - "12.13.1"
+  - "11.15.0"
+  - "10.19.0"
 
 install: npm install
 
