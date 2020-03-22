@@ -7,7 +7,7 @@ const Cache = require('json-fetch-cache');
 const WFNQ = require('../index.js');
 const Settings = require('../lib/Settings');
 
-// process.env.NEXUS_TIMEOUT = 10000;
+process.env.NEXUS_TIMEOUT = 10000;
 process.env.MARKET_TIMEOUT = 3000;
 
 // dumb logger to grab any logging output that would clog the test log
