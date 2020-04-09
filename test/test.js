@@ -42,7 +42,7 @@ describe('Nexus Query', () => {
     embed.type.should.equal('rich');
     embed.should.have.own.property('title');
     embed.title.should.have.string(`[${settings.lookupAlias(platform).toUpperCase()}]`);
-    embed.description.should.have.string(querystring);
+    embed.title.should.have.string(querystring);
   };
 
   describe('price check query attachment', () => {
@@ -73,16 +73,14 @@ describe('Nexus Query', () => {
     });
 
     it('should create an attachment when querying for a mod', async () => {
-      try {
-        const modString = 'Vermillion Storm';
-        const result = await nexus.priceCheckQueryAttachment(modString);
-        result.should.be.an('array');
-        const embed = result[0];
-        embed.should.be.an('object');
-        embed.description.should.have.string(modString);
-      } catch (error) {
-        should.not.exist(error);
-      }
+      const modString = 'Vermillion Storm';
+      const result = await nexus.priceCheckQueryAttachment(modString);
+      result.should.be.an('array');
+      const embed = result[0];
+      embed.should.be.an('object');
+      embed.title.should.have.string(modString);
+
+      embed.fields[0].should.be.an('object');
     });
 
     it('should create an no results for attachment query', async () => {
