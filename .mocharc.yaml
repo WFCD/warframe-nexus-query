@@ -2,3 +2,4 @@ color: true
 diff: true
 exit: true
 timeout: 20000
+retries: 5

@@ -28,7 +28,7 @@ const marketCache = new Cache(settings.urls.market, settings.maxCacheLength, {
 });
 
 const should = chai.should();
-const querystring = 'Akbolto';
+const querystring = 'loki prime';
 
 const nexus = new WFNQ({ logger, marketCache });
 
@@ -43,7 +43,7 @@ describe('Nexus Query', () => {
     embed.type.should.equal('rich');
     embed.should.have.own.property('title');
     embed.title.should.have.string(`[${settings.lookupAlias(platform).toUpperCase()}]`);
-    embed.title.should.have.string(querystring);
+    embed.title.toLowerCase().should.have.string(querystring);
   };
 
   describe('price check query attachment', () => {
@@ -60,7 +60,7 @@ describe('Nexus Query', () => {
 
       Object.keys(settings.platforms).forEach(async (platform) => {
         it(`should accomodate ${platform}`, async () => {
-          await testQueryWithPlatform(platform);
+          return testQueryWithPlatform(platform);
         });
       });
     });
