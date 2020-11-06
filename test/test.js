@@ -32,6 +32,7 @@ const querystring = 'Akbolto';
 
 const nexus = new WFNQ({ logger, marketCache });
 
+beforeEach(done => setTimeout(done, 500));
 describe('Nexus Query', () => {
   const testQueryWithPlatform = async (platform) => {
     const result = await nexus.priceCheckQueryAttachment(querystring, null, platform);
@@ -55,6 +56,8 @@ describe('Nexus Query', () => {
     });
 
     describe('when providing a platform', () => {
+      beforeEach(done => setTimeout(done, 7000));
+
       Object.keys(settings.platforms).forEach(async (platform) => {
         it(`should accomodate ${platform}`, async () => {
           await testQueryWithPlatform(platform);
@@ -77,6 +80,7 @@ describe('Nexus Query', () => {
       const result = await nexus.priceCheckQueryAttachment(modString);
       result.should.be.an('array');
       const embed = result[0];
+      should.exist(embed);
       embed.should.be.an('object');
       embed.title.should.have.string(modString);
 
