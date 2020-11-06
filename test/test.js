@@ -28,10 +28,11 @@ const marketCache = new Cache(settings.urls.market, settings.maxCacheLength, {
 });
 
 const should = chai.should();
-const querystring = 'Akbolto';
+const querystring = 'loki prime';
 
 const nexus = new WFNQ({ logger, marketCache });
 
+beforeEach((done) => setTimeout(done, 500));
 describe('Nexus Query', () => {
   const testQueryWithPlatform = async (platform) => {
     const result = await nexus.priceCheckQueryAttachment(querystring, null, platform);
@@ -42,7 +43,7 @@ describe('Nexus Query', () => {
     embed.type.should.equal('rich');
     embed.should.have.own.property('title');
     embed.title.should.have.string(`[${settings.lookupAlias(platform).toUpperCase()}]`);
-    embed.title.should.have.string(querystring);
+    embed.title.toLowerCase().should.have.string(querystring);
   };
 
   describe('price check query attachment', () => {
@@ -55,10 +56,10 @@ describe('Nexus Query', () => {
     });
 
     describe('when providing a platform', () => {
+      beforeEach((done) => setTimeout(done, 7000));
+
       Object.keys(settings.platforms).forEach(async (platform) => {
-        it(`should accomodate ${platform}`, async () => {
-          await testQueryWithPlatform(platform);
-        });
+        it(`should accomodate ${platform}`, async () => testQueryWithPlatform(platform));
       });
     });
 
@@ -77,6 +78,7 @@ describe('Nexus Query', () => {
       const result = await nexus.priceCheckQueryAttachment(modString);
       result.should.be.an('array');
       const embed = result[0];
+      should.exist(embed);
       embed.should.be.an('object');
       embed.title.should.have.string(modString);
 
