@@ -59,9 +59,7 @@ describe('Nexus Query', () => {
       beforeEach((done) => setTimeout(done, 7000));
 
       Object.keys(settings.platforms).forEach(async (platform) => {
-        it(`should accomodate ${platform}`, async () => {
-          return testQueryWithPlatform(platform);
-        });
+        it(`should accomodate ${platform}`, async () => testQueryWithPlatform(platform));
       });
     });
 
