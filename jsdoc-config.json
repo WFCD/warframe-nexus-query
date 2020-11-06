@@ -1,0 +1,30 @@
+{
+  "source": {
+    "include": ["./lib/", "./README.md"]
+  },
+  "opts": {
+    "template": "./node_modules/ink-docstrap/template",
+    "recurse": true
+  },
+  "recurseDepth": 10,
+  "plugins": [],
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false,
+    "systemName"        : "warframe-nexus-query",
+    "footer"            : "",
+    "copyright"         : "©2020, WFCD",
+    "includeDate"       : true,
+    "navType"           : "vertical",
+    "theme"             : "cosmo",
+    "linenums"          : true,
+    "collapseSymbols"   : true,
+    "inverseNav"        : true,
+    "outputSourceFiles" : true,
+    "outputSourcePath"  : true,
+    "dateFormat"        : "dddd, MMMM Do YYYY, HH:mm:ss",
+    "syntaxTheme"       : "dark",
+    "sort"              : "longname, version, since",
+    "search"            : true
+  }
+}

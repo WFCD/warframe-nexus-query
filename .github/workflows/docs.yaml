@@ -17,7 +17,7 @@ jobs:
         uses: andstor/jsdoc-action@v1
         with:
           output_dir: ./docs
-          config_file: jsdoc.conf
+          config_file: jsdoc-config.json
           front_page: README.md
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
