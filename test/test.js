@@ -34,7 +34,7 @@ const querystring = 'loki prime';
 const nexus = new WFNQ({ logger, marketCache, skipNexus: true });
 
 describe('Nexus Query', () => {
-  beforeEach((done) => setTimeout(done, 750));
+  beforeEach((done) => setTimeout(done, 2000));
 
   describe('price check query string', () => {
     it('should throw errors when called without query', async () => {
