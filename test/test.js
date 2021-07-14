@@ -34,7 +34,7 @@ const querystring = 'loki prime';
 const nexus = new WFNQ({ logger, marketCache, skipNexus: true });
 
 describe('Nexus Query', () => {
-  beforeEach(done => setTimeout(done, 750));
+  beforeEach((done) => setTimeout(done, 750));
 
   describe('price check query string', () => {
     it('should throw errors when called without query', async () => {
@@ -70,7 +70,7 @@ describe('Nexus Query', () => {
         result.should.be.a('string');
         result.should.have.string(querystring);
       };
-      
+
       Object.keys(settings.platforms).forEach(async (platform) => {
         if (typeof settings.platforms[platform] === 'string') {
           it(`should accomodate ${platform}`, async () => testQueryWithPlatform(platform));

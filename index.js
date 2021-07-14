@@ -11,16 +11,6 @@ const Creator = require('./lib/AttachmentCreator.js');
 const MarketFetcher = require('./lib/market/v1/MarketFetcher.js');
 const NexusFetcher = require('./lib/nexus/v2/NexusFetcher');
 
-const noResultAttachment = {
-  type: 'rich',
-  title: 'No results',
-  color: '0xff55ff',
-  url: 'https://warframe.market',
-  footer: {
-    text: 'Pricechecks from NexusStats and Warframe.Market',
-  },
-};
-
 if (!global.__basedir) {
   global.__basedir = __dirname;
 }

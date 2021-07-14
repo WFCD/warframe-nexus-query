@@ -30,8 +30,8 @@ setTimeout(async () => {
       body: JSON.stringify({ embeds }),
       headers: { 'Content-Type': 'application/json' },
     });
-    console.log(`response: ${await res.text()}`);
     if (res.ok) {
+      console.log(`response: ${await res.text()}`);
     } else {
       console.error(`fail! ${res.ok} ${JSON.stringify(embeds)}`);
     }
