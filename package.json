@@ -4,7 +4,7 @@
   "description": "Query prices form nexus-stats.com and warframe.market.",
   "main": "index.js",
   "scripts": {
-    "test": "nyc --reporter=lcov mocha",
+    "test": "nyc mocha",
     "coverage": "npm test && nyc report --reporter=text-lcov | coveralls",
     "build-docs": "jsdoc -c jsdoc-config.json -d docs",
     "lint": "eslint index.js lib/ test/",
@@ -51,8 +51,6 @@
     "eslint": "^6.1.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.19.1",
-    "ink-docstrap": "^1.3.2",
-    "jsdoc": "^3.6.6",
     "mocha": "^7.1.1",
     "nyc": "^15.1.0"
   },
@@ -106,5 +104,21 @@
       "no-await-in-loop": "off",
       "import/no-unresolved": 0
     }
+  },
+  "mocha": {
+    "spec": "test/test.js",
+    "timeout": 10000,
+    "bail": true
+  },
+  "nyc": {
+    "reporter": [
+      "lcov",
+      "text"
+    ],
+    "skip-full": true,
+    "exclude": [
+      "test/*",
+      "lib/nexus/*"
+    ]
   }
 }

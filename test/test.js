@@ -16,7 +16,8 @@ const logger = {
   log: () => {},
   info: () => {},
   // eslint-disable-next-line no-console
-  // turn on to debug error: (e) => console.error(e),
+  // turn on to debug
+  // error: (e) => console.error(e),
   error: () => {},
   silly: () => {},
 };
@@ -24,27 +25,59 @@ const logger = {
 const settings = new Settings();
 const marketCache = new Cache(settings.urls.market, settings.maxCacheLength, {
   logger,
-  delayStart: true,
+  delayStart: false,
 });
 
 const should = chai.should();
 const querystring = 'loki prime';
 
-const nexus = new WFNQ({ logger, marketCache });
+const nexus = new WFNQ({ logger, marketCache, skipNexus: true });
 
-beforeEach((done) => setTimeout(done, 500));
 describe('Nexus Query', () => {
-  const testQueryWithPlatform = async (platform) => {
-    const result = await nexus.priceCheckQueryAttachment(querystring, null, platform);
+  beforeEach(done => setTimeout(done, 750));
 
-    result.should.be.an('array');
-    const embed = result[0];
-    embed.should.be.an('object');
-    embed.type.should.equal('rich');
-    embed.should.have.own.property('title');
-    embed.title.should.have.string(`[${settings.lookupAlias(platform).toUpperCase()}]`);
-    embed.title.toLowerCase().should.have.string(querystring);
-  };
+  describe('price check query string', () => {
+    it('should throw errors when called without query', async () => {
+      try {
+        await nexus.priceCheckQueryString();
+      } catch (error) {
+        should.exist(error);
+      }
+    });
+    it('should create a string when called with string query', async () => {
+      const result = await nexus.priceCheckQueryString(querystring);
+      result.should.be.an('string');
+    });
+    it('should create a string when querying for a mod', async () => {
+      const modString = 'Vermillion Storm';
+      const result = await nexus.priceCheckQueryString(modString);
+      result.should.be.a('string');
+      result.should.have.string(modString);
+    });
+    it('should create an no results string for query', async () => {
+      try {
+        const result = await nexus.priceCheckQueryString('nonagon');
+        result.should.be.a('string');
+      } catch (error) {
+        should.not.exist(error);
+      }
+    });
+
+    describe('when providing a platform', () => {
+      const testQueryWithPlatform = async (platform) => {
+        const result = await nexus.priceCheckQueryString(querystring, null, platform);
+
+        result.should.be.a('string');
+        result.should.have.string(querystring);
+      };
+      
+      Object.keys(settings.platforms).forEach(async (platform) => {
+        if (typeof settings.platforms[platform] === 'string') {
+          it(`should accomodate ${platform}`, async () => testQueryWithPlatform(platform));
+        }
+      });
+    });
+  });
 
   describe('price check query attachment', () => {
     it('should throw errors when called without query', async () => {
@@ -54,15 +87,6 @@ describe('Nexus Query', () => {
         should.exist(error);
       }
     });
-
-    describe('when providing a platform', () => {
-      beforeEach((done) => setTimeout(done, 7000));
-
-      Object.keys(settings.platforms).forEach(async (platform) => {
-        it(`should accomodate ${platform}`, async () => testQueryWithPlatform(platform));
-      });
-    });
-
     it('should create an attachment when called with attachment query', async () => {
       const result = await nexus.priceCheckQueryAttachment(querystring);
       result.should.be.an('array');
@@ -72,7 +96,6 @@ describe('Nexus Query', () => {
       result[0].fields.should.be.an('array');
       result[0].fields.length.should.equal(5);
     });
-
     it('should create an attachment when querying for a mod', async () => {
       const modString = 'Vermillion Storm';
       const result = await nexus.priceCheckQueryAttachment(modString);
@@ -84,7 +107,6 @@ describe('Nexus Query', () => {
 
       embed.fields[0].should.be.an('object');
     });
-
     it('should create an no results for attachment query', async () => {
       try {
         const result = await nexus.priceCheckQueryAttachment('nonagon');
@@ -94,6 +116,26 @@ describe('Nexus Query', () => {
       } catch (error) {
         should.not.exist(error);
       }
+    });
+
+    describe('when providing a platform', () => {
+      const testQueryWithPlatform = async (platform) => {
+        const result = await nexus.priceCheckQueryAttachment(querystring, null, platform);
+
+        result.should.be.an('array');
+        const embed = result[0];
+        embed.should.be.an('object');
+        embed.type.should.equal('rich');
+        embed.should.have.own.property('title');
+        embed.title.should.have.string(`[${settings.lookupAlias(platform).toUpperCase()}]`);
+        embed.title.toLowerCase().should.have.string(querystring);
+      };
+
+      Object.keys(settings.platforms).forEach(async (platform) => {
+        if (typeof settings.platforms[platform] === 'string') {
+          it(`should accomodate ${platform}`, async () => testQueryWithPlatform(platform));
+        }
+      });
     });
   });
 });

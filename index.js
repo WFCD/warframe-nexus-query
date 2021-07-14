@@ -13,7 +13,7 @@ const NexusFetcher = require('./lib/nexus/v2/NexusFetcher');
 
 const noResultAttachment = {
   type: 'rich',
-  description: 'No result',
+  title: 'No results',
   color: '0xff55ff',
   url: 'https://warframe.market',
   footer: {
@@ -28,29 +28,41 @@ if (!global.__basedir) {
 /**
  * Represents a queryable datastore of information derived from `https://nexus-stats.com/api`
  */
-class PriceCheckQuerier {
+module.exports = class PriceCheckQuerier {
   /**
    * Creates an instance representing a WarframeNexusStats data object
    * @constructor
    */
-  constructor({ logger = console, nexusApi = undefined, marketCache } = {}) {
+  constructor({
+    logger = console,
+    nexusApi = undefined,
+    marketCache = undefined,
+    skipNexus = false,
+    skipMarket = false,
+  }) {
     this.settings = new Settings();
     this.logger = logger;
+    this.skipNexus = skipNexus;
+    this.skipMarket = skipMarket;
 
-    try {
-      this.nexusFetcher = new NexusFetcher({ settings: this.settings, nexusApi, logger });
-    } catch (e) {
-      this.logger.error(`couldn't set up nexus fetcher: ${e.message}`);
+    if (!skipNexus) {
+      try {
+        this.nexusFetcher = new NexusFetcher({ settings: this.settings, nexusApi, logger });
+      } catch (e) {
+        this.logger.error(`couldn't set up nexus fetcher: ${e.message}`);
+      }
     }
 
-    try {
-      /**
-       * Fetch market data
-       * @type {MarketFetcher}
-       */
-      this.marketFetcher = new MarketFetcher({ logger, settings: this.settings, marketCache });
-    } catch (e) {
-      this.logger.error(`couldn't set up market fetcher: ${e.message}`);
+    if (!skipMarket) {
+      try {
+        /**
+         * Fetch market data
+         * @type {MarketFetcher}
+         */
+        this.marketFetcher = new MarketFetcher({ logger, settings: this.settings, marketCache });
+      } catch (e) {
+        this.logger.error(`couldn't set up market fetcher: ${e.message}`);
+      }
     }
 
     /**
@@ -67,36 +79,47 @@ class PriceCheckQuerier {
    * @returns {Promise<Array<NexusItem>>} a Promise of an array of Item objects
    */
   async priceCheckQuery(query, platform = 'pc') {
+    this.logger.info(`state:\n\tskipNexus: ${this.skipNexus}\n\tskipMarket: ${this.skipMarket}\n\tquery: ${query}\n\tplatform: ${platform}`);
     if (!query) {
       throw new Error('This funtcion requires a query to be provided');
     }
     // eslint-disable-next-line no-param-reassign
-    platform = this.settings.platforms[platform.toLowerCase()];
+    platform = this.settings.lookupAlias(platform.toLowerCase());
 
     let nexusResults;
     let successfulQuery;
     let attachments = [];
-    if (platform !== 'switch') {
-      try {
-        const nexusPromise = this.nexusFetcher.queryNexus(query, platform);
-        nexusResults = await promiseTimeout(this.settings.timeouts.nexus, nexusPromise);
-        ({ successfulQuery, attachments } = nexusResults);
-      } catch (e) {
-        this.logger.error(`Couldn't process ${query} on nexus-hub... time out.`);
+    if (!this.skipNexus) {
+      this.logger.info(`querying nexus for ${query} on ${platform}`);
+      if (platform !== 'switch') {
+        try {
+          const nexusPromise = this.nexusFetcher.queryNexus(query, platform);
+          nexusResults = await promiseTimeout(this.settings.timeouts.nexus, nexusPromise);
+          ({ successfulQuery, attachments } = nexusResults);
+        } catch (e) {
+          this.logger.error(`Couldn't process ${query} on nexus-hub... time out.`);
+        }
       }
+    } else {
+      this.logger.info('skipNexus');
     }
 
-    if (this.marketFetcher) {
+    if (this.marketFetcher && !this.skipMarket) {
+      this.logger.info(`querying market for ${query} on ${platform}`);
       try {
-        const marketPromise = this.marketFetcher.queryMarket(query, { successfulQuery, platform });
+        const marketPromise = this.marketFetcher.queryMarket(query, {
+          successfulQuery, platform: this.settings.lookupAlias(platform, true),
+        });
         const marketResults = await promiseTimeout(this.settings.timeouts.market, marketPromise);
         attachments = [...attachments, ...marketResults];
       } catch (e) {
         this.logger.error(`Couldn't process ${query} on warframe.market... time out.`);
       }
+    } else {
+      this.logger.info('No market fetcher, skipping market');
     }
 
-    return attachments.length ? attachments : [noResultAttachment];
+    return attachments;
   }
 
   /**
@@ -108,7 +131,7 @@ class PriceCheckQuerier {
    */
   async priceCheckQueryString(query, priorResults, platform = 'pc') {
     const components = priorResults || await this.priceCheckQuery(query, platform);
-    const tokens = [];
+    const tokens = [`[${platform.toUpperCase()}] ${query}`];
     components.slice(0, 4).forEach((component) => {
       tokens.push(`${md.lineEnd}${component.toString()}`);
     });
@@ -138,8 +161,10 @@ class PriceCheckQuerier {
    * Stop updating caches
    */
   async stopUpdating() {
-    if (this.marketFetcher.marketCache) {
+    if (!this.skipMarket && this.marketFetcher.marketCache) {
       this.marketFetcher.marketCache.stop();
+    } else {
+      this.logger.log('no market cache, or skipMarket was true');
     }
 
     if (fss.existsSync(`${global.__basedir}/tmp`)) {
@@ -159,6 +184,4 @@ class PriceCheckQuerier {
       }
     }
   }
-}
-
-module.exports = PriceCheckQuerier;
+};
