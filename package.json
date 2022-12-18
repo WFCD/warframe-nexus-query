@@ -108,7 +108,8 @@
   "mocha": {
     "spec": "test/test.js",
     "timeout": 10000,
-    "bail": true
+    "bail": true,
+    "exit": true
   },
   "nyc": {
     "reporter": [
