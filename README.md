@@ -4,7 +4,7 @@
 [![Discord](https://img.shields.io/discord/256087517353213954.svg?logo=discord)](https://discord.gg/jGZxH9f)
 
 
-A node project for allowing simple access to the [Nexus Hub](https://nexushub.co/) & [Warframe.Market](https://warframe.market)  APIs.
+A node project for allowing simple summary of the [Warframe.Market](https://warframe.market) pricing API.
 
 ## Installation
 ```
@@ -13,17 +13,18 @@ npm install --save warframe-nexus-query
 
 ## Usage
 
-Require | Module File | Accessor | Description | parameters
---- | --- | --- | --- | ---
-`warframe-nexus-query` | `index.js` | `.priceCheckQueryString` | Get Query result string | `query`, `callback`
-`warframe-nexus-query` | `index.js` | `.priceCheckQuery` | Get Query result objects, has more parameters available | `query`, `callback`
+| Require                | Module File | Accessor                 | Description                                             | parameters          |
+|------------------------|-------------|--------------------------|---------------------------------------------------------|---------------------|
+| `warframe-nexus-query` | `index.js`  | `.priceCheckQueryString` | Get Query result string                                 | `query`, `callback` |
+| `warframe-nexus-query` | `index.js`  | `.priceCheckQuery`       | Get Query result objects, has more parameters available | `query`, `callback` |
 
 ## Environment variables
 
-Variable | example | default
---- | --- | ---
-`NEXUSSTATS_MAX_CACHED_TIME` | `600000` | `30000`
-`NEXUSSTATS_URL_OVERRIDE` | `'https://nexus-stats.com/api'` | `https://nexus-stats.com/api`
+| Variable                     | example                         | default                       |
+|------------------------------|---------------------------------|-------------------------------|
+| `NEXUSSTATS_MAX_CACHED_TIME` | `600000`                        | `30000`                       |
+| `NEXUSSTATS_URL_OVERRIDE`    | `'https://nexus-stats.com/api'` | `https://nexus-stats.com/api` |
+
 
 ## Objects
 

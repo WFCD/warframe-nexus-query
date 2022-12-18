@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-      - run: npm i
+        uses: actions/checkout@v3
+      - run: npm ci
       - run: npm i ink-docstrap jsdoc
       - name: Build
         uses: andstor/jsdoc-action@v1
