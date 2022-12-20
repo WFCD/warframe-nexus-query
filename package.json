@@ -109,7 +109,8 @@
     "spec": "test/test.js",
     "timeout": 10000,
     "bail": true,
-    "exit": true
+    "exit": true,
+    "slow": 10000
   },
   "nyc": {
     "reporter": [

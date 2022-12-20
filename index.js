@@ -9,15 +9,11 @@ const promiseTimeout = require('./lib/promiseTimeout');
 const Settings = require('./lib/Settings.js');
 const Creator = require('./lib/AttachmentCreator.js');
 const MarketFetcher = require('./lib/market/v1/MarketFetcher.js');
-const NexusFetcher = require('./lib/nexus/v2/NexusFetcher');
 
 if (!global.__basedir) {
   global.__basedir = __dirname;
 }
 
-/**
- * Represents a queryable datastore of information derived from `https://nexus-stats.com/api`
- */
 module.exports = class PriceCheckQuerier {
   /**
    * Creates an instance representing a WarframeNexusStats data object
@@ -25,23 +21,12 @@ module.exports = class PriceCheckQuerier {
    */
   constructor({
     logger = console,
-    nexusApi = undefined,
     marketCache = undefined,
-    skipNexus = false,
     skipMarket = false,
   }) {
     this.settings = new Settings();
     this.logger = logger;
-    this.skipNexus = skipNexus;
     this.skipMarket = skipMarket;
-
-    if (!skipNexus) {
-      try {
-        this.nexusFetcher = new NexusFetcher({ settings: this.settings, nexusApi, logger });
-      } catch (e) {
-        this.logger.error(`couldn't set up nexus fetcher: ${e.message}`);
-      }
-    }
 
     if (!skipMarket) {
       try {
@@ -51,7 +36,7 @@ module.exports = class PriceCheckQuerier {
          */
         this.marketFetcher = new MarketFetcher({ logger, settings: this.settings, marketCache });
       } catch (e) {
-        this.logger.error(`couldn't set up market fetcher: ${e.message}`);
+        /* istanbul ignore next */ this.logger.error(`couldn't set up market fetcher: ${e.message}`);
       }
     }
 
@@ -69,31 +54,17 @@ module.exports = class PriceCheckQuerier {
    * @returns {Promise<Array<NexusItem>>} a Promise of an array of Item objects
    */
   async priceCheckQuery(query, platform = 'pc') {
-    this.logger.info(`state:\n\tskipNexus: ${this.skipNexus}\n\tskipMarket: ${this.skipMarket}\n\tquery: ${query}\n\tplatform: ${platform}`);
+    this.logger.info(`state:\n\tskipMarket: ${this.skipMarket}\n\tquery: ${query}\n\tplatform: ${platform}`);
     if (!query) {
       throw new Error('This funtcion requires a query to be provided');
     }
     // eslint-disable-next-line no-param-reassign
     platform = this.settings.lookupAlias(platform.toLowerCase());
 
-    let nexusResults;
     let successfulQuery;
     let attachments = [];
-    if (!this.skipNexus) {
-      this.logger.info(`querying nexus for ${query} on ${platform}`);
-      if (platform !== 'switch') {
-        try {
-          const nexusPromise = this.nexusFetcher.queryNexus(query, platform);
-          nexusResults = await promiseTimeout(this.settings.timeouts.nexus, nexusPromise);
-          ({ successfulQuery, attachments } = nexusResults);
-        } catch (e) {
-          this.logger.error(`Couldn't process ${query} on nexus-hub... time out.`);
-        }
-      }
-    } else {
-      this.logger.info('skipNexus');
-    }
 
+    /* istanbul ignore else */
     if (this.marketFetcher && !this.skipMarket) {
       this.logger.info(`querying market for ${query} on ${platform}`);
       try {
@@ -103,7 +74,7 @@ module.exports = class PriceCheckQuerier {
         const marketResults = await promiseTimeout(this.settings.timeouts.market, marketPromise);
         attachments = [...attachments, ...marketResults];
       } catch (e) {
-        this.logger.error(`Couldn't process ${query} on warframe.market... time out.`);
+        /* istanbul ignore next */ this.logger.error(`Couldn't process ${query} on warframe.market... time out.`);
       }
     } else {
       this.logger.info('No market fetcher, skipping market');
