@@ -6,9 +6,9 @@ const fss = require('fs');
 const path = require('path');
 
 const promiseTimeout = require('./lib/promiseTimeout');
-const Settings = require('./lib/Settings.js');
-const Creator = require('./lib/AttachmentCreator.js');
-const MarketFetcher = require('./lib/market/v1/MarketFetcher.js');
+const Settings = require('./lib/Settings');
+const Creator = require('./lib/AttachmentCreator');
+const MarketFetcher = require('./lib/market/v1/MarketFetcher');
 
 if (!global.__basedir) {
   global.__basedir = __dirname;
@@ -19,11 +19,7 @@ module.exports = class PriceCheckQuerier {
    * Creates an instance representing a WarframeNexusStats data object
    * @constructor
    */
-  constructor({
-    logger = console,
-    marketCache = undefined,
-    skipMarket = false,
-  }) {
+  constructor({ logger = console, marketCache = undefined, skipMarket = false }) {
     this.settings = new Settings();
     this.logger = logger;
     this.skipMarket = skipMarket;
@@ -69,7 +65,8 @@ module.exports = class PriceCheckQuerier {
       this.logger.info(`querying market for ${query} on ${platform}`);
       try {
         const marketPromise = this.marketFetcher.queryMarket(query, {
-          successfulQuery, platform: this.settings.lookupAlias(platform, true),
+          successfulQuery,
+          platform: this.settings.lookupAlias(platform, true),
         });
         const marketResults = await promiseTimeout(this.settings.timeouts.market, marketPromise);
         attachments = [...attachments, ...marketResults];
@@ -91,15 +88,13 @@ module.exports = class PriceCheckQuerier {
    * @returns {Promise<string>} a Promise of a string containing the results of the query
    */
   async priceCheckQueryString(query, priorResults, platform = 'pc') {
-    const components = priorResults || await this.priceCheckQuery(query, platform);
+    const components = priorResults || (await this.priceCheckQuery(query, platform));
     const tokens = [`[${platform.toUpperCase()}] ${query}`];
     components.slice(0, 4).forEach((component) => {
       tokens.push(`${md.lineEnd}${component.toString()}`);
     });
     let componentsToReturnString = `${md.codeMulti}${tokens.join()}${md.blockEnd}`;
-    componentsToReturnString = components.length > 0
-      ? componentsToReturnString
-      : this.settings.defaultString;
+    componentsToReturnString = components.length > 0 ? componentsToReturnString : this.settings.defaultString;
     return componentsToReturnString;
   }
 
@@ -108,10 +103,10 @@ module.exports = class PriceCheckQuerier {
    * @param {string} query Query to search the nexus-stats database against
    * @param {Object[]} priorResults results provided from a prior search
    * @param {string} platform Platform to query price data for. One of 'pc', 'ps4', 'xb1'
-   * @returns {Array<Object>} a Promise of an array of attachment objects
+   * @returns {Promise<Array<Object>>} a Promise of an array of attachment objects
    */
   async priceCheckQueryAttachment(query, priorResults, platform = 'pc') {
-    const components = priorResults || await this.priceCheckQuery(query, platform);
+    const components = priorResults || (await this.priceCheckQuery(query, platform));
     const realPlatform = this.settings.lookupAlias(platform);
 
     const attachment = this.creator.attachmentFromComponents(components, query, realPlatform);
@@ -122,6 +117,7 @@ module.exports = class PriceCheckQuerier {
    * Stop updating caches
    */
   async stopUpdating() {
+    /* istanbul ignore else */
     if (!this.skipMarket && this.marketFetcher.marketCache) {
       this.marketFetcher.marketCache.stop();
     } else {
@@ -131,14 +127,18 @@ module.exports = class PriceCheckQuerier {
     if (fss.existsSync(`${global.__basedir}/tmp`)) {
       const files = await fs.readdir(`${global.__basedir}/tmp`);
       let allSuccess = true;
-      for (const file of files) {
-        try {
-          await fs.unlink(path.join(global.__basedir, 'tmp', file));
-        } catch (e) {
-          allSuccess = false;
-          this.logger.debug(`Couldn't delete ${file}`);
-        }
-      }
+      await Promise.all(
+        files.map(
+          /* istanbul ignore next */ async (file) => {
+            try {
+              await fs.unlink(path.join(global.__basedir, 'tmp', file));
+            } catch (e) {
+              allSuccess = false;
+              this.logger.debug(`Couldn't delete ${file}`);
+            }
+          }
+        )
+      );
 
       if (allSuccess) {
         await fs.rmdir(`${global.__basedir}/tmp`);
