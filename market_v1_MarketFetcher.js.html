@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="AttachmentCreator.html">AttachmentCreator</a></li><li><a href="Component.html">Component</a></li><li><a href="Item.html">Item</a></li><li><a href="NexusItem.html">NexusItem</a></li><li><a href="Settings.html">Settings</a></li><li><a href="Summary.html">Summary</a></li>
+					<li><a href="AttachmentCreator.html">AttachmentCreator</a></li><li><a href="Settings.html">Settings</a></li><li><a href="Summary.html">Summary</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#fieldValue">fieldValue</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li><li><a href="global.html#truncPercentage">truncPercentage</a></li>
+					<li><a href="global.html#fieldValue">fieldValue</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li>
 				</ul>
 			</li>
 			
@@ -87,16 +87,24 @@ const fs = require('fs').promises;
 
 const fetch = require('node-fetch');
 
-const MarketSummary = require('./summary.js');
+const MarketSummary = require('./summary');
+
+/**
+ * @typedef {Object} MappedPrice
+ * @property {string} volume
+ * @property {string} median
+ * @property {string} max_price
+ * @property {string} min_price
+ * @property {string} datetime ts formatted date string
+ */
 
 class MarketFetcher {
   constructor({ logger = console, settings, marketCache }) {
     /**
-       * The json cache stpromg data from warframe.market
-       * @type {JSONCache}
-       */
-    this.marketCache = marketCache
-      || new JSONCache(settings.urls.market, settings.maxCacheLength, { logger });
+     * The json cache stpromg data from warframe.market
+     * @type {JSONCache}
+     */
+    this.marketCache = marketCache || new JSONCache(settings.urls.market, settings.maxCacheLength, { logger });
 
     this.settings = settings;
     this.urls = {
@@ -116,8 +124,12 @@ class MarketFetcher {
         platform: platform.toLowerCase(),
       },
     };
-    const data = await fetch(`${this.urls.market}${this.urls.marketBasePath}${urlName}/statistics`, reqOpts)
-      .then((d) => d.json());
+    const data = await fetch(`${this.urls.market}${this.urls.marketBasePath}${urlName}/statistics`, reqOpts).then((d) =>
+      d.json()
+    );
+    /**
+     * @type {MappedPrice[]}
+     */
     const stats = data.payload.statistics_live['48hours'];
 
     // Descending sort
@@ -127,17 +139,17 @@ class MarketFetcher {
       if (tsA === tsB) return 0;
       if (tsA &lt; tsB) return -1;
       if (tsA > tsB) return 1;
+      /* istanbul ignore next */
       return 0;
     });
 
     const deepData = stats[0];
-    const summary = {
-      soldCount: deepData ? Number.parseInt(deepData.volume, 10) : null,
-      soldPrice: deepData ? Number.parseInt(deepData.median, 10) : null,
-      maximum: deepData ? Number.parseInt(deepData.max_price, 10) : null,
-      minimum: deepData ? Number.parseInt(deepData.min_price, 10) : null,
+    return {
+      soldCount: deepData ? Number.parseInt(deepData.volume, 10) : undefined,
+      soldPrice: deepData ? Number.parseInt(deepData.median, 10) : undefined,
+      maximum: deepData ? Number.parseInt(deepData.max_price, 10) : undefined,
+      minimum: deepData ? Number.parseInt(deepData.min_price, 10) : undefined,
     };
-    return summary;
   }
 
   async resultForItem(urlName, platform = 'pc') {
@@ -146,11 +158,8 @@ class MarketFetcher {
         platform: platform.toLowerCase(),
       },
     };
-    const res = await fetch(`${this.urls.market}${this.urls.marketBasePath}${urlName}`, reqOpts)
-      .then((d) => d.json());
-    const data = res.payload ? await Promise.all(res.payload.item.items_in_set
-      .map((item) => this.summaryForItem(item))) : {};
-    return data;
+    const res = await fetch(`${this.urls.market}${this.urls.marketBasePath}${urlName}`, reqOpts).then((d) => d.json());
+    return res.payload ? Promise.all(res.payload.item.items_in_set.map((item) => this.summaryForItem(item))) : {};
   }
 
   /**
@@ -167,9 +176,7 @@ class MarketFetcher {
     }
     const summary = new MarketSummary(item);
 
-    const prices = await this.averagesForItem(item.url_name);
-
-    summary.prices = prices;
+    summary.prices = await this.averagesForItem(item.url_name);
     const options = {
       url: summary.thumbnail,
       dest: `${global.__basedir}/tmp/${summary.name}.png`,
@@ -181,6 +188,7 @@ class MarketFetcher {
         summary.color = typeof colors !== 'undefined' ? colors[0].hex().replace('#', '0x') : 0xff0000;
       }
     } catch (e) {
+      /* istanbul ignore next */
       this.logger.error(e);
     } finally {
       await fs.unlink(`${global.__basedir}/tmp/${summary.name}.png`);
@@ -194,7 +202,7 @@ class MarketFetcher {
     try {
       // get market data
       const marketData = await this.marketCache.getDataJson();
-      if (!marketData) {
+      /* istanbul ignore if */ if (!marketData) {
         this.logger.info('No market data!');
         return [];
       }
@@ -212,6 +220,7 @@ class MarketFetcher {
         attachments.push(...marketComponents);
       }
     } catch (err) {
+      /* istanbul ignore next */
       this.logger.error(err);
     }
     return attachments;
@@ -264,7 +273,7 @@ module.exports = MarketFetcher;
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a>
 	
-		on Wednesday, October 12th 2022, 20:37:24
+		on Tuesday, January 17th 2023, 16:20:27
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
