@@ -4,11 +4,11 @@
 const chai = require('chai');
 const Cache = require('json-fetch-cache');
 
-const WFNQ = require('../index.js');
+const WFNQ = require('../index');
 const Settings = require('../lib/Settings');
 
 process.env.NEXUS_TIMEOUT = 10000;
-process.env.MARKET_TIMEOUT = 3000;
+process.env.MARKET_TIMEOUT = 15000;
 
 // dumb logger to grab any logging output that would clog the test log
 const logger = {
@@ -35,6 +35,9 @@ const nexus = new WFNQ({ logger, marketCache, skipNexus: true });
 
 describe('Nexus Query', () => {
   beforeEach((done) => setTimeout(done, 2000));
+  after(async () => {
+    await nexus.stopUpdating();
+  });
 
   describe('price check query string', () => {
     it('should throw errors when called without query', async () => {
@@ -65,7 +68,7 @@ describe('Nexus Query', () => {
 
     describe('when providing a platform', () => {
       const testQueryWithPlatform = async (platform) => {
-        const result = await nexus.priceCheckQueryString(querystring, null, platform);
+        const result = await nexus.priceCheckQueryString(querystring, undefined, platform);
 
         result.should.be.a('string');
         result.should.have.string(querystring);
@@ -120,7 +123,7 @@ describe('Nexus Query', () => {
 
     describe('when providing a platform', () => {
       const testQueryWithPlatform = async (platform) => {
-        const result = await nexus.priceCheckQueryAttachment(querystring, null, platform);
+        const result = await nexus.priceCheckQueryAttachment(querystring, undefined, platform);
 
         result.should.be.an('array');
         const embed = result[0];

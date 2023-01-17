@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-      - run: npm i
-      - run: npm i ink-docstrap jsdoc
+        uses: actions/checkout@v3
+      - run: npm ci
+      - run: npm i ink-docstrap jsdoc taffydb
       - name: Build
         uses: andstor/jsdoc-action@v1
         with:

@@ -8,7 +8,8 @@
     "coverage": "npm test && nyc report --reporter=text-lcov | coveralls",
     "build-docs": "jsdoc -c jsdoc-config.json -d docs",
     "lint": "eslint index.js lib/ test/",
-    "lint:fix": "eslint index.js lib/ test/ --fix"
+    "lint:fix": "eslint index.js lib/ test/ --fix",
+    "postinstall": "install-peerdeps @wfcd/eslint-config@^1.3.3 -S"
   },
   "files": [
     "lib",
@@ -38,7 +39,6 @@
     "image-downloader": "^4.0.2",
     "json-fetch-cache": "^1.2.6",
     "json-query": "^2.2.2",
-    "nexushub-client": "^1.2.0",
     "node-fetch": "^2.6.0",
     "node-md-config": "^2.0.1",
     "numeral": "^2.0.6"
@@ -46,21 +46,21 @@
   "devDependencies": {
     "@types/json-query": "^2.2.0",
     "@types/node-fetch": "^2.5.4",
+    "@wfcd/eslint-config": "^1.3.3",
     "chai": "^4.2.0",
-    "coveralls": "^3.1.0",
-    "eslint": "^6.1.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.19.1",
-    "mocha": "^7.1.1",
+    "coveralls": "^3.1.1",
+    "install-peerdeps": "^3.0.3",
+    "mocha": "^10.2.0",
     "nyc": "^15.1.0"
   },
   "engines": {
-    "node": ">=10.19.0",
-    "npm": ">=6.1.0"
+    "node": ">=12.22.12",
+    "npm": ">=6.12.0"
   },
   "release": {
     "branch": "master"
   },
+  "prettier": "@wfcd/eslint-config/prettier",
   "eslintIgnore": [
     ".github/**",
     "docs/**",
@@ -68,47 +68,39 @@
     "types/**"
   ],
   "eslintConfig": {
-    "extends": "airbnb-base",
+    "extends": "@wfcd",
     "parserOptions": {
-      "sourceType": "script"
+      "ecmaVersion": 13
+    },
+    "env": {
+      "es6": true
     },
     "rules": {
-      "valid-jsdoc": [
+      "no-underscore-dangle": [
         "error",
         {
-          "requireReturn": false,
-          "requireReturnDescription": false,
-          "preferType": {
-            "String": "string",
-            "Number": "number",
-            "Boolean": "boolean",
-            "Function": "function",
-            "object": "Object",
-            "date": "Date",
-            "error": "Error"
-          },
-          "prefer": {
-            "return": "returns"
-          }
+          "allow": [
+            "__basedir"
+          ]
         }
-      ],
-      "no-underscore-dangle": "off",
-      "strict": [
-        "error",
-        "safe"
-      ],
-      "linebreak-style": "off",
-      "no-restricted-syntax": [
-        "off"
-      ],
-      "no-await-in-loop": "off",
-      "import/no-unresolved": 0
+      ]
     }
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-class-properties",
+      "@babel/plugin-proposal-private-methods"
+    ]
   },
   "mocha": {
     "spec": "test/test.js",
-    "timeout": 10000,
-    "bail": true
+    "timeout": 30000,
+    "bail": true,
+    "exit": true,
+    "slow": 10000
   },
   "nyc": {
     "reporter": [

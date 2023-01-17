@@ -42,3 +42,6 @@ tmp/
 
 .example.js
 docs/
+
+# IntelliJ
+.idea/
