@@ -13,26 +13,33 @@ const tearDown = async () => {
   try {
     await querier.stopUpdating();
     console.log('tore down stuff');
-    process.exit(0);
+    // process.exit(0);
   } catch (e) {
     console.error(e);
-    process.exit(1);
+    // process.exit(1);
   }
 };
 
-const embeds = await querier.priceCheckQueryAttachment('loki prime', null, 'xb1');
-if (embeds && embeds[0] && embeds[0].fields && embeds[0].fields.length) {
-  const res = await fetch(webhook, {
-    method: 'POST',
-    body: JSON.stringify({ embeds }),
-    headers: { 'Content-Type': 'application/json' },
-  });
-  if (res.ok) {
-    console.log(`response: ${res.statusText}`);
+const test = async (query, platform) => {
+  const embeds = await querier.priceCheckQueryAttachment(query, null, platform);
+  if (embeds && embeds[0] && embeds[0].fields && embeds[0].fields.length) {
+    const res = await fetch(webhook, {
+      method: 'POST',
+      body: JSON.stringify({ embeds }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (res.ok) {
+      console.log(`response: ${res.statusText}`);
+    } else {
+      console.error(`fail! ${res.ok} ${JSON.stringify(embeds)}`);
+    }
   } else {
-    console.error(`fail! ${res.ok} ${JSON.stringify(embeds)}`);
+    console.error(JSON.stringify(embeds));
   }
-} else {
-  console.error(JSON.stringify(embeds));
 }
+
+await test('loki prime', 'xb1');
+await test('nikana prime', 'pc');
+await test('garuda prime', 'swi');
+
 await tearDown();
