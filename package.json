@@ -69,12 +69,6 @@
   ],
   "eslintConfig": {
     "extends": "@wfcd",
-    "parserOptions": {
-      "ecmaVersion": 13
-    },
-    "env": {
-      "es6": true
-    },
     "rules": {
       "no-underscore-dangle": [
         "error",
