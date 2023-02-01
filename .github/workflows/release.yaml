@@ -52,6 +52,11 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: paambaati/codeclimate-action@v2
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: nyc report
   release:
     name: Release
     runs-on: ubuntu-latest
