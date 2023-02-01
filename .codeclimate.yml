@@ -7,7 +7,7 @@ exclude_patterns:
 plugins:
   eslint:
     enabled: true
-    channel: 'eslint-7'
+    channel: 'beta'
 checks:
   method-lines:
     enabled: false
