@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/WFCD/warframe-nexus-query#README",
   "dependencies": {
-    "get-image-colors": "^1.8.1",
+    "get-image-colors": "^4.0.1",
     "image-downloader": "^4.0.2",
     "json-fetch-cache": "^1.2.6",
     "json-query": "^2.2.2",
