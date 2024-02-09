@@ -1,11 +1,8 @@
-'use strict';
+import chai from 'chai';
+import Cache from 'json-fetch-cache';
 
-/* modules */
-const chai = require('chai');
-const Cache = require('json-fetch-cache');
-
-const WFNQ = require('../index');
-const Settings = require('../lib/Settings');
+import WFNQ from '../index.js';
+import Settings from '../lib/Settings.js';
 
 process.env.NEXUS_TIMEOUT = 10000;
 process.env.MARKET_TIMEOUT = 15000;

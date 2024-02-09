@@ -1,20 +1,15 @@
-'use strict';
+import fs from 'node:fs/promises';
+import fss from 'node:fs';
+import path from 'node:path';
 
-const md = require('node-md-config');
-const fs = require('fs').promises;
-const fss = require('fs');
-const path = require('path');
+import md from 'node-md-config';
 
-const promiseTimeout = require('./lib/promiseTimeout');
-const Settings = require('./lib/Settings');
-const Creator = require('./lib/AttachmentCreator');
-const MarketFetcher = require('./lib/market/v1/MarketFetcher');
+import promiseTimeout from './lib/promiseTimeout.js';
+import Settings from './lib/Settings.js';
+import Creator from './lib/AttachmentCreator.js';
+import MarketFetcher from './lib/market/v1/MarketFetcher.js';
 
-if (!global.__basedir) {
-  global.__basedir = __dirname;
-}
-
-module.exports = class PriceCheckQuerier {
+export default class PriceCheckQuerier {
   /**
    * Creates an instance representing a WarframeNexusStats data object
    * @constructor
@@ -145,4 +140,4 @@ module.exports = class PriceCheckQuerier {
       }
     }
   }
-};
+}
