@@ -40,7 +40,7 @@
     "json-fetch-cache": "^1.2.6",
     "json-query": "^2.2.2",
     "node-fetch": "^2.6.0",
-    "node-md-config": "^2.0.1",
+    "config": "^3.3.11",
     "numeral": "^2.0.6"
   },
   "devDependencies": {

@@ -1,9 +1,10 @@
 'use strict';
 
-const md = require('node-md-config');
 const fs = require('fs').promises;
 const fss = require('fs');
 const path = require('path');
+
+const md = require('config');
 
 const promiseTimeout = require('./lib/promiseTimeout');
 const Settings = require('./lib/Settings');
