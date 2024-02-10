@@ -1,4 +1,4 @@
-import chai from 'chai';
+import { should as s } from 'chai';
 import Cache from 'json-fetch-cache';
 
 import WFNQ from '../index.js';
@@ -25,7 +25,7 @@ const marketCache = new Cache(settings.urls.market, settings.maxCacheLength, {
   delayStart: false,
 });
 
-const should = chai.should();
+const should = s();
 const querystring = 'loki prime';
 
 const nexus = new WFNQ({ logger, marketCache, skipNexus: true });
