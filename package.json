@@ -7,7 +7,7 @@
   "scripts": {
     "test": "c8 mocha",
     "coverage": "npm test && c8 report --reporter=text-lcov | coveralls",
-    "build-docs": "jsdoc -c jsdoc-config.json -d docs",
+    "build:docs": "jsdoc -c jsdoc-config.json -d docs",
     "lint": "eslint index.js lib/ test/",
     "lint:fix": "eslint index.js lib/ test/ --fix",
     "postinstall": "install-peerdeps @wfcd/eslint-config@^1.5.0 -S"
