@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-import fetch from 'node-fetch';
 import Querier from '../index.js';
 
 const id = process.env.TEST_WH_ID;

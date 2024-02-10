@@ -1,20 +1,15 @@
-'use strict';
+import fs from 'node:fs/promises';
+import fss from 'node:fs';
+import path from 'node:path';
 
-const md = require('node-md-config');
-const fs = require('fs').promises;
-const fss = require('fs');
-const path = require('path');
+import md from 'node-md-config';
 
-const promiseTimeout = require('./lib/promiseTimeout');
-const Settings = require('./lib/Settings');
-const Creator = require('./lib/AttachmentCreator');
-const MarketFetcher = require('./lib/market/v1/MarketFetcher');
+import promiseTimeout from './lib/promiseTimeout.js';
+import Settings from './lib/Settings.js';
+import Creator from './lib/AttachmentCreator.js';
+import MarketFetcher from './lib/market/v1/MarketFetcher.js';
 
-if (!global.__basedir) {
-  global.__basedir = __dirname;
-}
-
-module.exports = class PriceCheckQuerier {
+export default class PriceCheckQuerier {
   /**
    * Creates an instance representing a WarframeNexusStats data object
    * @constructor
@@ -32,7 +27,7 @@ module.exports = class PriceCheckQuerier {
          */
         this.marketFetcher = new MarketFetcher({ logger, settings: this.settings, marketCache });
       } catch (e) {
-        /* istanbul ignore next */ this.logger.error(`couldn't set up market fetcher: ${e.message}`);
+        this.logger.error(`couldn't set up market fetcher: ${e.message}`);
       }
     }
 
@@ -71,7 +66,7 @@ module.exports = class PriceCheckQuerier {
         const marketResults = await promiseTimeout(this.settings.timeouts.market, marketPromise);
         attachments = [...attachments, ...marketResults];
       } catch (e) {
-        /* istanbul ignore next */ this.logger.error(`Couldn't process ${query} on warframe.market... time out.`);
+        this.logger.error(`Couldn't process ${query} on warframe.market... time out.`);
       }
     } else {
       this.logger.info('No market fetcher, skipping market');
@@ -128,16 +123,14 @@ module.exports = class PriceCheckQuerier {
       const files = await fs.readdir(`${global.__basedir}/tmp`);
       let allSuccess = true;
       await Promise.all(
-        files.map(
-          /* istanbul ignore next */ async (file) => {
-            try {
-              await fs.unlink(path.join(global.__basedir, 'tmp', file));
-            } catch (e) {
-              allSuccess = false;
-              this.logger.debug(`Couldn't delete ${file}`);
-            }
+        files.map(async (file) => {
+          try {
+            await fs.unlink(path.join(global.__basedir, 'tmp', file));
+          } catch (e) {
+            allSuccess = false;
+            this.logger.debug(`Couldn't delete ${file}`);
           }
-        )
+        })
       );
 
       if (allSuccess) {
@@ -145,4 +138,4 @@ module.exports = class PriceCheckQuerier {
       }
     }
   }
-};
+}
