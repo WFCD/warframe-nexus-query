@@ -123,16 +123,14 @@ export default class PriceCheckQuerier {
       const files = await fs.readdir(`${global.__basedir}/tmp`);
       let allSuccess = true;
       await Promise.all(
-        files.map(
-          async (file) => {
-            try {
-              await fs.unlink(path.join(global.__basedir, 'tmp', file));
-            } catch (e) {
-              allSuccess = false;
-              this.logger.debug(`Couldn't delete ${file}`);
-            }
+        files.map(async (file) => {
+          try {
+            await fs.unlink(path.join(global.__basedir, 'tmp', file));
+          } catch (e) {
+            allSuccess = false;
+            this.logger.debug(`Couldn't delete ${file}`);
           }
-        )
+        })
       );
 
       if (allSuccess) {
