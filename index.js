@@ -27,7 +27,7 @@ export default class PriceCheckQuerier {
          */
         this.marketFetcher = new MarketFetcher({ logger, settings: this.settings, marketCache });
       } catch (e) {
-        /* istanbul ignore next */ this.logger.error(`couldn't set up market fetcher: ${e.message}`);
+        this.logger.error(`couldn't set up market fetcher: ${e.message}`);
       }
     }
 
@@ -66,7 +66,7 @@ export default class PriceCheckQuerier {
         const marketResults = await promiseTimeout(this.settings.timeouts.market, marketPromise);
         attachments = [...attachments, ...marketResults];
       } catch (e) {
-        /* istanbul ignore next */ this.logger.error(`Couldn't process ${query} on warframe.market... time out.`);
+        this.logger.error(`Couldn't process ${query} on warframe.market... time out.`);
       }
     } else {
       this.logger.info('No market fetcher, skipping market');
@@ -124,7 +124,7 @@ export default class PriceCheckQuerier {
       let allSuccess = true;
       await Promise.all(
         files.map(
-          /* istanbul ignore next */ async (file) => {
+          async (file) => {
             try {
               await fs.unlink(path.join(global.__basedir, 'tmp', file));
             } catch (e) {
