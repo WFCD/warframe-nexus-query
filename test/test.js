@@ -18,7 +18,7 @@ const logger = /** @type {Console} */ {
   // turn on to debug
   // error: (e) => console.error(e),
   error: () => {},
-} ;
+};
 
 const settings = new Settings();
 const marketCache = new Cache(settings.urls.market, settings.maxCacheLength, {
