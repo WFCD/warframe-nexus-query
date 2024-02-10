@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>warframe-nexus-query Class: AttachmentCreator</title>
+	<title>warframe-nexus-query Class: exports</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="AttachmentCreator.html">AttachmentCreator</a></li><li><a href="Settings.html">Settings</a></li><li><a href="Summary.html">Summary</a></li>
+					<li><a href="module.html#.exports">module.exports</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#fieldValue">fieldValue</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li>
+					<li><a href="global.html#attachmentFromComponents">attachmentFromComponents</a></li><li><a href="global.html#fieldValue">fieldValue</a></li><li><a href="global.html#lookupAlias">lookupAlias</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li><li><a href="global.html#summaryForItem">summaryForItem</a></li><li><a href="global.html#toString">toString</a></li>
 				</ul>
 			</li>
 			
@@ -72,13 +72,13 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: AttachmentCreator</h1>
+	<h1 class="page-title">Class: exports</h1>
 <section>
 
 <header>
     
         <h2>
-        AttachmentCreator
+        exports
         </h2>
         
             <div class="class-description">Create the attachment itself</div>
@@ -93,7 +93,7 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="AttachmentCreator"><span class="type-signature"></span>new AttachmentCreator()</h4>
+    <h4 class="name" id=".exports"><span class="type-signature"></span>new exports()</h4>
     
     
 </dt>
@@ -144,7 +144,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="AttachmentCreator.js.html">AttachmentCreator.js</a>,
-				 <a href="AttachmentCreator.js.html#sunlight-1-line-83">line 83</a>
+				 <a href="AttachmentCreator.js.html#sunlight-1-line-81">line 81</a>
 			</li>
 		</ul>
 	</dd>
@@ -187,15 +187,416 @@
     
 
     
-
-    
-        <h3 class="subsection-title">Methods</h3>
+        <h3 class="subsection-title">Members</h3>
 
         <dl>
             
 <hr>
+<dt class="name" id="marketCache">
+    <h4 id="marketCache"><span class="type-signature"></span>marketCache<span class="type-signature"> :JSONCache</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The json cache stored data from warframe.market
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">JSONCache</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="market_v1_MarketFetcher.js.html">market/v1/MarketFetcher.js</a>,
+				 <a href="market_v1_MarketFetcher.js.html#sunlight-1-line-27">line 27</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+	<h1 class="page-title">Class: exports</h1>
+<section>
+
+<header>
+    
+        <h2>
+        exports
+        </h2>
+        
+            <div class="class-description">Settings storage for nexus query</div>
+        
+    
+</header>
+
+
+<article>
+    <div class="container-overview">
+    
+        
+<hr>
 <dt>
-    <h4 class="name" id="attachmentFromComponents"><span class="type-signature"></span>attachmentFromComponents(components, query [, platform])</h4>
+    <h4 class="name" id=".exports"><span class="type-signature"></span>new exports()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    <dl>
+
+<table class="props table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>maxCacheLength</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">maximum length to store cached data</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>urls</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">URL list for nexus stats</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+</dl>
+
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="Settings.js.html">Settings.js</a>,
+				 <a href="Settings.js.html#sunlight-1-line-7">line 7</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+<hr>
+<dt class="name" id="marketCache">
+    <h4 id="marketCache"><span class="type-signature"></span>marketCache<span class="type-signature"> :JSONCache</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The json cache stored data from warframe.market
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">JSONCache</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="market_v1_MarketFetcher.js.html">market/v1/MarketFetcher.js</a>,
+				 <a href="market_v1_MarketFetcher.js.html#sunlight-1-line-27">line 27</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+	<h1 class="page-title">Class: exports</h1>
+<section>
+
+<header>
+    
+        <h2>
+        exports
+        </h2>
+        
+            <div class="class-description">Represents an individual component object of an item.</div>
+        
+    
+</header>
+
+
+<article>
+    <div class="container-overview">
+    
+        
+<hr>
+<dt>
+    <h4 class="name" id=".exports"><span class="type-signature"></span>new exports(itemData)</h4>
     
     
 </dt>
@@ -203,7 +604,7 @@
 
     
     <div class="description">
-        Build an attachment from the provided components
+        Represents an individual item.
     </div>
     
 
@@ -226,11 +627,7 @@
         <th>Type</th>
 
         
-        <th>Argument</th>
-        
 
-        
-        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -242,13 +639,13 @@
 
         <tr>
             
-                <td class="name"><code>components</code></td>
+                <td class="name"><code>itemData</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;MarketComponent></span>
+<span class="param-type">json</span>
 
 
 
@@ -256,98 +653,10 @@
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last">collected array of components with market data</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>query</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Search query that these components match</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>platform</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    'pc'
-                
-                </td>
-            
-
-            <td class="description last">Platform for the request, defaults to 'pc'</td>
+            <td class="description last">the component data to parse into a summary</td>
         </tr>
 
     
@@ -391,8 +700,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="AttachmentCreator.js.html">AttachmentCreator.js</a>,
-				 <a href="AttachmentCreator.js.html#sunlight-1-line-92">line 92</a>
+				<a href="market_v1_summary.js.html">market/v1/summary.js</a>,
+				 <a href="market_v1_summary.js.html#sunlight-1-line-9">line 9</a>
 			</li>
 		</ul>
 	</dd>
@@ -417,35 +726,110 @@
     
 
     
-    <h5>Returns:</h5>
+
     
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
             
-<div class="param-desc">
-    Discord-ready attachment describing the item
-</div>
+<hr>
+<dt class="name" id="marketCache">
+    <h4 id="marketCache"><span class="type-signature"></span>marketCache<span class="type-signature"> :JSONCache</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The json cache stored data from warframe.market
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">JSONCache</span>
 
 
 
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Object</span>
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
 
 
 
-    </dd>
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="market_v1_MarketFetcher.js.html">market/v1/MarketFetcher.js</a>,
+				 <a href="market_v1_MarketFetcher.js.html#sunlight-1-line-27">line 27</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
-
-        
 
     
 </dd>
 
         </dl>
+    
+
     
 
     
@@ -497,9 +881,9 @@
 	</span>
 
 <span class="jsdoc-message">
-	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a>
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a>
 	
-		on Friday, October 20th 2023, 14:40:23
+		on Saturday, February 10th 2024, 19:27:02
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
