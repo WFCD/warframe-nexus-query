@@ -1,14 +1,16 @@
-import chai from 'chai';
+import { should } from 'chai';
 import Cache from 'json-fetch-cache';
 
 import WFNQ from '../index.js';
 import Settings from '../lib/Settings.js';
 
+should();
+
 process.env.NEXUS_TIMEOUT = 10000;
 process.env.MARKET_TIMEOUT = 15000;
 
 // dumb logger to grab any logging output that would clog the test log
-const logger = {
+const logger = /** @type {Console} */ {
   debug: () => {},
   log: () => {},
   info: () => {},
@@ -16,8 +18,7 @@ const logger = {
   // turn on to debug
   // error: (e) => console.error(e),
   error: () => {},
-  silly: () => {},
-};
+} ;
 
 const settings = new Settings();
 const marketCache = new Cache(settings.urls.market, settings.maxCacheLength, {
@@ -25,10 +26,9 @@ const marketCache = new Cache(settings.urls.market, settings.maxCacheLength, {
   delayStart: false,
 });
 
-const should = chai.should();
 const querystring = 'loki prime';
 
-const nexus = new WFNQ({ logger, marketCache, skipNexus: true });
+const nexus = new WFNQ({ logger, marketCache });
 
 describe('Nexus Query', () => {
   beforeEach((done) => setTimeout(done, 2000));
