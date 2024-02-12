@@ -14,7 +14,8 @@
   },
   "files": [
     "lib",
-    "index.js"
+    "index.js",
+    "basedir.js"
   ],
   "directories": {
     "test": "test"
