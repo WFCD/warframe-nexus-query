@@ -10,7 +10,7 @@
     "build:docs": "jsdoc -c jsdoc-config.json -d docs",
     "lint": "eslint index.js lib/ test/",
     "lint:fix": "eslint index.js lib/ test/ --fix",
-    "postinstall": "install-peerdeps @wfcd/eslint-config@^1.5.0 -S"
+    "postinstall": "install-peerdeps @wfcd/eslint-config@latest -S"
   },
   "files": [
     "lib",
@@ -85,8 +85,8 @@
       "@babel/preset-env"
     ],
     "plugins": [
-      "@babel/plugin-proposal-class-properties",
-      "@babel/plugin-proposal-private-methods"
+      "@babel/plugin-transform-class-properties",
+      "@babel/plugin-transform-private-methods"
     ]
   },
   "mocha": {
