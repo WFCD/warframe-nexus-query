@@ -1,6 +1,6 @@
 {
   "name": "warframe-nexus-query",
-  "version": "1.6.5",
+  "version": "0.0.0-dev",
   "description": "Query prices form nexus-stats.com and warframe.market.",
   "type": "module",
   "main": "index.js",
@@ -10,7 +10,7 @@
     "build:docs": "jsdoc -c jsdoc-config.json -d docs",
     "lint": "eslint index.js lib/ test/",
     "lint:fix": "eslint index.js lib/ test/ --fix",
-    "postinstall": "install-peerdeps @wfcd/eslint-config@latest -S"
+    "postinstall": "if [ \"$NODE_ENV\" = \"dev\" ] ; then npx -p install-peerdeps@latest install-peerdeps @wfcd/eslint-config@latest -S ; fi"
   },
   "files": [
     "lib",
@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@types/json-query": "^2.2.0",
-    "@wfcd/eslint-config": "^1.5.0",
+    "@wfcd/eslint-config": "latest",
     "c8": "^9.1.0",
     "chai": "^5.0.3",
     "coveralls": "^3.1.1",
