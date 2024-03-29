@@ -67,6 +67,8 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: npm
+      - name: Install Dependencies
+        run: npm ci
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4
         env:
