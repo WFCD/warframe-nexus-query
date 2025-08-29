@@ -121,7 +121,7 @@
     "@types/json-query": "^2.2.0",
     "@wfcd/eslint-config": "^1.6.1",
     "c8": "^10.1.2",
-    "chai": "^5.0.3",
+    "chai": "^6.0.1",
     "coveralls": "^3.1.1",
     "husky": "^9.0.11",
     "install-peerdeps": "^3.0.3",
