@@ -12,10 +12,7 @@
   "bugs": {
     "url": "https://github.com/WFCD/warframe-nexus-query/issues"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/WFCD/warframe-nexus-query.git"
-  },
+  "repository": "https://github.com/WFCD/warframe-nexus-query",
   "license": "Apache-2.0",
   "author": "tobitenno",
   "type": "module",
@@ -132,5 +129,6 @@
   "engines": {
     "node": ">=18",
     "npm": ">=8.19"
-  }
+  },
+  "publishConfig": { "provenance": true }
 }
