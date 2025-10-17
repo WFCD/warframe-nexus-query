@@ -26,6 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: lint
     strategy:
+      max-parallel: 1
       matrix:
         node-version: ['lts/hydrogen', 'lts/iron', 'lts/*']
     steps:
@@ -41,7 +42,7 @@ jobs:
   coverage:
     name: Coverage
     runs-on: ubuntu-latest
-    needs: lint
+    needs: ['lint', 'test']
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
