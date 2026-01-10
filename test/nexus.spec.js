@@ -416,6 +416,686 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
 });
 
 // ============================================================================
+// V2 MODEL TESTS
+// ============================================================================
+
+describe('Summary Model (v2)', function () {
+  let summary;
+  let Item;
+  let Order;
+  let SummaryV2;
+
+  before(async function () {
+    const itemModule = await import('../lib/market/v2/models/Item.js');
+    const orderModule = await import('../lib/market/v2/models/Order.js');
+    const summaryModule = await import('../lib/market/v2/models/Summary.js');
+    Item = itemModule.default;
+    Order = orderModule.default;
+    SummaryV2 = summaryModule.default;
+
+    // Create mock item
+    const itemData = {
+      id: 'test-item',
+      slug: 'test_item',
+      i18n: {
+        en: { name: 'Test Item', description: 'A test item' },
+      },
+      thumb: 'icons/test.png',
+      icon: 'icons/test_icon.png',
+      subIcon: 'icons/test_sub.png',
+      tradingTax: 2000,
+      ducats: 45,
+      reqMasteryRank: 8,
+      tradable: true,
+      vaulted: false,
+      tags: ['prime', 'weapon'],
+      wikiLink: 'https://warframe.fandom.com/wiki/Test_Item',
+    };
+    const item = new Item(itemData, 'en');
+
+    // Create mock orders
+    const sellOrders = [
+      new Order({
+        id: '1',
+        type: 'sell',
+        platinum: 50,
+        quantity: 2,
+        user: {
+          id: 'u1',
+          ingameName: 'Seller1',
+          status: 'online',
+          reputation: 100,
+          platform: 'pc',
+          activity: { type: 'IN_ORBITER' },
+        },
+      }),
+      new Order({
+        id: '2',
+        type: 'sell',
+        platinum: 55,
+        quantity: 1,
+        user: {
+          id: 'u2',
+          ingameName: 'Seller2',
+          status: 'ingame',
+          reputation: 50,
+          platform: 'pc',
+          activity: { type: 'ON_MISSION', details: 'Survival' },
+        },
+      }),
+      new Order({
+        id: '3',
+        type: 'sell',
+        platinum: 100,
+        quantity: 3,
+        user: {
+          id: 'u3',
+          ingameName: 'Seller3',
+          status: 'offline',
+          reputation: 200,
+          platform: 'pc',
+        },
+      }),
+    ];
+
+    const buyOrders = [
+      new Order({
+        id: '4',
+        type: 'buy',
+        platinum: 40,
+        quantity: 1,
+        user: {
+          id: 'u4',
+          ingameName: 'Buyer1',
+          status: 'online',
+          reputation: 75,
+          platform: 'pc',
+          activity: { type: 'IN_DOJO' },
+        },
+      }),
+      new Order({
+        id: '5',
+        type: 'buy',
+        platinum: 35,
+        quantity: 2,
+        user: {
+          id: 'u5',
+          ingameName: 'Buyer2',
+          status: 'ingame',
+          reputation: 60,
+          platform: 'pc',
+          activity: { type: 'IN_RELAY', details: 'Larunda Relay' },
+        },
+      }),
+    ];
+
+    const statistics = {
+      sell: {
+        volume: 6,
+        orderCount: 3,
+        median: 55,
+        min: 50,
+        max: 100,
+        avg: 68,
+      },
+      buy: {
+        volume: 3,
+        orderCount: 2,
+        median: 37,
+        min: 35,
+        max: 40,
+        avg: 37,
+      },
+    };
+
+    summary = new SummaryV2(item, { buy: buyOrders, sell: sellOrders }, statistics);
+  });
+
+  it('should get online buyers with default limit', function () {
+    const buyers = summary.getOnlineBuyers();
+    buyers.should.be.an('array').with.lengthOf(2);
+    buyers[0].should.have.property('ingameName', 'Buyer1');
+    buyers[0].should.have.property('platinum', 40);
+    buyers[0].should.have.property('quantity', 1);
+    buyers[0].should.have.property('status', 'online');
+    buyers[0].should.have.property('activity', 'In Dojo');
+  });
+
+  it('should get online buyers with custom limit', function () {
+    const buyers = summary.getOnlineBuyers(1);
+    buyers.should.be.an('array').with.lengthOf(1);
+    buyers[0].should.have.property('ingameName', 'Buyer1');
+  });
+
+  it('should format toString with codex option', function () {
+    const str = summary.toString('codex');
+    str.should.include('**Test Item**');
+    str.should.include('Codex: A test item');
+    str.should.not.include('Tax:');
+  });
+
+  it('should format toString with item option', function () {
+    const str = summary.toString('item');
+    str.should.include('**Test Item**');
+    str.should.include('Tax: 2000cr');
+    str.should.include('Requires: MR 8');
+    str.should.include('Item is tradable');
+    str.should.include('3 sellers (6 items)');
+    str.should.include('Median: 55p');
+    str.should.include('Range: 50p - 100p');
+    str.should.include('2 buyers');
+    str.should.not.include('Codex:');
+  });
+
+  it('should format toString with traders option', function () {
+    const str = summary.toString('traders');
+    str.should.include('**Test Item**');
+    str.should.include('**Online Sellers:**');
+    str.should.include('Seller1 - 50p x2');
+    str.should.include('Seller2 - 55p x1');
+    str.should.not.include('Tax:');
+  });
+
+  it('should format toString with all option', function () {
+    const str = summary.toString('all');
+    str.should.include('**Test Item**');
+    str.should.include('Codex: A test item');
+    str.should.include('Tax: 2000cr');
+    str.should.include('**Online Sellers:**');
+  });
+
+  it('should handle vaulted items in toString', async function () {
+    const itemModule = await import('../lib/market/v2/models/Item.js');
+    const ItemClass = itemModule.default;
+    const vaultedItem = new ItemClass(
+      {
+        id: 'vaulted-item',
+        slug: 'vaulted_item',
+        i18n: { en: { name: 'Vaulted Item' } },
+        tradingTax: 1000,
+        tradable: true,
+        vaulted: true,
+      },
+      'en'
+    );
+
+    const vaultedSummary = new SummaryV2(
+      vaultedItem,
+      { buy: [], sell: [] },
+      {
+        sell: { volume: 0, orderCount: 0, median: 0, min: 0, max: 0, avg: 0 },
+        buy: { volume: 0, orderCount: 0, median: 0, min: 0, max: 0, avg: 0 },
+      }
+    );
+
+    const str = vaultedSummary.toString('item');
+    str.should.include('(VAULTED)');
+  });
+
+  it('should handle items without wiki links', function () {
+    const str = summary.toString();
+    str.should.include('https://warframe.market/items/test_item');
+  });
+
+  it('should pad strings correctly', function () {
+    const padded = summary.pad('test', 10, '-');
+    padded.should.equal('test------');
+    padded.should.have.lengthOf(10);
+  });
+
+  it('should pad strings with default space character', function () {
+    const padded = summary.pad('test', 10);
+    padded.should.equal('test      ');
+  });
+});
+
+describe('Order and OrderUser Models', function () {
+  let Order;
+  let OrderUser;
+
+  before(async function () {
+    const orderModule = await import('../lib/market/v2/models/Order.js');
+    Order = orderModule.default;
+    OrderUser = orderModule.OrderUser;
+  });
+
+  it('should get activity descriptions for all types', function () {
+    const activities = [
+      { type: 'ON_MISSION', expected: 'On Mission' },
+      { type: 'ON_MISSION', details: 'Survival', expected: 'On Mission: Survival' },
+      { type: 'IN_DOJO', expected: 'In Dojo' },
+      { type: 'IN_ORBITER', expected: 'In Orbiter' },
+      { type: 'IN_RELAY', expected: 'In Relay' },
+      { type: 'IN_RELAY', details: 'Larunda Relay', expected: 'In Relay: Larunda Relay' },
+      { type: 'IDLE', expected: 'Idle' },
+      { type: 'UNKNOWN', expected: undefined },
+    ];
+
+    activities.forEach(({ type, details, expected }) => {
+      const user = new OrderUser({
+        id: 'test',
+        ingameName: 'TestUser',
+        status: 'online',
+        platform: 'pc',
+        activity: { type, details },
+      });
+      const result = user.getActivityDescription();
+      if (expected === undefined) {
+        should.not.exist(result);
+      } else {
+        result.should.equal(expected);
+      }
+    });
+  });
+
+  it('should return null for missing activity', function () {
+    const user = new OrderUser({
+      id: 'test',
+      ingameName: 'TestUser',
+      status: 'online',
+      platform: 'pc',
+    });
+    should.not.exist(user.getActivityDescription());
+  });
+
+  it('should get status emojis for all statuses', function () {
+    const statuses = [
+      { status: 'online', expected: '🟢' },
+      { status: 'ingame', expected: '🎮' },
+      { status: 'offline', expected: '⚫' },
+      { status: 'invisible', expected: '👻' },
+      { status: 'unknown', expected: '❓' },
+    ];
+
+    statuses.forEach(({ status, expected }) => {
+      const user = new OrderUser({
+        id: 'test',
+        ingameName: 'TestUser',
+        status,
+        platform: 'pc',
+      });
+      user.getStatusEmoji().should.equal(expected);
+    });
+  });
+
+  it('should serialize OrderUser to JSON', function () {
+    const userData = {
+      id: 'test-id',
+      ingameName: 'TestUser',
+      avatar: 'avatar.png',
+      reputation: 100,
+      locale: 'en',
+      platform: 'pc',
+      crossplay: true,
+      status: 'online',
+      activity: { type: 'IN_ORBITER' },
+      lastSeen: '2026-01-10T12:00:00Z',
+    };
+
+    const user = new OrderUser(userData);
+    const json = user.toJSON();
+
+    json.should.have.property('id', 'test-id');
+    json.should.have.property('ingameName', 'TestUser');
+    json.should.have.property('reputation', 100);
+    json.should.have.property('status', 'online');
+    json.activity.should.deep.equal({ type: 'IN_ORBITER' });
+  });
+
+  it('should handle orders without users', function () {
+    const order = new Order({
+      id: 'order-1',
+      type: 'sell',
+      platinum: 50,
+      quantity: 1,
+    });
+
+    should.not.exist(order.user);
+    order.isUserOnline().should.equal(false);
+    order.toString().should.equal('SELL: 50p x1');
+  });
+
+  it('should handle offline users', function () {
+    const order = new Order({
+      id: 'order-1',
+      type: 'buy',
+      platinum: 40,
+      quantity: 2,
+      user: {
+        id: 'u1',
+        ingameName: 'OfflineUser',
+        status: 'offline',
+        platform: 'pc',
+      },
+    });
+
+    order.isUserOnline().should.equal(false);
+    order.toString().should.include('by OfflineUser');
+  });
+
+  it('should format order with modifiers', function () {
+    const order = new Order({
+      id: 'order-1',
+      type: 'sell',
+      platinum: 100,
+      quantity: 1,
+      rank: 5,
+      subtype: 'maxed',
+      user: {
+        id: 'u1',
+        ingameName: 'MaxedSeller',
+        status: 'online',
+        platform: 'pc',
+      },
+    });
+
+    const str = order.toString();
+    str.should.include('R5');
+    str.should.include('maxed');
+    str.should.include('MaxedSeller');
+  });
+
+  it('should calculate order age in hours', function () {
+    const now = new Date();
+    const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+
+    const order = new Order({
+      id: 'order-1',
+      type: 'sell',
+      platinum: 50,
+      quantity: 1,
+      updatedAt: twoHoursAgo.toISOString(),
+    });
+
+    const age = order.getAgeHours();
+    age.should.be.approximately(2, 0.1);
+  });
+});
+
+describe('Statistics Utilities', function () {
+  let calculateStatistics;
+  let Order;
+
+  before(async function () {
+    const statsModule = await import('../lib/market/v2/utils/statistics.js');
+    const orderModule = await import('../lib/market/v2/models/Order.js');
+    calculateStatistics = statsModule.calculateStatistics;
+    Order = orderModule.default;
+  });
+
+  it('should calculate statistics for sell orders', function () {
+    const orders = [
+      new Order({
+        id: '1',
+        type: 'sell',
+        platinum: 50,
+        quantity: 2,
+        user: { id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc' },
+      }),
+      new Order({
+        id: '2',
+        type: 'sell',
+        platinum: 60,
+        quantity: 1,
+        user: { id: 'u2', ingameName: 'User2', status: 'online', platform: 'pc' },
+      }),
+      new Order({
+        id: '3',
+        type: 'sell',
+        platinum: 70,
+        quantity: 3,
+        user: { id: 'u3', ingameName: 'User3', status: 'online', platform: 'pc' },
+      }),
+    ];
+
+    const stats = calculateStatistics(orders, { type: 'sell' });
+    stats.orderCount.should.equal(3);
+    stats.volume.should.equal(6);
+    stats.median.should.equal(60);
+    stats.min.should.equal(50);
+    stats.max.should.equal(70);
+    stats.avg.should.equal(60);
+  });
+
+  it('should handle empty order arrays', function () {
+    const stats = calculateStatistics([], { type: 'sell' });
+    stats.orderCount.should.equal(0);
+    stats.volume.should.equal(0);
+    stats.median.should.equal(0);
+    stats.min.should.equal(0);
+    stats.max.should.equal(0);
+  });
+
+  it('should handle single order', function () {
+    const orders = [
+      new Order({
+        id: '1',
+        type: 'sell',
+        platinum: 50,
+        quantity: 1,
+        user: { id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc' },
+      }),
+    ];
+
+    const stats = calculateStatistics(orders, { type: 'sell' });
+    stats.orderCount.should.equal(1);
+    stats.median.should.equal(50);
+    stats.min.should.equal(50);
+    stats.max.should.equal(50);
+  });
+
+  it('should filter by online status', function () {
+    const orders = [
+      new Order({
+        id: '1',
+        type: 'sell',
+        platinum: 50,
+        quantity: 1,
+        user: { id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc' },
+      }),
+      new Order({
+        id: '2',
+        type: 'sell',
+        platinum: 60,
+        quantity: 1,
+        user: { id: 'u2', ingameName: 'User2', status: 'offline', platform: 'pc' },
+      }),
+    ];
+
+    const stats = calculateStatistics(orders, { type: 'sell', onlineOnly: true });
+    stats.orderCount.should.equal(1);
+    stats.median.should.equal(50);
+  });
+
+  it('should include offline users when onlineOnly is false', function () {
+    const orders = [
+      new Order({
+        id: '1',
+        type: 'sell',
+        platinum: 50,
+        quantity: 1,
+        user: { id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc' },
+      }),
+      new Order({
+        id: '2',
+        type: 'sell',
+        platinum: 60,
+        quantity: 1,
+        user: { id: 'u2', ingameName: 'User2', status: 'offline', platform: 'pc' },
+      }),
+    ];
+
+    const stats = calculateStatistics(orders, { type: 'sell', onlineOnly: false });
+    stats.orderCount.should.equal(2);
+  });
+
+  it('should calculate median for even-length arrays', function () {
+    const orders = [
+      new Order({
+        id: '1',
+        type: 'sell',
+        platinum: 50,
+        quantity: 1,
+        user: { id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc' },
+      }),
+      new Order({
+        id: '2',
+        type: 'sell',
+        platinum: 60,
+        quantity: 1,
+        user: { id: 'u2', ingameName: 'User2', status: 'online', platform: 'pc' },
+      }),
+      new Order({
+        id: '3',
+        type: 'sell',
+        platinum: 70,
+        quantity: 1,
+        user: { id: 'u3', ingameName: 'User3', status: 'online', platform: 'pc' },
+      }),
+      new Order({
+        id: '4',
+        type: 'sell',
+        platinum: 80,
+        quantity: 1,
+        user: { id: 'u4', ingameName: 'User4', status: 'online', platform: 'pc' },
+      }),
+    ];
+
+    const stats = calculateStatistics(orders, { type: 'sell' });
+    stats.median.should.equal(65); // (60 + 70) / 2
+  });
+
+  it('should calculate quartiles correctly', function () {
+    const orders = [
+      new Order({
+        id: '1',
+        type: 'sell',
+        platinum: 10,
+        quantity: 1,
+        user: { id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc' },
+      }),
+      new Order({
+        id: '2',
+        type: 'sell',
+        platinum: 20,
+        quantity: 1,
+        user: { id: 'u2', ingameName: 'User2', status: 'online', platform: 'pc' },
+      }),
+      new Order({
+        id: '3',
+        type: 'sell',
+        platinum: 30,
+        quantity: 1,
+        user: { id: 'u3', ingameName: 'User3', status: 'online', platform: 'pc' },
+      }),
+      new Order({
+        id: '4',
+        type: 'sell',
+        platinum: 40,
+        quantity: 1,
+        user: { id: 'u4', ingameName: 'User4', status: 'online', platform: 'pc' },
+      }),
+      new Order({
+        id: '5',
+        type: 'sell',
+        platinum: 50,
+        quantity: 1,
+        user: { id: 'u5', ingameName: 'User5', status: 'online', platform: 'pc' },
+      }),
+    ];
+
+    const stats = calculateStatistics(orders, { type: 'sell' });
+    stats.q1.should.be.approximately(20, 1);
+    stats.q3.should.be.approximately(40, 1);
+  });
+});
+
+describe('i18n Utilities', function () {
+  let normalizeLanguage;
+  let extractLocalized;
+  let getLocalizedField;
+
+  before(async function () {
+    const i18nModule = await import('../lib/market/v2/utils/i18n.js');
+    normalizeLanguage = i18nModule.normalizeLanguage;
+    extractLocalized = i18nModule.extractLocalized;
+    getLocalizedField = i18nModule.getLocalizedField;
+  });
+
+  it('should normalize valid language codes', function () {
+    normalizeLanguage('en').should.equal('en');
+    normalizeLanguage('EN').should.equal('en');
+    normalizeLanguage('es').should.equal('es');
+    normalizeLanguage('ru').should.equal('ru');
+  });
+
+  it('should fallback to English for unsupported languages', function () {
+    normalizeLanguage('invalid').should.equal('en');
+    normalizeLanguage('jp').should.equal('en');
+    normalizeLanguage('').should.equal('en');
+    normalizeLanguage(undefined).should.equal('en');
+  });
+
+  it('should extract localized data with preferred locale', function () {
+    const i18n = {
+      en: { name: 'English Name', description: 'English Description' },
+      es: { name: 'Nombre Español', description: 'Descripción Española' },
+    };
+
+    const enData = extractLocalized(i18n, 'en');
+    enData.name.should.equal('English Name');
+
+    const esData = extractLocalized(i18n, 'es');
+    esData.name.should.equal('Nombre Español');
+  });
+
+  it('should fallback to English when locale not found', function () {
+    const i18n = {
+      en: { name: 'English Name' },
+    };
+
+    const data = extractLocalized(i18n, 'fr');
+    data.name.should.equal('English Name');
+  });
+
+  it('should return empty object for undefined i18n', function () {
+    const data = extractLocalized(undefined, 'en');
+    data.should.deep.equal({});
+  });
+
+  it('should get localized field with fallback', function () {
+    const i18n = {
+      en: { name: 'English Name', description: 'English Description' },
+      es: { name: 'Nombre Español' },
+    };
+
+    const enName = getLocalizedField(i18n, 'name', 'en');
+    enName.should.equal('English Name');
+
+    const esName = getLocalizedField(i18n, 'name', 'es');
+    esName.should.equal('Nombre Español');
+  });
+
+  it('should return default value when field not found', function () {
+    const i18n = {
+      en: { name: 'English Name' },
+    };
+
+    const missing = getLocalizedField(i18n, 'missing', 'en', 'default');
+    missing.should.equal('default');
+  });
+
+  it('should return undefined default when field not found and no default', function () {
+    const i18n = {
+      en: { name: 'English Name' },
+    };
+
+    const missing = getLocalizedField(i18n, 'missing', 'en');
+    should.not.exist(missing);
+  });
+});
+
+// ============================================================================
 // V2 API INTEGRATION TESTS (WFNQ Wrapper)
 // ============================================================================
 
