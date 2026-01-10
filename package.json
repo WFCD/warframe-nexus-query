@@ -33,77 +33,6 @@
     "prepare": "husky && npx install-peerdeps @wfcd/eslint-config@latest -S",
     "test": "c8 mocha"
   },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ],
-    "rules": {
-      "body-max-line-length": [0]
-    }
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --cache --fix"
-    ],
-    "package*.json": [
-      "prettier --write",
-      "npm dedupe",
-      "npx sort-package-json"
-    ],
-    "*.{json,yaml,yml},!package*.json": [
-      "prettier --write"
-    ]
-  },
-  "babel": {
-    "plugins": [
-      "@babel/plugin-transform-class-properties",
-      "@babel/plugin-transform-private-methods"
-    ],
-    "presets": [
-      "@babel/preset-env"
-    ]
-  },
-  "prettier": "@wfcd/eslint-config/prettier",
-  "eslintConfig": {
-    "extends": "@wfcd/eslint-config/esm",
-    "rules": {
-      "no-underscore-dangle": [
-        "error",
-        {
-          "allow": [
-            "__basedir"
-          ]
-        }
-      ]
-    }
-  },
-  "eslintIgnore": [
-    ".github/**",
-    "docs/**",
-    "resources/**",
-    "types/**"
-  ],
-  "release": {
-    "branch": "master"
-  },
-  "mocha": {
-    "bail": true,
-    "exit": true,
-    "slow": 10000,
-    "spec": "test/test.js",
-    "timeout": 30000
-  },
-  "c8": {
-    "exclude": [
-      "test/*",
-      "lib/nexus/*"
-    ],
-    "reporter": [
-      "lcov",
-      "text"
-    ],
-    "skip-full": true
-  },
   "dependencies": {
     "get-image-colors": "^4.0.1",
     "image-downloader": "^4.0.2",
@@ -130,5 +59,7 @@
     "node": ">=18",
     "npm": ">=8.19"
   },
-  "publishConfig": { "provenance": true }
+  "publishConfig": {
+    "provenance": true
+  }
 }

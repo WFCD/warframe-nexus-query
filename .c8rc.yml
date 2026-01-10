@@ -1,0 +1,7 @@
+exclude:
+  - test/*
+  - lib/nexus/*
+reporter:
+  - lcov
+  - text
+skip-full: true

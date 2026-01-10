@@ -1,0 +1,8 @@
+"*.js":
+  - eslint --cache --fix
+package*.json:
+  - prettier --write
+  - npm dedupe
+  - npx sort-package-json
+"*.{json,yaml,yml},!package*.json":
+  - prettier --write
