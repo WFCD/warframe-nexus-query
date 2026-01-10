@@ -219,7 +219,7 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
 
     it('should cache items between calls', async function () {
       // Clear any existing cache
-      fetcher.cache.clear();
+      fetcher.clearCache();
 
       const start1 = Date.now();
       const items1 = await fetcher.getItems();

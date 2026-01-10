@@ -1,6 +1,5 @@
 {
   "rules": {
-    "no-underscore-dangle": "off",
     "no-null/no-null": "off",
     "no-use-before-define": ["error", { "functions": false }]
   }
