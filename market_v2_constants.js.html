@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>warframe-nexus-query Source: market/v1/MarketFetcher.js</title>
+	<title>warframe-nexus-query Source: market/v2/constants.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module.html#.exports">module.exports</a></li>
+					<li><a href="OrderUser.html">OrderUser</a></li><li><a href="module.html#.exports">module.exports</a></li><li><a href="module.exports_module.exports.html">module.exports#module.exports</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#attachmentFromComponents">attachmentFromComponents</a></li><li><a href="global.html#fieldValue">fieldValue</a></li><li><a href="global.html#lookupAlias">lookupAlias</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li><li><a href="global.html#summaryForItem">summaryForItem</a></li><li><a href="global.html#toString">toString</a></li>
+					<li><a href="global.html#API_BASE_URL">API_BASE_URL</a></li><li><a href="global.html#attachmentFromComponents">attachmentFromComponents</a></li><li><a href="global.html#calculateMedian">calculateMedian</a></li><li><a href="global.html#calculatePercentile">calculatePercentile</a></li><li><a href="global.html#calculateStatistics">calculateStatistics</a></li><li><a href="global.html#checkVersions">checkVersions</a></li><li><a href="global.html#clear">clear</a></li><li><a href="global.html#clearCache">clearCache</a></li><li><a href="global.html#delete">delete</a></li><li><a href="global.html#extractLocalized">extractLocalized</a></li><li><a href="global.html#fetchWithTimeout">fetchWithTimeout</a></li><li><a href="global.html#fieldValue">fieldValue</a></li><li><a href="global.html#fieldValueV2">fieldValueV2</a></li><li><a href="global.html#formatPriceRange">formatPriceRange</a></li><li><a href="global.html#formatStatistics">formatStatistics</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getAgeHours">getAgeHours</a></li><li><a href="global.html#getAllOrders">getAllOrders</a></li><li><a href="global.html#getBestOrders">getBestOrders</a></li><li><a href="global.html#getIconUrl">getIconUrl</a></li><li><a href="global.html#getItemBySlug">getItemBySlug</a></li><li><a href="global.html#getItemSet">getItemSet</a></li><li><a href="global.html#getItems">getItems</a></li><li><a href="global.html#getLocalized">getLocalized</a></li><li><a href="global.html#getLocalizedField">getLocalizedField</a></li><li><a href="global.html#getOnlineBuyers">getOnlineBuyers</a></li><li><a href="global.html#getOnlineSellers">getOnlineSellers</a></li><li><a href="global.html#getRecentOrders">getRecentOrders</a></li><li><a href="global.html#getThumbUrl">getThumbUrl</a></li><li><a href="global.html#getTopOrders">getTopOrders</a></li><li><a href="global.html#has">has</a></li><li><a href="global.html#isBuyOrder">isBuyOrder</a></li><li><a href="global.html#isPartOfSet">isPartOfSet</a></li><li><a href="global.html#isSellOrder">isSellOrder</a></li><li><a href="global.html#isUserOnline">isUserOnline</a></li><li><a href="global.html#isVaulted">isVaulted</a></li><li><a href="global.html#lookupAlias">lookupAlias</a></li><li><a href="global.html#normalizeLanguage">normalizeLanguage</a></li><li><a href="global.html#normalizePlatform">normalizePlatform</a></li><li><a href="global.html#pad">pad</a></li><li><a href="global.html#post">post</a></li><li><a href="global.html#priceCheckQuery">priceCheckQuery</a></li><li><a href="global.html#queryMarket">queryMarket</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#removeOutliers">removeOutliers</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#setLocale">setLocale</a></li><li><a href="global.html#setTimeout">setTimeout</a></li><li><a href="global.html#shouldRefresh">shouldRefresh</a></li><li><a href="global.html#size">size</a></li><li><a href="global.html#stop">stop</a></li><li><a href="global.html#toJSON">toJSON</a></li><li><a href="global.html#toString">toString</a></li>
 				</ul>
 			</li>
 			
@@ -72,159 +72,71 @@
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: market/v1/MarketFetcher.js</h1>
+		<h1 class="page-title">Source: market/v2/constants.js</h1>
     
 <section>
     <article>
         <pre
-            class="sunlight-highlight-javascript linenums">import fs from 'node:fs/promises';
-
-import getColors from 'get-image-colors';
-import imageDownloader from 'image-downloader';
-import jsonQuery from 'json-query';
-import JSONCache from 'json-fetch-cache';
-
-import baseDir from '../../../basedir.js';
-
-import MarketSummary from './summary.js';
-
-/**
- * @typedef {Object} MappedPrice
- * @property {string} volume
- * @property {string} median
- * @property {string} max_price
- * @property {string} min_price
- * @property {string} datetime ts formatted date string
+            class="sunlight-highlight-javascript linenums">/**
+ * Constants for Warframe Market API v2
  */
 
-export default class MarketFetcher {
-  constructor({ logger = console, settings, marketCache }) {
-    /**
-     * The json cache stored data from warframe.market
-     * @type {JSONCache}
-     */
-    this.marketCache = marketCache || new JSONCache(settings.urls.market, settings.maxCacheLength, { logger });
+export const API_BASE_URL = process.env.MARKET_V2_URL_OVERRIDE || 'https://api.warframe.market/v2';
+export const ASSETS_BASE_URL = process.env.MARKET_ASSETS_URL_OVERRIDE || 'https://warframe.market/static/assets/';
 
-    this.settings = settings;
-    this.urls = {
-      market: process.env.MARKET_URL_OVERRIDE || 'https://api.warframe.market',
-      marketAssets: process.env.MARKET_ASSETS_URL_OVERRIDE || 'https://warframe.market/static/assets/',
-      marketBasePath: '/v1/items/',
-    };
+export const DEFAULT_TIMEOUT = parseInt(process.env.MARKET_TIMEOUT, 10) || 5000;
+export const VERSION_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
+export const CACHE_TTL = 60 * 60 * 1000; // 1 hour fallback TTL
+export const SHORT_CACHE_TTL = 60 * 1000; // 1 minute for orders
 
-    this.logger = logger;
+export const PLATFORMS = {
+  pc: 'pc',
+  ps4: 'ps4',
+  playstation: 'ps4',
+  xb1: 'xbox',
+  xbone: 'xbox',
+  xbox: 'xbox',
+  switch: 'switch',
+  swi: 'switch',
+  ns: 'switch',
+  mobile: 'mobile',
+};
 
-    this.logger.info('finished setting up market fetcher');
-  }
+export const LANGUAGES = {
+  en: 'en',
+  es: 'es',
+  fr: 'fr',
+  de: 'de',
+  it: 'it',
+  pl: 'pl',
+  pt: 'pt',
+  ru: 'ru',
+  ko: 'ko',
+  'zh-hans': 'zh-hans',
+  'zh-hant': 'zh-hant',
+  uk: 'uk',
+};
 
-  async averagesForItem(urlName, platform = 'pc') {
-    const reqOpts = {
-      headers: {
-        platform: platform.toLowerCase(),
-      },
-    };
-    const data = await fetch(`${this.urls.market}${this.urls.marketBasePath}${urlName}/statistics`, reqOpts).then((d) =>
-      d.json()
-    );
-    /**
-     * @type {MappedPrice[]}
-     */
-    const stats = data.payload.statistics_live['48hours'];
+export const USER_STATUS = {
+  INVISIBLE: 'invisible',
+  OFFLINE: 'offline',
+  ONLINE: 'online',
+  INGAME: 'ingame',
+};
 
-    // Descending sort
-    stats.sort((a, b) => {
-      const tsA = new Date(a.datetime).getTime();
-      const tsB = new Date(b.datetime).getTime();
-      if (tsA === tsB) return 0;
-      if (tsA &lt; tsB) return -1;
-      if (tsA > tsB) return 1;
-      /* istanbul ignore next */
-      return 0;
-    });
+export const ACTIVITY_TYPE = {
+  UNKNOWN: 'UNKNOWN',
+  IDLE: 'IDLE',
+  ON_MISSION: 'ON_MISSION',
+  IN_DOJO: 'IN_DOJO',
+  IN_ORBITER: 'IN_ORBITER',
+  IN_RELAY: 'IN_RELAY',
+};
 
-    const deepData = stats[0];
-    return {
-      soldCount: deepData ? Number.parseInt(deepData.volume, 10) : undefined,
-      soldPrice: deepData ? Number.parseInt(deepData.median, 10) : undefined,
-      maximum: deepData ? Number.parseInt(deepData.max_price, 10) : undefined,
-      minimum: deepData ? Number.parseInt(deepData.min_price, 10) : undefined,
-    };
-  }
-
-  async resultForItem(urlName, platform = 'pc') {
-    const reqOpts = {
-      headers: {
-        platform: platform.toLowerCase(),
-      },
-    };
-    const res = await fetch(`${this.urls.market}${this.urls.marketBasePath}${urlName}`, reqOpts).then((d) => d.json());
-    return res.payload ? Promise.all(res.payload.item.items_in_set.map((item) => this.summaryForItem(item))) : {};
-  }
-
-  /**
-   * Construct a summary for the market item
-   * @param  {Object}  item Warframe.market Item
-   * @returns {Object}      Market summary for item
-   */
-  async summaryForItem(item) {
-    try {
-      // set up temp folder
-      await fs.mkdir(`${baseDir}/tmp`);
-    } catch (e) {
-      // this.logger.error(e);
-    }
-    const summary = new MarketSummary(item);
-
-    summary.prices = await this.averagesForItem(item.url_name);
-    const options = {
-      url: summary.thumbnail,
-      dest: `${baseDir}/tmp/${summary.name}.png`,
-    };
-    try {
-      const { image } = await imageDownloader.image(options);
-      if (image) {
-        const colors = await getColors(image, 'image/png');
-        summary.color = typeof colors !== 'undefined' ? colors[0].hex().replace('#', '0x') : 0xff0000;
-      }
-    } catch (e) {
-      /* istanbul ignore next */
-      this.logger.error(e);
-    } finally {
-      await fs.unlink(`${baseDir}/tmp/${summary.name}.png`);
-    }
-    return summary;
-  }
-
-  async queryMarket(query, { successfulQuery, platform = 'pc' }) {
-    this.logger.info(`querying market for ${query} on ${platform}`);
-    const attachments = [];
-    try {
-      // get market data
-      const marketData = await this.marketCache.getDataJson();
-      if (!marketData) {
-        this.logger.info('No market data!');
-        return [];
-      }
-      const marketResults = jsonQuery(`items[*item_name~/^${successfulQuery || query}.*/i]`, {
-        data: marketData.payload || {},
-        allowRegexp: true,
-      }).value;
-      if (!marketResults || marketResults.length &lt; 1) {
-        this.logger.info('No market results!');
-        return [];
-      }
-
-      const marketComponents = await this.resultForItem(marketResults[0].url_name, platform);
-      if (marketComponents.length > 0) {
-        attachments.push(...marketComponents);
-      }
-    } catch (err) {
-      /* istanbul ignore next */
-      this.logger.error(err);
-    }
-    return attachments;
-  }
-}
+export const ORDER_TYPE = {
+  BUY: 'buy',
+  SELL: 'sell',
+};
 </pre>
     </article>
 </section>
@@ -270,7 +182,7 @@ export default class MarketFetcher {
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a>
 	
-		on Friday, December 5th 2025, 01:24:20
+		on Saturday, January 10th 2026, 14:46:23
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

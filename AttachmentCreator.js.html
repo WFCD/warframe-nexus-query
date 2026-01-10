@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module.html#.exports">module.exports</a></li>
+					<li><a href="OrderUser.html">OrderUser</a></li><li><a href="module.html#.exports">module.exports</a></li><li><a href="module.exports_module.exports.html">module.exports#module.exports</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#attachmentFromComponents">attachmentFromComponents</a></li><li><a href="global.html#fieldValue">fieldValue</a></li><li><a href="global.html#lookupAlias">lookupAlias</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li><li><a href="global.html#summaryForItem">summaryForItem</a></li><li><a href="global.html#toString">toString</a></li>
+					<li><a href="global.html#API_BASE_URL">API_BASE_URL</a></li><li><a href="global.html#attachmentFromComponents">attachmentFromComponents</a></li><li><a href="global.html#calculateMedian">calculateMedian</a></li><li><a href="global.html#calculatePercentile">calculatePercentile</a></li><li><a href="global.html#calculateStatistics">calculateStatistics</a></li><li><a href="global.html#checkVersions">checkVersions</a></li><li><a href="global.html#clear">clear</a></li><li><a href="global.html#clearCache">clearCache</a></li><li><a href="global.html#delete">delete</a></li><li><a href="global.html#extractLocalized">extractLocalized</a></li><li><a href="global.html#fetchWithTimeout">fetchWithTimeout</a></li><li><a href="global.html#fieldValue">fieldValue</a></li><li><a href="global.html#fieldValueV2">fieldValueV2</a></li><li><a href="global.html#formatPriceRange">formatPriceRange</a></li><li><a href="global.html#formatStatistics">formatStatistics</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getAgeHours">getAgeHours</a></li><li><a href="global.html#getAllOrders">getAllOrders</a></li><li><a href="global.html#getBestOrders">getBestOrders</a></li><li><a href="global.html#getIconUrl">getIconUrl</a></li><li><a href="global.html#getItemBySlug">getItemBySlug</a></li><li><a href="global.html#getItemSet">getItemSet</a></li><li><a href="global.html#getItems">getItems</a></li><li><a href="global.html#getLocalized">getLocalized</a></li><li><a href="global.html#getLocalizedField">getLocalizedField</a></li><li><a href="global.html#getOnlineBuyers">getOnlineBuyers</a></li><li><a href="global.html#getOnlineSellers">getOnlineSellers</a></li><li><a href="global.html#getRecentOrders">getRecentOrders</a></li><li><a href="global.html#getThumbUrl">getThumbUrl</a></li><li><a href="global.html#getTopOrders">getTopOrders</a></li><li><a href="global.html#has">has</a></li><li><a href="global.html#isBuyOrder">isBuyOrder</a></li><li><a href="global.html#isPartOfSet">isPartOfSet</a></li><li><a href="global.html#isSellOrder">isSellOrder</a></li><li><a href="global.html#isUserOnline">isUserOnline</a></li><li><a href="global.html#isVaulted">isVaulted</a></li><li><a href="global.html#lookupAlias">lookupAlias</a></li><li><a href="global.html#normalizeLanguage">normalizeLanguage</a></li><li><a href="global.html#normalizePlatform">normalizePlatform</a></li><li><a href="global.html#pad">pad</a></li><li><a href="global.html#post">post</a></li><li><a href="global.html#priceCheckQuery">priceCheckQuery</a></li><li><a href="global.html#queryMarket">queryMarket</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#removeOutliers">removeOutliers</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#setLocale">setLocale</a></li><li><a href="global.html#setTimeout">setTimeout</a></li><li><a href="global.html#shouldRefresh">shouldRefresh</a></li><li><a href="global.html#size">size</a></li><li><a href="global.html#stop">stop</a></li><li><a href="global.html#toJSON">toJSON</a></li><li><a href="global.html#toString">toString</a></li>
 				</ul>
 			</li>
 			
@@ -78,8 +78,6 @@
     <article>
         <pre
             class="sunlight-highlight-javascript linenums">import n from 'numeral';
-
-import MarketComponent from './market/v1/summary.js'; // eslint-disable-line no-unused-vars
 
 const numerFmt = '0,0';
 const wfcdLogo = 'https://warframestat.us/wfcd_logo_color.png';
@@ -128,7 +126,7 @@ function safeRange(value1, value2) {
 }
 
 /**
- * Build a field from provided nexus &amp; market components
+ * Build a field from provided nexus &amp; market components (v1)
  * @param  {MarketComponent} mComponent market component
  * @returns {Object}            built field
  */
@@ -155,6 +153,67 @@ function fieldValue(mComponent) {
 }
 
 /**
+ * Build a field from v2 market component with trader info
+ * @param  {MarketComponent} mComponent market component (v2)
+ * @returns {Object}            built field
+ */
+function fieldValueV2(mComponent) {
+  // Validate input
+  if (!mComponent) {
+    throw new TypeError('mComponent is required');
+  }
+
+  if (typeof mComponent !== 'object') {
+    throw new TypeError('mComponent must be an object');
+  }
+
+  if (!mComponent.name || typeof mComponent.name !== 'string') {
+    throw new TypeError('mComponent.name must be a non-empty string');
+  }
+
+  if (mComponent.tradingTax !== undefined &amp;&amp; typeof mComponent.tradingTax !== 'number') {
+    throw new TypeError('mComponent.tradingTax must be a number');
+  }
+
+  if (mComponent.statistics &amp;&amp; typeof mComponent.statistics !== 'object') {
+    throw new TypeError('mComponent.statistics must be an object');
+  }
+
+  const sellStats = mComponent.statistics?.sell || {};
+
+  const mMedian = safeValue(sellStats.median);
+  const mRange = safeRange(sellStats.min, sellStats.max);
+
+  // Get online sellers (up to 3)
+  const onlineSellers = mComponent.getOnlineSellers ? mComponent.getOnlineSellers(3) : [];
+
+  let tradersInfo = '';
+  if (onlineSellers.length > 0) {
+    tradersInfo = '\n**Online Sellers:**\n';
+    onlineSellers.forEach((trader, idx) => {
+      const statusEmoji = trader.status === 'online' ? '🟢' : '🟡';
+      const activityText = trader.activity ? ` (${trader.activity})` : '';
+      tradersInfo += `${idx + 1}. ${statusEmoji} ${trader.ingameName}: ${trader.platinum}p${activityText}\n`;
+    });
+  } else {
+    tradersInfo = '\n_No online sellers currently available_\n';
+  }
+
+  return {
+    name: mComponent.name.trim(),
+    value:
+      `\`\`\`haskell\n` +
+      `${'Value'.padEnd(6, ' ')} | Market\n` +
+      `${'Median'.padEnd(6, ' ')} | ${mMedian}\n` +
+      `${'Range'.padEnd(6, ' ')} | ${mRange}\n` +
+      `${'Volume'.padEnd(6, ' ')} | ${sellStats.orderCount || 0} orders\n` +
+      `\`\`\`\n` +
+      `Trade Tax: ${n(mComponent.tradingTax).format(numerFmt)}cr\n${tradersInfo}`,
+    inline: false,
+  };
+}
+
+/**
  * Create the attachment itself
  */
 export default class AttachmentCreator {
@@ -170,9 +229,22 @@ export default class AttachmentCreator {
     if (!components || !components.length || !Array.isArray(components)) return noResultAttachment;
 
     const attachment = JSON.parse(JSON.stringify(baseAttachment));
-    const marketComponents = components.filter(
-      (component) => component &amp;&amp; component.type === 'market-v1' &amp;&amp; typeof component.prices.soldPrice !== 'undefined'
+
+    // Check if we have v2 components
+    const v2Components = components.filter(
+      (component) => component &amp;&amp; component.type === 'market-v2' &amp;&amp; component.statistics
     );
+
+    // Fall back to v1 components if no v2 found
+    const marketComponents =
+      v2Components.length > 0
+        ? v2Components
+        : components.filter(
+            (component) =>
+              component &amp;&amp; component.type === 'market-v1' &amp;&amp; typeof component.prices.soldPrice !== 'undefined'
+          );
+
+    const isV2 = v2Components.length > 0;
 
     /* istanbul ignore else */
     if (marketComponents.length > 0) {
@@ -184,12 +256,13 @@ export default class AttachmentCreator {
           attachment.thumbnail.url = marketComponent.thumbnail;
         }
 
-        attachment.fields.push(fieldValue(marketComponent));
+        // Use appropriate field builder based on version
+        attachment.fields.push(isV2 ? fieldValueV2(marketComponent) : fieldValue(marketComponent));
       });
 
       attachment.footer = {
         icon_url: wfcdLogo,
-        text: 'Price data provided by Warframe.Market',
+        text: isV2 ? 'Price data provided by Warframe.Market (API v2)' : 'Price data provided by Warframe.Market',
       };
     } else {
       return noResultAttachment;
@@ -247,7 +320,7 @@ export default class AttachmentCreator {
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a>
 	
-		on Friday, December 5th 2025, 01:24:20
+		on Saturday, January 10th 2026, 14:46:23
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

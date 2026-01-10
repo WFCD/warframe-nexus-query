@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module.html#.exports">module.exports</a></li>
+					<li><a href="OrderUser.html">OrderUser</a></li><li><a href="module.html#.exports">module.exports</a></li><li><a href="module.exports_module.exports.html">module.exports#module.exports</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#attachmentFromComponents">attachmentFromComponents</a></li><li><a href="global.html#fieldValue">fieldValue</a></li><li><a href="global.html#lookupAlias">lookupAlias</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li><li><a href="global.html#summaryForItem">summaryForItem</a></li><li><a href="global.html#toString">toString</a></li>
+					<li><a href="global.html#API_BASE_URL">API_BASE_URL</a></li><li><a href="global.html#attachmentFromComponents">attachmentFromComponents</a></li><li><a href="global.html#calculateMedian">calculateMedian</a></li><li><a href="global.html#calculatePercentile">calculatePercentile</a></li><li><a href="global.html#calculateStatistics">calculateStatistics</a></li><li><a href="global.html#checkVersions">checkVersions</a></li><li><a href="global.html#clear">clear</a></li><li><a href="global.html#clearCache">clearCache</a></li><li><a href="global.html#delete">delete</a></li><li><a href="global.html#extractLocalized">extractLocalized</a></li><li><a href="global.html#fetchWithTimeout">fetchWithTimeout</a></li><li><a href="global.html#fieldValue">fieldValue</a></li><li><a href="global.html#fieldValueV2">fieldValueV2</a></li><li><a href="global.html#formatPriceRange">formatPriceRange</a></li><li><a href="global.html#formatStatistics">formatStatistics</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getAgeHours">getAgeHours</a></li><li><a href="global.html#getAllOrders">getAllOrders</a></li><li><a href="global.html#getBestOrders">getBestOrders</a></li><li><a href="global.html#getIconUrl">getIconUrl</a></li><li><a href="global.html#getItemBySlug">getItemBySlug</a></li><li><a href="global.html#getItemSet">getItemSet</a></li><li><a href="global.html#getItems">getItems</a></li><li><a href="global.html#getLocalized">getLocalized</a></li><li><a href="global.html#getLocalizedField">getLocalizedField</a></li><li><a href="global.html#getOnlineBuyers">getOnlineBuyers</a></li><li><a href="global.html#getOnlineSellers">getOnlineSellers</a></li><li><a href="global.html#getRecentOrders">getRecentOrders</a></li><li><a href="global.html#getThumbUrl">getThumbUrl</a></li><li><a href="global.html#getTopOrders">getTopOrders</a></li><li><a href="global.html#has">has</a></li><li><a href="global.html#isBuyOrder">isBuyOrder</a></li><li><a href="global.html#isPartOfSet">isPartOfSet</a></li><li><a href="global.html#isSellOrder">isSellOrder</a></li><li><a href="global.html#isUserOnline">isUserOnline</a></li><li><a href="global.html#isVaulted">isVaulted</a></li><li><a href="global.html#lookupAlias">lookupAlias</a></li><li><a href="global.html#normalizeLanguage">normalizeLanguage</a></li><li><a href="global.html#normalizePlatform">normalizePlatform</a></li><li><a href="global.html#pad">pad</a></li><li><a href="global.html#post">post</a></li><li><a href="global.html#priceCheckQuery">priceCheckQuery</a></li><li><a href="global.html#queryMarket">queryMarket</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#removeOutliers">removeOutliers</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#setLocale">setLocale</a></li><li><a href="global.html#setTimeout">setTimeout</a></li><li><a href="global.html#shouldRefresh">shouldRefresh</a></li><li><a href="global.html#size">size</a></li><li><a href="global.html#stop">stop</a></li><li><a href="global.html#toJSON">toJSON</a></li><li><a href="global.html#toString">toString</a></li>
 				</ul>
 			</li>
 			
@@ -96,78 +96,366 @@
         <article><h1>warframe-nexus-query</h1>
 <p><a href="https://github.com/WFCD/banner/blob/master/PROJECTS.md"><img src="https://img.shields.io/badge/Warframe_Comm_Devs-supported-blue.svg?color=2E96EF&amp;logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyOTgiIGhlaWdodD0iMTczIiB2aWV3Qm94PSIwIDAgMjk4IDE3MyI%2BPHBhdGggZD0iTTE4NSA2N2MxNSA4IDI4IDE2IDMxIDE5czIzIDE4LTcgNjBjMCAwIDM1LTMxIDI2LTc5LTE0LTctNjItMzYtNzAtNDUtNC01LTEwLTEyLTE1LTIyLTUgMTAtOSAxNC0xNSAyMi0xMyAxMy01OCAzOC03MiA0NS05IDQ4IDI2IDc5IDI2IDc5LTMwLTQyLTEwLTU3LTctNjBsMzEtMTkgMzYtMjIgMzYgMjJ6TTU1IDE3M2wtMTctM2MtOC0xOS0yMC00NC0yNC01MC01LTctNy0xMS0xNC0xNWwxOC0yYzE2LTMgMjItNyAzMi0xMyAxIDYgMCA5IDIgMTQtNiA0LTIxIDEwLTI0IDE2IDMgMTQgNSAyNyAyNyA1M3ptMTYtMTFsLTktMi0xNC0yOWEzMCAzMCAwIDAgMC04LThoN2wxMy00IDQgN2MtMyAyLTcgMy04IDZhODYgODYgMCAwIDAgMTUgMzB6bTE3MiAxMWwxNy0zYzgtMTkgMjAtNDQgMjQtNTAgNS03IDctMTEgMTQtMTVsLTE4LTJjLTE2LTMtMjItNy0zMi0xMy0xIDYgMCA5LTIgMTQgNiA0IDIxIDEwIDI0IDE2LTMgMTQtNSAyNy0yNyA1M3ptLTE2LTExbDktMiAxNC0yOWEzMCAzMCAwIDAgMSA4LThoLTdsLTEzLTQtNCA3YzMgMiA3IDMgOCA2YTg2IDg2IDAgMCAxLTE1IDMwem0tNzktNDBsLTYtNmMtMSAzLTMgNi02IDdsNSA1YTUgNSAwIDAgMSAyIDB6bS0xMy0yYTQgNCAwIDAgMSAxLTJsMi0yYTQgNCAwIDAgMSAyLTFsNC0xNy0xNy0xMC04IDcgMTMgOC0yIDctNyAyLTgtMTItOCA4IDEwIDE3em0xMiAxMWE1IDUgMCAwIDAtNC0yIDQgNCAwIDAgMC0zIDFsLTMwIDI3YTUgNSAwIDAgMCAwIDdsNCA0YTYgNiAwIDAgMCA0IDIgNSA1IDAgMCAwIDMtMWwyNy0zMWMyLTIgMS01LTEtN3ptMzkgMjZsLTMwLTI4LTYgNmE1IDUgMCAwIDEgMCAzbDI2IDI5YTEgMSAwIDAgMCAxIDBsNS0yIDItMmMxLTIgMy01IDItNnptNS00NWEyIDIgMCAwIDAtNCAwbC0xIDEtMi00YzEtMy01LTktNS05LTEzLTE0LTIzLTE0LTI3LTEzLTIgMS0yIDEgMCAyIDE0IDIgMTUgMTAgMTMgMTNhNCA0IDAgMCAwLTEgMyAzIDMgMCAwIDAgMSAxbC0yMSAyMmE3IDcgMCAwIDEgNCAyIDggOCAwIDAgMSAyIDNsMjAtMjFhNyA3IDAgMCAwIDEgMSA0IDQgMCAwIDAgNCAwYzEtMSA2IDMgNyA0aC0xYTMgMyAwIDAgMCAwIDQgMiAyIDAgMCAwIDQgMGw2LTZhMyAzIDAgMCAwIDAtM3oiIGZpbGw9IiMyZTk2ZWYiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg%3D%3D" alt="Supported by the Warframe Community Developers"></a>
 <a href="https://discord.gg/jGZxH9f"><img src="https://img.shields.io/discord/256087517353213954.svg?logo=discord" alt="Discord"></a></p>
-<p>A node project for allowing simple summary of the <a href="https://warframe.market">Warframe.Market</a> pricing API.</p>
+<p>A Node.js library for querying Warframe item prices from the <a href="https://warframe.market">Warframe.Market</a> API.</p>
+<h2>Features</h2>
+<ul>
+<li>🔄 Support for both Warframe Market API v1 and v2</li>
+<li>📊 Real-time price statistics (median, min, max, average)</li>
+<li>👥 Live trader information with online status (v2)</li>
+<li>🌍 Full internationalization support (12 languages)</li>
+<li>🎮 Multi-platform support (PC, PlayStation, Xbox, Nintendo Switch)</li>
+<li>💾 Smart caching with version-based invalidation</li>
+<li>📱 Discord webhook integration ready</li>
+</ul>
 <h2>Installation</h2>
-<pre class="prettyprint source"><code>npm install --save warframe-nexus-query
+<pre class="prettyprint source lang-bash"><code>npm install --save warframe-nexus-query
 </code></pre>
-<h2>Usage</h2>
-<table>
-<thead>
-<tr>
-<th>Require</th>
-<th>Module File</th>
-<th>Accessor</th>
-<th>Description</th>
-<th>parameters</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>warframe-nexus-query</code></td>
-<td><code>index.js</code></td>
-<td><code>.priceCheckQueryString</code></td>
-<td>Get Query result string</td>
-<td><code>query</code>, <code>callback</code></td>
-</tr>
-<tr>
-<td><code>warframe-nexus-query</code></td>
-<td><code>index.js</code></td>
-<td><code>.priceCheckQuery</code></td>
-<td>Get Query result objects, has more parameters available</td>
-<td><code>query</code>, <code>callback</code></td>
-</tr>
-</tbody>
-</table>
-<h2>Environment variables</h2>
+<h2>Quick Start</h2>
+<pre class="prettyprint source lang-javascript"><code>import PriceCheckQuerier from 'warframe-nexus-query';
+
+const querier = new PriceCheckQuerier({ logger: console });
+
+// Query item prices
+const results = await querier.priceCheckQuery('loki prime', 'pc');
+console.log(results);
+
+// Get Discord-formatted attachments
+const attachments = await querier.priceCheckQueryAttachment('ash prime systems', undefined, 'pc');
+console.log(attachments);
+
+// Clean up when done
+await querier.stopUpdating();
+</code></pre>
+<h2>API</h2>
+<h3>Constructor</h3>
+<pre class="prettyprint source lang-javascript"><code>const querier = new PriceCheckQuerier(options);
+</code></pre>
+<p><strong>Options:</strong></p>
+<ul>
+<li><code>logger</code> - Logger instance (default: <code>console</code>)</li>
+<li><code>marketCache</code> - Custom cache implementation (optional)</li>
+<li><code>skipMarket</code> - Skip market data fetching (default: <code>false</code>)</li>
+</ul>
+<h3>Methods</h3>
+<h4><code>priceCheckQuery(query, platform)</code></h4>
+<p>Query item prices and return raw result objects.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>query</code> (string) - Item name to search for</li>
+<li><code>platform</code> (string) - Platform: <code>'pc'</code>, <code>'ps4'</code>, <code>'playstation'</code>, <code>'xb1'</code>, <code>'xbox'</code>, <code>'xbone'</code>, <code>'swi'</code>, <code>'switch'</code>, <code>'ns'</code></li>
+</ul>
+<p><strong>Returns:</strong> <code>Promise&lt;Array&lt;Summary&gt;&gt;</code> - Array of price summary objects</p>
+<pre class="prettyprint source lang-javascript"><code>const results = await querier.priceCheckQuery('nova prime set', 'pc');
+</code></pre>
+<h4><code>priceCheckQueryString(query, platform)</code></h4>
+<p>Query item prices and return formatted string.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>query</code> (string) - Item name to search for</li>
+<li><code>platform</code> (string) - Platform identifier</li>
+</ul>
+<p><strong>Returns:</strong> <code>Promise&lt;string&gt;</code> - Formatted price string</p>
+<pre class="prettyprint source lang-javascript"><code>const priceString = await querier.priceCheckQueryString('maiming strike', 'pc');
+console.log(priceString); // &quot;Maiming Strike: 150p (avg)&quot;
+</code></pre>
+<h4><code>priceCheckQueryAttachment(query, priorResults, platform)</code></h4>
+<p>Query item prices and return Discord-formatted embeds.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>query</code> (string) - Item name to search for</li>
+<li><code>priorResults</code> (Array|undefined) - Prior query results to use instead of fetching new data</li>
+<li><code>platform</code> (string) - Platform identifier</li>
+</ul>
+<p><strong>Returns:</strong> <code>Promise&lt;Array&lt;Object&gt;&gt;</code> - Array of Discord embed objects</p>
+<pre class="prettyprint source lang-javascript"><code>const embeds = await querier.priceCheckQueryAttachment('condition overload', undefined, 'pc');
+// Send embeds to Discord webhook
+await fetch(webhookUrl, {
+  method: 'POST',
+  body: JSON.stringify({ embeds }),
+  headers: { 'Content-Type': 'application/json' },
+});
+</code></pre>
+<h4><code>stopUpdating()</code></h4>
+<p>Clean up resources and stop background updates.</p>
+<pre class="prettyprint source lang-javascript"><code>await querier.stopUpdating();
+</code></pre>
+<h2>Environment Variables</h2>
 <table>
 <thead>
 <tr>
 <th>Variable</th>
-<th>example</th>
-<th>default</th>
+<th>Description</th>
+<th>Default</th>
+<th>Example</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>NEXUSSTATS_MAX_CACHED_TIME</code></td>
-<td><code>600000</code></td>
-<td><code>30000</code></td>
+<td><code>WARFRAME_MARKET_API_VERSION</code></td>
+<td>API version to use</td>
+<td><code>v1</code></td>
+<td><code>v2</code></td>
 </tr>
 <tr>
-<td><code>NEXUSSTATS_URL_OVERRIDE</code></td>
-<td><code>'https://nexus-stats.com/api'</code></td>
-<td><code>https://nexus-stats.com/api</code></td>
+<td><code>MARKET_TIMEOUT</code></td>
+<td>API request timeout (ms)</td>
+<td><code>30000</code></td>
+<td><code>60000</code></td>
+</tr>
+<tr>
+<td><code>MARKET_CACHE_PATH</code></td>
+<td>Cache directory path</td>
+<td><code>./cache</code></td>
+<td><code>/tmp/wf-cache</code></td>
+</tr>
+<tr>
+<td><code>MARKET_V2_URL_OVERRIDE</code></td>
+<td>Custom v2 API base URL</td>
+<td>-</td>
+<td><code>https://custom.api/v2</code></td>
 </tr>
 </tbody>
 </table>
-<h2>Objects</h2>
-<p>Item</p>
+<h3>API Version Selection</h3>
+<p>Switch between v1 and v2 APIs:</p>
+<pre class="prettyprint source lang-bash"><code># Use v2 API (recommended)
+WARFRAME_MARKET_API_VERSION=v2 node app.js
+
+# Use v1 API (legacy)
+WARFRAME_MARKET_API_VERSION=v1 node app.js
+</code></pre>
+<h2>API v2 Features</h2>
+<p>The v2 API includes enhanced features:</p>
 <ul>
-<li><code>components</code> - List of component objects</li>
-<li><code>id</code> - Unique identifier for the Item object</li>
-<li><code>title</code> - Title of the item</li>
-<li><code>type</code> - Type of the item</li>
-<li><code>supplyPercent</code> - Of the total amount of item listings for this object, this is the percent for sale</li>
-<li><code>demandPercent</code> - Of the total amount of item listings for this object, this is t looking to be bought</li>
-<li><code>supplyAmount</code>  - Of the total amount of item listings for this object, this is the number for sale</li>
-<li><code>demandAmount</code>  - Of the total amount of item listings for this object, this is the number looking to be bought</li>
+<li><strong>Version-based caching</strong> - Automatic cache invalidation when items update</li>
+<li><strong>Real-time trader data</strong> - See who's online and ready to trade</li>
+<li><strong>Trader activity</strong> - View current in-game activity (mission, dojo, relay, etc.)</li>
+<li><strong>User reputation</strong> - Trader reputation scores</li>
+<li><strong>Crossplay support</strong> - Trade across platforms</li>
+<li><strong>Better performance</strong> - Optimized endpoints for faster queries</li>
 </ul>
-<p>Component</p>
+<h3>v2 Example Response</h3>
+<pre class="prettyprint source lang-javascript"><code>{
+  item: 'Ash Prime Systems',
+  prices: {
+    selling: { median: 15, average: 18.5, min: 10, max: 30 },
+    buying: { median: 12, average: 11.8, min: 8, max: 15 }
+  },
+  traders: [
+    {
+      user: 'TraderName',
+      platinum: 15,
+      quantity: 3,
+      status: 'online',
+      reputation: 156,
+      activity: 'In Dojo'
+    }
+  ]
+}
+</code></pre>
+<h2>Platform Aliases</h2>
+<p>The following platform identifiers are supported:</p>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Aliases</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PC</td>
+<td><code>pc</code></td>
+</tr>
+<tr>
+<td>PlayStation</td>
+<td><code>ps4</code>, <code>playstation</code></td>
+</tr>
+<tr>
+<td>Xbox</td>
+<td><code>xb1</code>, <code>xbox</code>, <code>xbone</code></td>
+</tr>
+<tr>
+<td>Nintendo Switch</td>
+<td><code>swi</code>, <code>switch</code>, <code>ns</code></td>
+</tr>
+</tbody>
+</table>
+<h2>Response Objects</h2>
+<h3>Summary Object</h3>
+<p>Result object returned by <code>priceCheckQuery()</code>:</p>
+<pre class="prettyprint source lang-javascript"><code>{
+  type: 'market-v2',          // 'market' for v1, 'market-v2' for v2
+  item: 'Item Name',
+  platform: 'pc',
+  componentName: 'Set',
+  prices: {
+    selling: {
+      median: 100,
+      average: 105.5,
+      min: 80,
+      max: 150,
+      count: 25
+    },
+    buying: {
+      median: 90,
+      average: 88.2,
+      min: 60,
+      max: 95,
+      count: 15
+    }
+  },
+  traders: [                   // v2 only
+    {
+      user: 'Username',
+      platinum: 100,
+      quantity: 2,
+      status: 'online',        // 'online' | 'ingame' | 'offline'
+      reputation: 250,
+      activity: 'On Mission'
+    }
+  ]
+}
+</code></pre>
+<h3>Discord Embed Object</h3>
+<p>Result object returned by <code>priceCheckQueryAttachment()</code>:</p>
+<pre class="prettyprint source lang-javascript"><code>{
+  title: 'Ash Prime Systems [PC]',
+  url: 'https://warframe.market/items/ash_prime_systems',
+  thumbnail: { url: 'https://warframe.market/static/assets/...' },
+  color: 0x336699,
+  fields: [
+    {
+      name: 'Selling',
+      value: '💰 15p (median)\n📊 10-30p range\n📦 25 orders',
+      inline: true
+    },
+    {
+      name: 'Buying',
+      value: '💰 12p (median)\n📊 8-15p range\n📦 15 orders',
+      inline: true
+    },
+    {
+      name: '🟢 Online Traders',
+      value: 'TraderName: 15p x3'
+    }
+  ],
+  footer: {
+    text: 'Warframe Market • Updated 2 minutes ago'
+  }
+}
+</code></pre>
+<h2>Examples</h2>
+<h3>Basic Price Check</h3>
+<pre class="prettyprint source lang-javascript"><code>import PriceCheckQuerier from 'warframe-nexus-query';
+
+const querier = new PriceCheckQuerier({ logger: console });
+
+// Search for an item
+const results = await querier.priceCheckQuery('nikana prime', 'pc');
+
+results.forEach((result) => {
+  console.log(`${result.item} - ${result.componentName}`);
+  console.log(`Median sell price: ${result.prices.selling.median}p`);
+  console.log(`Median buy price: ${result.prices.buying.median}p`);
+});
+
+await querier.stopUpdating();
+</code></pre>
+<h3>Discord Bot Integration</h3>
+<pre class="prettyprint source lang-javascript"><code>import PriceCheckQuerier from 'warframe-nexus-query';
+import { Client, GatewayIntentBits } from 'discord.js';
+
+const bot = new Client({ intents: [GatewayIntentBits.Guilds] });
+const querier = new PriceCheckQuerier({ logger: console });
+
+bot.on('interactionCreate', async (interaction) => {
+  if (!interaction.isChatInputCommand()) return;
+
+  if (interaction.commandName === 'price') {
+    const item = interaction.options.getString('item');
+    const platform = interaction.options.getString('platform') || 'pc';
+
+    const embeds = await querier.priceCheckQueryAttachment(item, undefined, platform);
+
+    if (embeds.length > 0) {
+      await interaction.reply({ embeds });
+    } else {
+      await interaction.reply('No results found for that item.');
+    }
+  }
+});
+
+bot.login(process.env.DISCORD_TOKEN);
+</code></pre>
+<h3>Multi-Platform Price Comparison</h3>
+<pre class="prettyprint source lang-javascript"><code>import PriceCheckQuerier from 'warframe-nexus-query';
+
+const querier = new PriceCheckQuerier({ logger: console });
+const platforms = ['pc', 'ps4', 'xbox', 'switch'];
+
+for (const platform of platforms) {
+  const results = await querier.priceCheckQuery('Trinity Prime Set', platform);
+
+  if (results.length > 0) {
+    const price = results[0].prices.selling.median;
+    console.log(`${platform.toUpperCase()}: ${price}p`);
+  }
+}
+
+await querier.stopUpdating();
+</code></pre>
+<h2>Testing</h2>
+<pre class="prettyprint source lang-bash"><code># Run tests
+npm test
+
+# Run linter
+npm run lint
+
+# Generate coverage report
+npm run coverage
+
+# Generate API documentation
+npm run build:docs
+</code></pre>
+<h2>Development</h2>
+<pre class="prettyprint source lang-bash"><code># Clone repository
+git clone https://github.com/WFCD/warframe-nexus-query.git
+cd warframe-nexus-query
+
+# Install dependencies
+npm install
+
+# Run tests in watch mode
+npm test -- --watch
+
+# Lint and auto-fix
+npm run lint:fix
+</code></pre>
+<h2>Contributing</h2>
+<p>Contributions are welcome! Please:</p>
+<ol>
+<li>Fork the repository</li>
+<li>Create a feature branch (<code>git checkout -b feature/amazing-feature</code>)</li>
+<li>Commit your changes (<code>git commit -m 'feat: add amazing feature'</code>)</li>
+<li>Push to the branch (<code>git push origin feature/amazing-feature</code>)</li>
+<li>Open a Pull Request</li>
+</ol>
+<h2>License</h2>
+<p>Licensed under the Apache License 2.0. See <a href="LICENSE">LICENSE</a> for details.</p>
+<h2>Links</h2>
 <ul>
-<li><code>name</code> -  Name of the component</li>
-<li><code>avgPrice</code> - Average platinum price</li>
-<li><code>rawAverage</code> - Raw average (non-rounded) price of the component</li>
-<li><code>data</code> - Array of Miscellaneous data</li>
+<li><a href="https://github.com/WFCD/warframe-nexus-query">GitHub Repository</a></li>
+<li><a href="https://www.npmjs.com/package/warframe-nexus-query">npm Package</a></li>
+<li><a href="https://warframe.market">Warframe Market API</a></li>
+<li><a href="https://discord.gg/jGZxH9f">Discord Community</a></li>
+<li><a href="https://github.com/WFCD">Warframe Community Developers</a></li>
+</ul>
+<h2>Acknowledgments</h2>
+<ul>
+<li>Built by the <a href="https://github.com/WFCD">Warframe Community Developers</a></li>
+<li>Powered by <a href="https://warframe.market">Warframe.Market</a> API</li>
+<li>Maintained by <a href="https://github.com/tobitenno">tobitenno</a> and contributors</li>
 </ul></article>
     </section>
 
@@ -218,7 +506,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a>
 	
-		on Friday, December 5th 2025, 01:24:20
+		on Saturday, January 10th 2026, 14:46:23
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

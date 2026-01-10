@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>warframe-nexus-query Source: market/v1/summary.js</title>
+	<title>warframe-nexus-query Source: market/v2/utils/i18n.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module.html#.exports">module.exports</a></li>
+					<li><a href="OrderUser.html">OrderUser</a></li><li><a href="module.html#.exports">module.exports</a></li><li><a href="module.exports_module.exports.html">module.exports#module.exports</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#attachmentFromComponents">attachmentFromComponents</a></li><li><a href="global.html#fieldValue">fieldValue</a></li><li><a href="global.html#lookupAlias">lookupAlias</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li><li><a href="global.html#summaryForItem">summaryForItem</a></li><li><a href="global.html#toString">toString</a></li>
+					<li><a href="global.html#API_BASE_URL">API_BASE_URL</a></li><li><a href="global.html#attachmentFromComponents">attachmentFromComponents</a></li><li><a href="global.html#calculateMedian">calculateMedian</a></li><li><a href="global.html#calculatePercentile">calculatePercentile</a></li><li><a href="global.html#calculateStatistics">calculateStatistics</a></li><li><a href="global.html#checkVersions">checkVersions</a></li><li><a href="global.html#clear">clear</a></li><li><a href="global.html#clearCache">clearCache</a></li><li><a href="global.html#delete">delete</a></li><li><a href="global.html#extractLocalized">extractLocalized</a></li><li><a href="global.html#fetchWithTimeout">fetchWithTimeout</a></li><li><a href="global.html#fieldValue">fieldValue</a></li><li><a href="global.html#fieldValueV2">fieldValueV2</a></li><li><a href="global.html#formatPriceRange">formatPriceRange</a></li><li><a href="global.html#formatStatistics">formatStatistics</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getAgeHours">getAgeHours</a></li><li><a href="global.html#getAllOrders">getAllOrders</a></li><li><a href="global.html#getBestOrders">getBestOrders</a></li><li><a href="global.html#getIconUrl">getIconUrl</a></li><li><a href="global.html#getItemBySlug">getItemBySlug</a></li><li><a href="global.html#getItemSet">getItemSet</a></li><li><a href="global.html#getItems">getItems</a></li><li><a href="global.html#getLocalized">getLocalized</a></li><li><a href="global.html#getLocalizedField">getLocalizedField</a></li><li><a href="global.html#getOnlineBuyers">getOnlineBuyers</a></li><li><a href="global.html#getOnlineSellers">getOnlineSellers</a></li><li><a href="global.html#getRecentOrders">getRecentOrders</a></li><li><a href="global.html#getThumbUrl">getThumbUrl</a></li><li><a href="global.html#getTopOrders">getTopOrders</a></li><li><a href="global.html#has">has</a></li><li><a href="global.html#isBuyOrder">isBuyOrder</a></li><li><a href="global.html#isPartOfSet">isPartOfSet</a></li><li><a href="global.html#isSellOrder">isSellOrder</a></li><li><a href="global.html#isUserOnline">isUserOnline</a></li><li><a href="global.html#isVaulted">isVaulted</a></li><li><a href="global.html#lookupAlias">lookupAlias</a></li><li><a href="global.html#normalizeLanguage">normalizeLanguage</a></li><li><a href="global.html#normalizePlatform">normalizePlatform</a></li><li><a href="global.html#pad">pad</a></li><li><a href="global.html#post">post</a></li><li><a href="global.html#priceCheckQuery">priceCheckQuery</a></li><li><a href="global.html#queryMarket">queryMarket</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#removeOutliers">removeOutliers</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#setLocale">setLocale</a></li><li><a href="global.html#setTimeout">setTimeout</a></li><li><a href="global.html#shouldRefresh">shouldRefresh</a></li><li><a href="global.html#size">size</a></li><li><a href="global.html#stop">stop</a></li><li><a href="global.html#toJSON">toJSON</a></li><li><a href="global.html#toString">toString</a></li>
 				</ul>
 			</li>
 			
@@ -72,75 +72,50 @@
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: market/v1/summary.js</h1>
+		<h1 class="page-title">Source: market/v2/utils/i18n.js</h1>
     
 <section>
     <article>
         <pre
-            class="sunlight-highlight-javascript linenums">const urls = {
-  market: process.env.MARKET_URL_OVERRIDE || 'https://api.warframe.market/v1/items',
-  marketAssets: process.env.MARKET_ASSETS_URL_OVERRIDE || 'https://warframe.market/static/assets/',
-};
+            class="sunlight-highlight-javascript linenums">/**
+ * i18n helper utilities
+ */
+
+import { LANGUAGES } from '../constants.js';
 
 /**
- * Represents an individual component object of an item.
+ * Normalize language code
+ * @param {string} lang - Language code
+ * @returns {string} Normalized language code
  */
-export default class Summary {
-  /**
-   * Represents an individual item.
-   * @param {json} itemData the component data to parse into a summary
-   * @constructor
-   */
-  constructor(itemData) {
-    this.name = itemData.en.item_name.trim();
-    this.thumbnail = `${urls.marketAssets}${itemData.thumb}`;
-    this.partThumb = `${urls.marketAssets}${itemData.sub_icon}`;
-    this.tradingTax = itemData.trading_tax || 0;
-    this.ducats = itemData.ducats || 0;
-    this.masteryLevel = itemData.mastery_level;
-    this.tradable = itemData.tradable;
-    this.wikiUrl = itemData.en.wiki_link;
-    this.codex = itemData.en.codex;
-    this.description = itemData.en.description.replace(/&lt;\/?p>/gi, '');
-    this.drops = itemData.en.drop;
-    this.url = `http://warframe.market/items/${itemData.url_name}`;
+export function normalizeLanguage(lang) {
+  if (!lang) return 'en';
+  const normalized = lang.toLowerCase().trim();
+  return LANGUAGES[normalized] || 'en';
+}
 
-    this.type = 'market-v1';
-  }
+/**
+ * Extract localized data from i18n object
+ * @param {Object} i18n - i18n object
+ * @param {string} locale - Preferred locale
+ * @returns {Object} Localized data
+ */
+export function extractLocalized(i18n, locale = 'en') {
+  if (!i18n) return {};
+  return i18n[locale] || i18n.en || {};
+}
 
-  /**
-   * The components' string representation
-   * @param {string} opt Option, either 'codex', 'item', 'location', 'all'
-   * @returns {string}
-   */
-  toString(opt = 'item') {
-    let value = this.name;
-    if (opt === 'codex' || opt === 'all') {
-      value += `\`\`\`\nCodex: ${this.codex}\n`;
-    }
-    if (opt === 'item' || opt === 'all') {
-      value +=
-        `${this.pad(`Requires: ${this.masteryLevel}`, 15)}| Tax: ${this.pad(`${this.tradingTax}cr`)}\n` +
-        `Item is ${this.tradable ? '' : ' not '} tradable\n` +
-        `${this.pad(`Sold ${this.prices.soldCount} for ${this.prices.soldPrice}`, 15)}|` +
-        `Minimum ${this.prices.minimum} | Maximum ${this.prices.maximum}\n`;
-    }
-    if (opt === 'location' || opt === 'all') {
-      value += `${this.pad(`Drops: ${this.drops.map((drop) => drop.name).join(', ')}`, 15)}\n`;
-    }
-    value += `\`\`\`\n${this.wikiUrl}`;
-    return `\u221F${value}`;
-  }
-
-  pad(str, length = 10, character = ' ') {
-    let stringRet;
-    if (str.length &lt; length) {
-      stringRet = this.pad(`${str}${character}`);
-    } else {
-      stringRet = str;
-    }
-    return stringRet;
-  }
+/**
+ * Get field from i18n object with fallback
+ * @param {Object} i18n - i18n object
+ * @param {string} field - Field name
+ * @param {string} locale - Preferred locale
+ * @param {*} defaultValue - Default value if not found
+ * @returns {*}
+ */
+export function getLocalizedField(i18n, field, locale = 'en', defaultValue = null) {
+  const localized = extractLocalized(i18n, locale);
+  return localized[field] ?? defaultValue;
 }
 </pre>
     </article>
@@ -187,7 +162,7 @@ export default class Summary {
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a>
 	
-		on Friday, December 5th 2025, 01:24:20
+		on Saturday, January 10th 2026, 14:46:23
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>warframe-nexus-query Source: market/v2/MarketFetcherV2.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">warframe-nexus-query</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="OrderUser.html">OrderUser</a></li><li><a href="module.html#.exports">module.exports</a></li><li><a href="module.exports_module.exports.html">module.exports#module.exports</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="global.html#API_BASE_URL">API_BASE_URL</a></li><li><a href="global.html#attachmentFromComponents">attachmentFromComponents</a></li><li><a href="global.html#calculateMedian">calculateMedian</a></li><li><a href="global.html#calculatePercentile">calculatePercentile</a></li><li><a href="global.html#calculateStatistics">calculateStatistics</a></li><li><a href="global.html#checkVersions">checkVersions</a></li><li><a href="global.html#clear">clear</a></li><li><a href="global.html#clearCache">clearCache</a></li><li><a href="global.html#delete">delete</a></li><li><a href="global.html#extractLocalized">extractLocalized</a></li><li><a href="global.html#fetchWithTimeout">fetchWithTimeout</a></li><li><a href="global.html#fieldValue">fieldValue</a></li><li><a href="global.html#fieldValueV2">fieldValueV2</a></li><li><a href="global.html#formatPriceRange">formatPriceRange</a></li><li><a href="global.html#formatStatistics">formatStatistics</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getAgeHours">getAgeHours</a></li><li><a href="global.html#getAllOrders">getAllOrders</a></li><li><a href="global.html#getBestOrders">getBestOrders</a></li><li><a href="global.html#getIconUrl">getIconUrl</a></li><li><a href="global.html#getItemBySlug">getItemBySlug</a></li><li><a href="global.html#getItemSet">getItemSet</a></li><li><a href="global.html#getItems">getItems</a></li><li><a href="global.html#getLocalized">getLocalized</a></li><li><a href="global.html#getLocalizedField">getLocalizedField</a></li><li><a href="global.html#getOnlineBuyers">getOnlineBuyers</a></li><li><a href="global.html#getOnlineSellers">getOnlineSellers</a></li><li><a href="global.html#getRecentOrders">getRecentOrders</a></li><li><a href="global.html#getThumbUrl">getThumbUrl</a></li><li><a href="global.html#getTopOrders">getTopOrders</a></li><li><a href="global.html#has">has</a></li><li><a href="global.html#isBuyOrder">isBuyOrder</a></li><li><a href="global.html#isPartOfSet">isPartOfSet</a></li><li><a href="global.html#isSellOrder">isSellOrder</a></li><li><a href="global.html#isUserOnline">isUserOnline</a></li><li><a href="global.html#isVaulted">isVaulted</a></li><li><a href="global.html#lookupAlias">lookupAlias</a></li><li><a href="global.html#normalizeLanguage">normalizeLanguage</a></li><li><a href="global.html#normalizePlatform">normalizePlatform</a></li><li><a href="global.html#pad">pad</a></li><li><a href="global.html#post">post</a></li><li><a href="global.html#priceCheckQuery">priceCheckQuery</a></li><li><a href="global.html#queryMarket">queryMarket</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#removeOutliers">removeOutliers</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#setLocale">setLocale</a></li><li><a href="global.html#setTimeout">setTimeout</a></li><li><a href="global.html#shouldRefresh">shouldRefresh</a></li><li><a href="global.html#size">size</a></li><li><a href="global.html#stop">stop</a></li><li><a href="global.html#toJSON">toJSON</a></li><li><a href="global.html#toString">toString</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: market/v2/MarketFetcherV2.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">/**
+ * Warframe Market API v2 Client
+ * Main entry point for interacting with the Warframe Market API v2
+ */
+
+import HttpClient from './utils/http.js';
+import VersionedCache from './utils/cache.js';
+import Item from './models/Item.js';
+import Order from './models/Order.js';
+import Summary from './models/Summary.js';
+import { calculateStatistics, getBestOrders, formatPriceRange, formatStatistics } from './utils/statistics.js';
+import { normalizeLanguage } from './utils/i18n.js';
+import { PLATFORMS, SHORT_CACHE_TTL, API_BASE_URL } from './constants.js';
+
+export default class MarketFetcherV2 {
+  // Private fields
+  #http;
+  #cache;
+  #ordersCache;
+  #ordersCacheMaxSize;
+
+  /**
+   * @param {Object} options - Fetcher options
+   * @param {string} [options.locale='en'] - Default language
+   * @param {number} [options.timeout=5000] - Request timeout in ms
+   * @param {Object} [options.logger] - Logger instance
+   * @param {number} [options.cacheSize=100] - Cache size
+   * @param {number} [options.cacheTTL] - Cache TTL in ms
+   */
+  constructor(options = {}) {
+    this.locale = normalizeLanguage(options.locale || 'en');
+    this.logger = options.logger || console;
+
+    this.#ordersCacheMaxSize = options.ordersCacheSize || 50;
+
+    this.#http = new HttpClient({
+      baseURL: options.baseURL || API_BASE_URL,
+      locale: this.locale,
+      timeout: options.timeout,
+      logger: this.logger,
+    });
+
+    this.#cache = new VersionedCache({
+      maxSize: options.cacheSize || 100,
+      ttl: options.cacheTTL,
+    });
+
+    // Short-lived cache for orders (1 minute)
+    this.#ordersCache = new Map();
+  }
+
+  // ==========================================================================
+  // ITEMS
+  // ==========================================================================
+
+  /**
+   * Get list of all tradable items
+   * @returns {Promise&lt;Item[]>}
+   */
+  async getItems() {
+    return this.#cache.get('items', 'items', async () => {
+      const data = await this.#http.get('/items', { locale: this.locale });
+      return data.map((item) => new Item(item, this.locale));
+    });
+  }
+
+  /**
+   * Get item by slug
+   * @param {string} slug - Item slug
+   * @returns {Promise&lt;Item>}
+   */
+  async getItemBySlug(slug) {
+    const cacheKey = `item_${slug}`;
+    return this.#cache.get(cacheKey, 'items', async () => {
+      const data = await this.#http.get(`/item/${slug}`, { locale: this.locale });
+      return new Item(data, this.locale);
+    });
+  }
+
+  /**
+   * Get all items in a set
+   * @param {string} slug - Item slug
+   * @returns {Promise&lt;{id: string, items: Item[]}>}
+   */
+  async getItemSet(slug) {
+    const cacheKey = `item_set_${slug}`;
+    return this.#cache.get(cacheKey, 'items', async () => {
+      const data = await this.#http.get(`/item/${slug}/set`, { locale: this.locale });
+      return {
+        id: data.id,
+        items: data.items.map((item) => new Item(item, this.locale)),
+      };
+    });
+  }
+
+  // ==========================================================================
+  // ORDERS
+  // ==========================================================================
+
+  /**
+   * Get top orders for an item (RECOMMENDED for price checks)
+   * @param {string} slug - Item slug
+   * @param {Object} options - Options
+   * @param {string} options.platform - Platform (pc, ps4, xbox, switch)
+   * @param {number} [options.rank] - Filter by rank
+   * @param {number} [options.rankLt] - Filter by rank less than
+   * @param {number} [options.charges] - Filter by charges
+   * @param {number} [options.chargesLt] - Filter by charges less than
+   * @param {number} [options.amberStars] - Filter by amber stars
+   * @param {number} [options.amberStarsLt] - Filter by amber stars less than
+   * @param {number} [options.cyanStars] - Filter by cyan stars
+   * @param {number} [options.cyanStarsLt] - Filter by cyan stars less than
+   * @param {string} [options.subtype] - Filter by subtype
+   * @returns {Promise&lt;{buy: Order[], sell: Order[]}>}
+   */
+  async getTopOrders(slug, options = {}) {
+    const { platform, ...filters } = options;
+
+    if (!platform) {
+      throw new Error('Platform is required');
+    }
+
+    const cacheKey = `top_orders_${slug}_${platform}_${this.#stableStringify(filters)}`;
+
+    // Check short-lived cache
+    const cached = this.#getOrdersFromCache(cacheKey);
+    if (cached) return cached;
+
+    const data = await this.#http.get(`/orders/item/${slug}/top`, {
+      platform,
+      query: filters,
+    });
+
+    const result = {
+      buy: data.buy.map((order) => new Order(order)),
+      sell: data.sell.map((order) => new Order(order)),
+    };
+
+    this.#setOrdersCache(cacheKey, result);
+    return result;
+  }
+
+  /**
+   * Get all orders for an item
+   * @param {string} slug - Item slug
+   * @param {string} platform - Platform (pc, ps4, xbox, switch)
+   * @returns {Promise&lt;Order[]>}
+   */
+  async getAllOrders(slug, platform) {
+    if (!platform) {
+      throw new Error('Platform is required');
+    }
+
+    const cacheKey = `all_orders_${slug}_${platform}`;
+
+    // Check short-lived cache
+    const cached = this.#getOrdersFromCache(cacheKey);
+    if (cached) return cached;
+
+    const data = await this.#http.get(`/orders/item/${slug}`, { platform });
+    const result = data.map((order) => new Order(order));
+
+    this.#setOrdersCache(cacheKey, result);
+    return result;
+  }
+
+  /**
+   * Get recent orders (last 4 hours)
+   * @param {string} platform - Platform (pc, ps4, xbox, switch)
+   * @returns {Promise&lt;Order[]>}
+   */
+  async getRecentOrders(platform) {
+    if (!platform) {
+      throw new Error('Platform is required');
+    }
+
+    const cacheKey = `recent_orders_${platform}`;
+
+    // Check short-lived cache
+    const cached = this.#getOrdersFromCache(cacheKey);
+    if (cached) return cached;
+
+    const data = await this.#http.get('/orders/recent', { platform });
+    const result = data.map((order) => new Order(order));
+
+    this.#setOrdersCache(cacheKey, result);
+    return result;
+  }
+
+  // ==========================================================================
+  // STATISTICS (Client-side calculation)
+  // ==========================================================================
+
+  /**
+   * Calculate statistics from orders
+   * @param {Order[]} orders - Orders array
+   * @param {Object} options - Calculation options
+   * @returns {Object} Statistics
+   */
+  calculateStatistics(orders, options = {}) {
+    return calculateStatistics(orders, options);
+  }
+
+  /**
+   * Get best orders (sorted)
+   * @param {Order[]} orders - Orders array
+   * @param {Object} options - Options
+   * @returns {{buy: Order[], sell: Order[]}}
+   */
+  getBestOrders(orders, options = {}) {
+    return getBestOrders(orders, options);
+  }
+
+  /**
+   * Format price range string
+   * @param {Object} stats - Statistics object
+   * @returns {string}
+   */
+  formatPriceRange(stats) {
+    return formatPriceRange(stats);
+  }
+
+  /**
+   * Format statistics for display
+   * @param {Object} stats - Statistics object
+   * @param {string} type - Order type
+   * @returns {string}
+   */
+  formatStatistics(stats, type) {
+    return formatStatistics(stats, type);
+  }
+
+  // ==========================================================================
+  // SEARCH / QUERY (v1 compatibility)
+  // ==========================================================================
+
+  /**
+   * Query market for item (fuzzy search)
+   * @param {string} query - Search query
+   * @param {Object} options - Options
+   * @param {string} options.platform - Platform
+   * @param {function} [options.successfulQuery] - Callback for successful query
+   * @returns {Promise&lt;Object>} Query results with statistics
+   */
+  async queryMarket(query, options = {}) {
+    const { platform, successfulQuery } = options;
+
+    if (!platform) {
+      throw new Error('Platform is required');
+    }
+
+    // Search for item
+    const items = await this.getItems();
+    const normalizedQuery = query.toLowerCase().trim();
+
+    // Fuzzy search
+    const matches = items.filter((item) => {
+      const name = item.name.toLowerCase();
+      const slug = item.slug.toLowerCase();
+      return name.includes(normalizedQuery) || slug.includes(normalizedQuery);
+    });
+
+    if (matches.length === 0) {
+      throw new Error(`No items found for query: ${query}`);
+    }
+
+    // Use first match
+    const item = matches[0];
+
+    // Get top orders for the item
+    const topOrders = await this.getTopOrders(item.slug, { platform });
+
+    // Calculate statistics
+    const sellStats = this.calculateStatistics(topOrders.sell, {
+      type: 'sell',
+      onlineOnly: true,
+    });
+    const buyStats = this.calculateStatistics(topOrders.buy, {
+      type: 'buy',
+      onlineOnly: true,
+    });
+
+    // Call success callback if provided
+    if (successfulQuery &amp;&amp; typeof successfulQuery === 'function') {
+      successfulQuery();
+    }
+
+    // Create Summary object for v1 compatibility
+    const summary = new Summary(item, topOrders, {
+      sell: sellStats,
+      buy: buyStats,
+    });
+
+    // Return array of summaries (v1 compatibility)
+    return [summary];
+  }
+
+  /**
+   * Price check query (v1 compatibility method)
+   * @param {string} query - Search query
+   * @param {string} platform - Platform
+   * @returns {Promise&lt;Object>}
+   */
+  async priceCheckQuery(query, platform) {
+    return this.queryMarket(query, { platform });
+  }
+
+  // ==========================================================================
+  // CACHE MANAGEMENT
+  // ==========================================================================
+
+  /**
+   * Get from short-lived orders cache
+   * @param {string} key - Cache key
+   * @returns {*|null}
+   * @private
+   */
+  #getOrdersFromCache(key) {
+    const cached = this.#ordersCache.get(key);
+    if (!cached) return null;
+
+    // Check TTL (1 minute for orders)
+    if (Date.now() - cached.timestamp > SHORT_CACHE_TTL) {
+      this.#ordersCache.delete(key);
+      return null;
+    }
+
+    return cached.value;
+  }
+
+  /**
+   * Set short-lived orders cache
+   * @param {string} key - Cache key
+   * @param {*} value - Value to cache
+   * @private
+   */
+  #setOrdersCache(key, value) {
+    // Evict oldest entries if at capacity
+    if (this.#ordersCache.size >= this.#ordersCacheMaxSize) {
+      const oldestKey = this.#ordersCache.keys().next().value;
+      this.#ordersCache.delete(oldestKey);
+    }
+    this.#ordersCache.set(key, {
+      value,
+      timestamp: Date.now(),
+    });
+  }
+
+  /**
+   * Clear all caches
+   */
+  clearCache() {
+    this.#cache.clear();
+    this.#ordersCache.clear();
+  }
+
+  /**
+   * Check API versions
+   * @returns {Promise&lt;Object>}
+   */
+  async checkVersions() {
+    return this.#cache.checkVersions();
+  }
+
+  /**
+   * Stable stringify for cache keys (sorts object keys recursively)
+   * @param {*} value - Value to stringify
+   * @returns {string} Deterministic JSON string
+   * @private
+   */
+  #stableStringify(value) {
+    if (value === null || value === undefined) {
+      return JSON.stringify(value);
+    }
+
+    if (typeof value !== 'object') {
+      return JSON.stringify(value);
+    }
+
+    if (Array.isArray(value)) {
+      return `[${value.map((item) => this.#stableStringify(item)).join(',')}]`;
+    }
+
+    // Sort object keys and recursively stringify
+    const sortedKeys = Object.keys(value).sort();
+    const pairs = sortedKeys.map((key) => `${JSON.stringify(key)}:${this.#stableStringify(value[key])}`);
+    return `{${pairs.join(',')}}`;
+  }
+
+  // ==========================================================================
+  // UTILITY
+  // ==========================================================================
+
+  /**
+   * Normalize platform
+   * @param {string} platform - Platform alias
+   * @returns {string} Normalized platform
+   */
+  normalizePlatform(platform) {
+    return PLATFORMS[platform?.toLowerCase()] || platform;
+  }
+
+  /**
+   * Set locale
+   * @param {string} locale - Language code
+   */
+  setLocale(locale) {
+    this.locale = normalizeLanguage(locale);
+    this.#http.setLocale(locale);
+  }
+
+  /**
+   * Stop and cleanup (clears all caches)
+   */
+  stop() {
+    this.clearCache();
+  }
+}
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	©2020, WFCD
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a>
+	
+		on Saturday, January 10th 2026, 14:46:23
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+<script>
+	$( function () {
+		$( '#main' ).localScroll( {
+			offset : { top : 60 } //offset by the height of your header (give or take a few px, see what works for you)
+		} );
+		$( "dt.name" ).each( function () {
+			var $this = $( this ).find("h4");
+			var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
+			var dt = $(this);
+			var children = dt.next( "dd" );
+
+			dt.prepend( icon ).css( {cursor : "pointer"} );
+			dt.addClass( "member-collapsed" ).addClass( "member" );
+
+
+			children.hide();
+
+			dt.children().on( "click", function () {
+				children = dt.next( "dd" );
+				children.slideToggle( "fast", function () {
+
+					if ( children.is( ":visible" ) ) {
+						icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
+						dt.addClass( "member-open" ).animate( "member-collapsed" );
+					} else {
+						icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
+						dt.addClass( "member-collapsed" ).removeClass( "member-open" );
+					}
+				} );
+			} );
+
+		} );
+	} );
+</script>
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>
