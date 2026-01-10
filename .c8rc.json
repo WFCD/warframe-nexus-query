@@ -1,0 +1,5 @@
+{
+  "exclude": ["test/*", "lib/nexus/*", "lib/market/v1/*"],
+  "reporter": ["lcov", "text"],
+  "skip-full": true
+}

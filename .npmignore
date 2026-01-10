@@ -8,7 +8,7 @@ jsdoc.conf
 .travis.yml
 .codeclimate.yml
 .babelrc.json
-.c8rc.yml
+.c8rc.json
 .commitlintrc.mjs
 .eslintignore
 .eslintrc

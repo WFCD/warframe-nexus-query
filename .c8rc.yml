@@ -1,9 +1,0 @@
-exclude:
-  - test/*
-  - lib/nexus/*
-  - lib/market/v1/*
-reporter:
-  - lcov
-  - text
-  - lcovonly
-skip-full: true
