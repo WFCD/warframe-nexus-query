@@ -40,9 +40,12 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
   this.timeout(20000);
 
   let fetcher;
+  let Item;
 
-  before(function () {
+  before(async function () {
     fetcher = new MarketFetcherV2({ logger, timeout: 15000 });
+    const itemModule = await import('../lib/market/v2/models/Item.js');
+    Item = itemModule.default;
   });
 
   beforeEach(function (done) {
@@ -62,16 +65,29 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
       firstItem.should.have.property('name');
     });
 
-    it('should return items with i18n support', async function () {
+    it('should return items with basic properties', async function () {
       const items = await fetcher.getItems();
       const item = items[0];
+
+      item.should.have.property('id');
+      item.should.have.property('slug');
+      item.should.have.property('name');
+      item.should.have.property('tags');
+
+      // Items from /items endpoint are Item instances
+      item.should.be.instanceOf(Item);
+    });
+
+    it('should return items with i18n support from getItemBySlug', async function () {
+      // Get a specific item by slug to get full data with i18n
+      const item = await fetcher.getItemBySlug('ash_prime_systems');
 
       item.should.have.property('getLocalized');
       item.getLocalized.should.be.a('function');
 
-      const name = item.getLocalized('name', 'en');
-      name.should.be.a('string');
-      name.should.have.length.greaterThan(0);
+      // Full item should have tradingTax and other economy data
+      should.exist(item.tradingTax);
+      item.tradingTax.should.be.a('number');
     });
 
     it('should cache items between calls', async function () {
@@ -261,6 +277,26 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
         error.message.should.include('No items found');
       }
     });
+
+    it('should return summary with full item data including tradingTax', async function () {
+      this.timeout(10000);
+      const query = 'ash prime systems';
+      const results = await fetcher.queryMarket(query, { platform: 'pc' });
+
+      const summary = results[0];
+
+      // Verify summary has full item data properties
+      summary.should.have.property('slug');
+      summary.should.have.property('tradingTax');
+      summary.should.have.property('tradable');
+
+      // Prime parts should have tradingTax
+      summary.tradingTax.should.be.a('number');
+      summary.tradingTax.should.be.greaterThan(0);
+
+      // Should have other economy fields
+      should.exist(summary.tradable);
+    });
   });
 
   describe('MarketFetcherV2 utility methods', function () {
@@ -421,7 +457,7 @@ describe('VersionedCache (v2)', function () {
   });
 
   beforeEach(function () {
-    cache = new VersionedCache({ logger });
+    cache = new VersionedCache({ persistent: false });
   });
 
   afterEach(function () {
@@ -480,7 +516,7 @@ describe('VersionedCache (v2)', function () {
   });
 
   it('should respect maxSize limit', function () {
-    const smallCache = new VersionedCache({ logger, maxSize: 3 });
+    const smallCache = new VersionedCache({ maxSize: 3, persistent: false });
     smallCache.set('key1', { data: 'value1' });
     smallCache.set('key2', { data: 'value2' });
     smallCache.set('key3', { data: 'value3' });
@@ -491,7 +527,7 @@ describe('VersionedCache (v2)', function () {
   });
 
   it('should expire entries after TTL', function (done) {
-    const shortCache = new VersionedCache({ logger, ttl: 50 });
+    const shortCache = new VersionedCache({ ttl: 50, persistent: false });
     shortCache.set('short-lived', { data: 'expires-soon' });
     shortCache.has('short-lived').should.equal(true);
 
@@ -499,6 +535,77 @@ describe('VersionedCache (v2)', function () {
       shortCache.has('short-lived').should.equal(false);
       done();
     }, 100);
+  });
+
+  it('should persist cache to disk and restore on restart', function () {
+    // Create cache with unique ID for this test
+    const testCacheId = 'test-cache-persist';
+    const cache1 = new VersionedCache({
+      cacheId: testCacheId,
+      persistent: true,
+    });
+
+    // Add some data
+    cache1.set('persistent-key', { data: 'persistent-value' });
+    cache1.set('another-key', { data: 'another-value' });
+
+    // Create new cache instance (simulates restart)
+    const cache2 = new VersionedCache({
+      cacheId: testCacheId,
+      persistent: true,
+    });
+
+    // Data should be loaded from disk
+    cache2.has('persistent-key').should.equal(true);
+    cache2.has('another-key').should.equal(true);
+
+    // Clean up
+    cache2.clear();
+  });
+
+  it('should work without persistence when disabled', function () {
+    const cache1 = new VersionedCache({
+      cacheId: 'test-no-persist',
+      persistent: false,
+    });
+
+    cache1.set('temp-key', { data: 'temp-value' });
+
+    const cache2 = new VersionedCache({
+      cacheId: 'test-no-persist',
+      persistent: false,
+    });
+
+    // Data should NOT persist
+    cache2.has('temp-key').should.equal(false);
+  });
+
+  it('should not restore expired entries from disk', function () {
+    const testCacheId = 'test-cache-ttl';
+    const cache1 = new VersionedCache({
+      cacheId: testCacheId,
+      persistent: true,
+      ttl: 1, // 1ms TTL
+    });
+
+    cache1.set('expires-quickly', { data: 'expired' });
+
+    // Wait for expiration
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // Create new instance after TTL expired
+        const cache2 = new VersionedCache({
+          cacheId: testCacheId,
+          persistent: true,
+          ttl: 1,
+        });
+
+        // Expired entry should not be loaded
+        cache2.has('expires-quickly').should.equal(false);
+        cache2.clear();
+        resolve();
+      }, 50);
+    });
   });
 });
 

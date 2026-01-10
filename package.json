@@ -37,6 +37,7 @@
     "test": "c8 mocha"
   },
   "dependencies": {
+    "flat-cache": "^6.1.19",
     "get-image-colors": "^4.0.1",
     "image-downloader": "^4.0.2",
     "json-fetch-cache": "^1.2.6",
