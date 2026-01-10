@@ -33,7 +33,7 @@ const results = await querier.priceCheckQuery('loki prime', 'pc');
 console.log(results);
 
 // Get Discord-formatted attachments
-const attachments = await querier.priceCheckQueryAttachment('ash prime systems', 'pc');
+const attachments = await querier.priceCheckQueryAttachment('ash prime systems', undefined, 'pc');
 console.log(attachments);
 
 // Clean up when done
@@ -87,14 +87,14 @@ const priceString = await querier.priceCheckQueryString('maiming strike', 'pc');
 console.log(priceString); // "Maiming Strike: 150p (avg)"
 ```
 
-#### `priceCheckQueryAttachment(query, excludedAttachment, platform)`
+#### `priceCheckQueryAttachment(query, priorResults, platform)`
 
 Query item prices and return Discord-formatted embeds.
 
 **Parameters:**
 
 - `query` (string) - Item name to search for
-- `excludedAttachment` (string|undefined) - Attachment to exclude from results
+- `priorResults` (Array|undefined) - Prior query results to use instead of fetching new data
 - `platform` (string) - Platform identifier
 
 **Returns:** `Promise<Array<Object>>` - Array of Discord embed objects
