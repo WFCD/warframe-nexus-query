@@ -45,3 +45,6 @@ docs/
 
 # IntelliJ
 .idea/
+
+# Eslint cache
+.eslintcache

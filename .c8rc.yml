@@ -5,4 +5,5 @@ exclude:
 reporter:
   - lcov
   - text
+  - lcovonly
 skip-full: true
