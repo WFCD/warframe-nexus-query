@@ -1,5 +1,5 @@
 bail: true
 exit: true
 slow: 10000
-spec: test/test.js
+spec: test/*.spec.js
 timeout: 30000

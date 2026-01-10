@@ -8,6 +8,10 @@ import promiseTimeout from './lib/promiseTimeout.js';
 import Settings from './lib/Settings.js';
 import Creator from './lib/AttachmentCreator.js';
 import MarketFetcher from './lib/market/v1/MarketFetcher.js';
+import { MarketFetcherV2 } from './lib/market/v2/index.js';
+
+// Select API version via environment variable
+const USE_V2 = process.env.WARFRAME_MARKET_API_VERSION === 'v2';
 
 export default class PriceCheckQuerier {
   /**
@@ -23,9 +27,17 @@ export default class PriceCheckQuerier {
       try {
         /**
          * Fetch market data
-         * @type {MarketFetcher}
+         * @type {MarketFetcher|MarketFetcherV2}
          */
-        this.marketFetcher = new MarketFetcher({ logger, settings: this.settings, marketCache });
+        if (USE_V2) {
+          this.logger.info('Using Warframe Market API v2');
+          this.marketFetcher = new MarketFetcherV2({ logger });
+          this.apiVersion = 'v2';
+        } else {
+          this.logger.info('Using Warframe Market API v1');
+          this.marketFetcher = new MarketFetcher({ logger, settings: this.settings, marketCache });
+          this.apiVersion = 'v1';
+        }
       } catch (e) {
         this.logger.error(`couldn't set up market fetcher: ${e.message}`);
       }
