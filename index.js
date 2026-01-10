@@ -125,10 +125,16 @@ export default class PriceCheckQuerier {
    */
   async stopUpdating() {
     /* istanbul ignore else */
-    if (!this.skipMarket && this.marketFetcher.marketCache) {
-      this.marketFetcher.marketCache.stop();
+    if (!this.skipMarket && this.marketFetcher) {
+      // v1 API uses marketCache
+      if (this.marketFetcher.marketCache) {
+        this.marketFetcher.marketCache.stop();
+      } else if (typeof this.marketFetcher.stop === 'function') {
+        // v2 API has stop() method
+        this.marketFetcher.stop();
+      }
     } else {
-      this.logger.log('no market cache, or skipMarket was true');
+      this.logger.log('no market fetcher, or skipMarket was true');
     }
 
     if (fss.existsSync(`${global.__basedir}/tmp`)) {
