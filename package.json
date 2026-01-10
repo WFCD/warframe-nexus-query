@@ -30,7 +30,7 @@
   ],
   "scripts": {
     "build:docs": "jsdoc -c jsdoc-config.json -d docs",
-    "coverage": "npm test && c8 report --reporter=text-lcov | coveralls",
+    "coverage": "npm test && c8 report --reporter=text-lcov | npx coveralls",
     "lint": "eslint index.js lib/ test/",
     "lint:fix": "eslint index.js lib/ test/ --fix",
     "prepare": "husky && npx install-peerdeps @wfcd/eslint-config@latest -S",
@@ -38,9 +38,6 @@
   },
   "dependencies": {
     "flat-cache": "^6.1.19",
-    "get-image-colors": "^4.0.1",
-    "image-downloader": "^4.0.2",
-    "json-fetch-cache": "^1.2.6",
     "json-query": "^2.2.2",
     "node-md-config": "^2.0.1",
     "numeral": "^2.0.6"
@@ -52,7 +49,6 @@
     "@wfcd/eslint-config": "^1.6.1",
     "c8": "^10.1.2",
     "chai": "^6.0.1",
-    "coveralls": "^3.1.1",
     "husky": "^9.0.11",
     "install-peerdeps": "^3.0.3",
     "lint-staged": "^16.0.0",

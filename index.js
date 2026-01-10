@@ -1,6 +1,6 @@
-import fs from 'node:fs/promises';
-import fss from 'node:fs';
-import path from 'node:path';
+import { readdir, unlink, rmdir } from 'node:fs/promises';
+import { existsSync as exists } from 'node:fs';
+import { join } from 'node:path';
 
 import md from 'node-md-config';
 
@@ -138,13 +138,13 @@ export default class PriceCheckQuerier {
       this.logger.log('no market fetcher, or skipMarket was true');
     }
 
-    if (fss.existsSync(`${global.__basedir}/tmp`)) {
-      const files = await fs.readdir(`${global.__basedir}/tmp`);
+    if (exists(`${global.__basedir}/tmp`)) {
+      const files = await readdir(`${global.__basedir}/tmp`);
       let allSuccess = true;
       await Promise.all(
         files.map(async (file) => {
           try {
-            await fs.unlink(path.join(global.__basedir, 'tmp', file));
+            await unlink(join(global.__basedir, 'tmp', file));
           } catch (e) {
             allSuccess = false;
             this.logger.debug(`Couldn't delete ${file}`);
@@ -153,7 +153,7 @@ export default class PriceCheckQuerier {
       );
 
       if (allSuccess) {
-        await fs.rmdir(`${global.__basedir}/tmp`);
+        await rmdir(`${global.__basedir}/tmp`);
       }
     }
   }
