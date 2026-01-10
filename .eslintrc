@@ -1,0 +1,13 @@
+{
+  "extends": "@wfcd/eslint-config/esm",
+  "rules": {
+    "no-underscore-dangle": [
+      "error",
+      {
+        "allow": [
+          "__basedir"
+        ]
+      }
+    ]
+  }
+}

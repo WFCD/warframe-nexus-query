@@ -7,3 +7,13 @@ jsdoc.conf
 .eslintrc.json
 .travis.yml
 .codeclimate.yml
+.babelrc.json
+.c8rc.json
+.commitlintrc.mjs
+.eslintignore
+.eslintrc
+.gitignore
+.nvmrc
+.prettierrc
+.releaserc.json
+.lintstagedrc.yml
