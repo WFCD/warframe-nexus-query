@@ -10,10 +10,9 @@ import Creator from './lib/AttachmentCreator.js';
 import MarketFetcher from './lib/market/v1/MarketFetcher.js';
 import { MarketFetcherV2 } from './lib/market/v2/index.js';
 
-// Select API version via environment variable
-const USE_V2 = process.env.WARFRAME_MARKET_API_VERSION === 'v2';
-
 export default class PriceCheckQuerier {
+  #useV2 = false;
+
   /**
    * Creates an instance representing a WarframeNexusStats data object
    * @constructor
@@ -25,11 +24,12 @@ export default class PriceCheckQuerier {
 
     if (!skipMarket) {
       try {
+        this.#useV2 = process.env.WARFRAME_MARKET_API_VERSION === 'v2';
         /**
          * Fetch market data
          * @type {MarketFetcher|MarketFetcherV2}
          */
-        if (USE_V2) {
+        if (this.#useV2) {
           this.logger.info('Using Warframe Market API v2');
           this.marketFetcher = new MarketFetcherV2({ logger });
           this.apiVersion = 'v2';

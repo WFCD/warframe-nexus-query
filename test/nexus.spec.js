@@ -521,7 +521,7 @@ describe('Warframe Market API v2 Integration', function () {
 
     it('should work with different platforms', async function () {
       const query = 'loki prime';
-      const platforms = ['pc', 'ps4', 'xbox', 'switch'];
+      const platforms = ['pc', 'ps4', 'xb1', 'switch'];
 
       // eslint-disable-next-line no-restricted-syntax
       for (const platform of platforms) {
@@ -647,6 +647,7 @@ describe('Discord Webhook Integration (Manual)', function () {
     if (!id || !token) {
       this.skip();
     }
+    process.env.WARFRAME_MARKET_API_VERSION = 'v2';
   });
 
   it('should send embeds to Discord webhook', async function () {
@@ -655,8 +656,8 @@ describe('Discord Webhook Integration (Manual)', function () {
     const querier = new WFNQ({ logger: console });
 
     const testCases = [
-      { query: 'loki prime', platform: 'xb1' },
       { query: 'nikana prime', platform: 'pc' },
+      { query: 'loki prime', platform: 'xb1' },
       { query: 'garuda prime', platform: 'swi' },
     ];
 
