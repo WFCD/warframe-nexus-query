@@ -413,6 +413,140 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
       }
     });
   });
+
+  describe('MarketFetcherV2 utility methods', function () {
+    it('should normalize platform aliases', function () {
+      fetcher.normalizePlatform('pc').should.equal('pc');
+      fetcher.normalizePlatform('PC').should.equal('pc');
+      fetcher.normalizePlatform('playstation').should.equal('ps4');
+      fetcher.normalizePlatform('ps4').should.equal('ps4');
+      fetcher.normalizePlatform('xbone').should.equal('xbox');
+      fetcher.normalizePlatform('xb1').should.equal('xbox');
+      fetcher.normalizePlatform('xbox').should.equal('xbox');
+      fetcher.normalizePlatform('swi').should.equal('switch');
+      fetcher.normalizePlatform('switch').should.equal('switch');
+      fetcher.normalizePlatform('ns').should.equal('switch');
+      fetcher.normalizePlatform('mobile').should.equal('mobile');
+    });
+
+    it('should handle invalid platform gracefully', function () {
+      const result = fetcher.normalizePlatform('invalid');
+      result.should.equal('invalid');
+    });
+
+    it('should handle undefined platform', function () {
+      const result = fetcher.normalizePlatform(undefined);
+      should.not.exist(result);
+    });
+
+    it('should set locale', function () {
+      fetcher.setLocale('es');
+      fetcher.locale.should.equal('es');
+
+      fetcher.setLocale('en');
+      fetcher.locale.should.equal('en');
+    });
+
+    it('should normalize invalid locale to English', function () {
+      fetcher.setLocale('invalid');
+      fetcher.locale.should.equal('en');
+    });
+  });
+});
+
+// ============================================================================
+// V2 CACHE TESTS
+// ============================================================================
+
+describe('VersionedCache (v2)', function () {
+  let VersionedCache;
+  let cache;
+
+  before(async function () {
+    const cacheModule = await import('../lib/market/v2/utils/cache.js');
+    VersionedCache = cacheModule.default;
+  });
+
+  beforeEach(function () {
+    cache = new VersionedCache({ logger });
+  });
+
+  afterEach(function () {
+    cache.clear();
+  });
+
+  it('should set and get values', async function () {
+    const testData = { data: 'test-value' };
+    cache.set('test-key', testData);
+
+    const value = await cache.get('test-key', undefined, async () => testData);
+    should.exist(value);
+    value.should.deep.equal(testData);
+  });
+
+  it('should return from fetchFn when cache misses', async function () {
+    const fetchFn = async () => ({ data: 'fetched-value' });
+    const value = await cache.get('non-existent-key', undefined, fetchFn);
+    value.should.deep.equal({ data: 'fetched-value' });
+  });
+
+  it('should delete specific keys', async function () {
+    const testData = { data: 'test-value' };
+    cache.set('test-key', testData);
+    cache.delete('test-key');
+
+    // Should call fetchFn since key was deleted
+    let fetchCalled = false;
+    await cache.get('test-key', undefined, async () => {
+      fetchCalled = true;
+      return testData;
+    });
+    fetchCalled.should.equal(true);
+  });
+
+  it('should report cache size', function () {
+    cache.size().should.equal(0);
+    cache.set('key1', { data: 'value1' });
+    cache.size().should.equal(1);
+    cache.set('key2', { data: 'value2' });
+    cache.size().should.equal(2);
+  });
+
+  it('should check if key exists', function () {
+    cache.has('test-key').should.equal(false);
+    cache.set('test-key', { data: 'test-value' });
+    cache.has('test-key').should.equal(true);
+  });
+
+  it('should clear all cache', function () {
+    cache.set('key1', { data: 'value1' });
+    cache.set('key2', { data: 'value2' });
+    cache.size().should.equal(2);
+    cache.clear();
+    cache.size().should.equal(0);
+  });
+
+  it('should respect maxSize limit', function () {
+    const smallCache = new VersionedCache({ logger, maxSize: 3 });
+    smallCache.set('key1', { data: 'value1' });
+    smallCache.set('key2', { data: 'value2' });
+    smallCache.set('key3', { data: 'value3' });
+    smallCache.size().should.equal(3);
+
+    smallCache.set('key4', { data: 'value4' });
+    smallCache.size().should.equal(3); // Should evict oldest
+  });
+
+  it('should expire entries after TTL', function (done) {
+    const shortCache = new VersionedCache({ logger, ttl: 50 });
+    shortCache.set('short-lived', { data: 'expires-soon' });
+    shortCache.has('short-lived').should.equal(true);
+
+    setTimeout(() => {
+      shortCache.has('short-lived').should.equal(false);
+      done();
+    }, 100);
+  });
 });
 
 // ============================================================================
@@ -810,6 +944,217 @@ describe('Order and OrderUser Models', function () {
     const age = order.getAgeHours();
     age.should.be.approximately(2, 0.1);
   });
+
+  it('should return 0 age for orders without updatedAt', function () {
+    const order = new Order({
+      id: 'order-1',
+      type: 'sell',
+      platinum: 50,
+      quantity: 1,
+    });
+
+    order.getAgeHours().should.equal(0);
+  });
+
+  it('should correctly identify buy orders', function () {
+    const buyOrder = new Order({
+      id: 'buy-1',
+      type: 'buy',
+      platinum: 40,
+      quantity: 1,
+    });
+
+    const sellOrder = new Order({
+      id: 'sell-1',
+      type: 'sell',
+      platinum: 50,
+      quantity: 1,
+    });
+
+    buyOrder.isBuyOrder().should.equal(true);
+    buyOrder.isSellOrder().should.equal(false);
+    sellOrder.isBuyOrder().should.equal(false);
+    sellOrder.isSellOrder().should.equal(true);
+  });
+
+  it('should serialize order to JSON', function () {
+    const order = new Order({
+      id: 'order-1',
+      type: 'sell',
+      platinum: 50,
+      quantity: 2,
+      perTrade: 1,
+      rank: 5,
+      charges: 3,
+      subtype: 'maxed',
+      amberStars: 1,
+      cyanStars: 2,
+      visible: true,
+      createdAt: '2026-01-10T10:00:00Z',
+      updatedAt: '2026-01-10T12:00:00Z',
+      itemId: 'item-123',
+      group: 'prime',
+      user: {
+        id: 'u1',
+        ingameName: 'TestUser',
+        status: 'online',
+        platform: 'pc',
+      },
+    });
+
+    const json = order.toJSON();
+    json.should.have.property('id', 'order-1');
+    json.should.have.property('type', 'sell');
+    json.should.have.property('platinum', 50);
+    json.should.have.property('quantity', 2);
+    json.should.have.property('rank', 5);
+    json.should.have.property('charges', 3);
+    json.should.have.property('subtype', 'maxed');
+    json.should.have.property('amberStars', 1);
+    json.should.have.property('cyanStars', 2);
+    json.should.have.property('visible', true);
+    json.should.have.property('createdAt');
+    json.should.have.property('updatedAt');
+    json.should.have.property('itemId', 'item-123');
+    json.should.have.property('group', 'prime');
+    json.user.should.have.property('ingameName', 'TestUser');
+  });
+});
+
+describe('Item Model (v2)', function () {
+  let Item;
+
+  before(async function () {
+    const itemModule = await import('../lib/market/v2/models/Item.js');
+    Item = itemModule.default;
+  });
+
+  it('should check if item is part of a set', function () {
+    const setItem = new Item(
+      {
+        id: 'item-1',
+        slug: 'ash_prime_systems',
+        i18n: { en: { name: 'Ash Prime Systems' } },
+        setParts: ['ash_prime_blueprint', 'ash_prime_chassis', 'ash_prime_neuroptics', 'ash_prime_systems'],
+        setRoot: 'ash_prime_set',
+      },
+      'en'
+    );
+
+    const standaloneItem = new Item(
+      {
+        id: 'item-2',
+        slug: 'maiming_strike',
+        i18n: { en: { name: 'Maiming Strike' } },
+      },
+      'en'
+    );
+
+    setItem.isPartOfSet().should.equal(true);
+    standaloneItem.isPartOfSet().should.equal(false);
+  });
+
+  it('should check if item is vaulted', function () {
+    const vaultedItem = new Item(
+      {
+        id: 'item-1',
+        slug: 'frost_prime_chassis',
+        i18n: { en: { name: 'Frost Prime Chassis' } },
+        vaulted: true,
+      },
+      'en'
+    );
+
+    const activeItem = new Item(
+      {
+        id: 'item-2',
+        slug: 'wisp_prime_chassis',
+        i18n: { en: { name: 'Wisp Prime Chassis' } },
+        vaulted: false,
+      },
+      'en'
+    );
+
+    vaultedItem.isVaulted().should.equal(true);
+    activeItem.isVaulted().should.equal(false);
+  });
+
+  it('should convert item to JSON', function () {
+    const item = new Item(
+      {
+        id: 'item-1',
+        slug: 'ash_prime_systems',
+        i18n: {
+          en: {
+            name: 'Ash Prime Systems',
+            description: 'Test description',
+            wikiLink: 'https://warframe.fandom.com/wiki/Ash_Prime',
+          },
+        },
+        thumb: 'icons/ash.png',
+        icon: 'icons/ash_icon.png',
+        tradingTax: 2000,
+        ducats: 45,
+        vosfor: 10,
+        reqMasteryRank: 8,
+        tradable: true,
+        vaulted: false,
+        tags: ['prime', 'warframe'],
+      },
+      'en'
+    );
+
+    const json = item.toJSON();
+    json.should.have.property('id', 'item-1');
+    json.should.have.property('slug', 'ash_prime_systems');
+    json.should.have.property('name', 'Ash Prime Systems');
+    json.should.have.property('tradingTax', 2000);
+    json.should.have.property('ducats', 45);
+    json.should.have.property('vosfor', 10);
+    json.should.have.property('masteryLevel', 8);
+    json.should.have.property('tradable', true);
+    json.should.have.property('vaulted', false);
+    json.should.have.property('wikiUrl', 'https://warframe.fandom.com/wiki/Ash_Prime');
+    json.tags.should.deep.equal(['prime', 'warframe']);
+  });
+
+  it('should convert item to string', function () {
+    const item = new Item(
+      {
+        id: 'item-1',
+        slug: 'ash_prime_systems',
+        i18n: { en: { name: 'Ash Prime Systems' } },
+      },
+      'en'
+    );
+
+    const str = item.toString();
+    str.should.equal('Ash Prime Systems [ash_prime_systems]');
+  });
+
+  it('should get correct thumb and icon URLs', function () {
+    const item = new Item(
+      {
+        id: 'item-1',
+        slug: 'ash_prime_systems',
+        i18n: {
+          en: {
+            name: 'Ash Prime Systems',
+            thumb: 'icons/en/thumbs/ash_prime_systems.png',
+            icon: 'icons/en/ash_prime_systems.png',
+          },
+        },
+      },
+      'en'
+    );
+
+    const baseUrl = 'https://warframe.market/static/assets/';
+    const thumbUrl = item.getThumbUrl(baseUrl);
+    const iconUrl = item.getIconUrl(baseUrl);
+
+    thumbUrl.should.equal(`${baseUrl}icons/en/thumbs/ash_prime_systems.png`);
+    iconUrl.should.equal(`${baseUrl}icons/en/ash_prime_systems.png`);
+  });
 });
 
 describe('Statistics Utilities', function () {
@@ -1007,6 +1352,199 @@ describe('Statistics Utilities', function () {
     const stats = calculateStatistics(orders, { type: 'sell' });
     stats.q1.should.be.approximately(20, 1);
     stats.q3.should.be.approximately(40, 1);
+  });
+
+  it('should apply includeOutliers option', function () {
+    const orders = [
+      new Order({
+        id: '1',
+        type: 'sell',
+        platinum: 10,
+        quantity: 1,
+        user: { id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc' },
+      }),
+      new Order({
+        id: '2',
+        type: 'sell',
+        platinum: 50,
+        quantity: 1,
+        user: { id: 'u2', ingameName: 'User2', status: 'online', platform: 'pc' },
+      }),
+      new Order({
+        id: '3',
+        type: 'sell',
+        platinum: 55,
+        quantity: 1,
+        user: { id: 'u3', ingameName: 'User3', status: 'online', platform: 'pc' },
+      }),
+      new Order({
+        id: '4',
+        type: 'sell',
+        platinum: 60,
+        quantity: 1,
+        user: { id: 'u4', ingameName: 'User4', status: 'online', platform: 'pc' },
+      }),
+      new Order({
+        id: '5',
+        type: 'sell',
+        platinum: 1000,
+        quantity: 1,
+        user: { id: 'u5', ingameName: 'User5', status: 'online', platform: 'pc' },
+      }),
+    ];
+
+    const statsWithOutliers = calculateStatistics(orders, { type: 'sell', includeOutliers: true });
+    const statsWithoutOutliers = calculateStatistics(orders, { type: 'sell', includeOutliers: false });
+
+    // With outliers, should include all 5 orders
+    statsWithOutliers.orderCount.should.equal(5);
+    statsWithOutliers.max.should.equal(1000); // Includes the outlier
+
+    // Without outliers, results should differ (extreme values filtered)
+    statsWithoutOutliers.should.not.deep.equal(statsWithOutliers);
+  });
+
+  describe('getBestOrders utility', function () {
+    let getBestOrders;
+
+    before(async function () {
+      const statsModule = await import('../lib/market/v2/utils/statistics.js');
+      getBestOrders = statsModule.getBestOrders;
+    });
+
+    it('should get best buy and sell orders', function () {
+      const orders = [
+        new Order({
+          id: '1',
+          type: 'buy',
+          platinum: 40,
+          quantity: 1,
+          user: { id: 'u1', ingameName: 'Buyer1', status: 'online', platform: 'pc' },
+        }),
+        new Order({
+          id: '2',
+          type: 'buy',
+          platinum: 35,
+          quantity: 1,
+          user: { id: 'u2', ingameName: 'Buyer2', status: 'online', platform: 'pc' },
+        }),
+        new Order({
+          id: '3',
+          type: 'sell',
+          platinum: 50,
+          quantity: 1,
+          user: { id: 'u3', ingameName: 'Seller1', status: 'online', platform: 'pc' },
+        }),
+        new Order({
+          id: '4',
+          type: 'sell',
+          platinum: 55,
+          quantity: 1,
+          user: { id: 'u4', ingameName: 'Seller2', status: 'online', platform: 'pc' },
+        }),
+      ];
+
+      const best = getBestOrders(orders);
+      best.should.have.property('buy');
+      best.should.have.property('sell');
+      best.buy[0].platinum.should.equal(40); // Highest buy
+      best.sell[0].platinum.should.equal(50); // Lowest sell
+    });
+
+    it('should respect limit parameter', function () {
+      const orders = [];
+      for (let i = 0; i < 10; i += 1) {
+        orders.push(
+          new Order({
+            id: `${i}`,
+            type: 'sell',
+            platinum: 50 + i,
+            quantity: 1,
+            user: { id: `u${i}`, ingameName: `User${i}`, status: 'online', platform: 'pc' },
+          })
+        );
+      }
+
+      const best = getBestOrders(orders, { limit: 3 });
+      best.sell.should.have.lengthOf(3);
+    });
+
+    it('should include offline orders when onlineOnly is false', function () {
+      const orders = [
+        new Order({
+          id: '1',
+          type: 'sell',
+          platinum: 50,
+          quantity: 1,
+          user: { id: 'u1', ingameName: 'User1', status: 'offline', platform: 'pc' },
+        }),
+      ];
+
+      const bestOnlineOnly = getBestOrders(orders, { onlineOnly: true });
+      const bestAll = getBestOrders(orders, { onlineOnly: false });
+
+      bestOnlineOnly.sell.should.have.lengthOf(0);
+      bestAll.sell.should.have.lengthOf(1);
+    });
+  });
+
+  describe('formatPriceRange utility', function () {
+    let formatPriceRange;
+
+    before(async function () {
+      const statsModule = await import('../lib/market/v2/utils/statistics.js');
+      formatPriceRange = statsModule.formatPriceRange;
+    });
+
+    it('should format no orders', function () {
+      const stats = { orderCount: 0, min: 0, max: 0, median: 0 };
+      formatPriceRange(stats).should.equal('No orders found');
+    });
+
+    it('should format single price', function () {
+      const stats = { orderCount: 1, min: 50, max: 50, median: 50 };
+      formatPriceRange(stats).should.equal('50p');
+    });
+
+    it('should format price range', function () {
+      const stats = { orderCount: 5, min: 50, max: 100, median: 75 };
+      formatPriceRange(stats).should.equal('50p - 100p (median: 75p)');
+    });
+  });
+
+  describe('formatStatistics utility', function () {
+    let formatStatistics;
+
+    before(async function () {
+      const statsModule = await import('../lib/market/v2/utils/statistics.js');
+      formatStatistics = statsModule.formatStatistics;
+    });
+
+    it('should format no sellers', function () {
+      const stats = { orderCount: 0, volume: 0, median: 0, min: 0, max: 0, avg: 0 };
+      formatStatistics(stats, 'sell').should.equal('No sellers found');
+    });
+
+    it('should format no buyers', function () {
+      const stats = { orderCount: 0, volume: 0, median: 0, min: 0, max: 0, avg: 0 };
+      formatStatistics(stats, 'buy').should.equal('No buyers found');
+    });
+
+    it('should format seller statistics', function () {
+      const stats = { orderCount: 10, volume: 50, median: 75, min: 50, max: 100, avg: 77 };
+      const result = formatStatistics(stats, 'sell');
+      result.should.include('**Sellers:** 10 orders (50 items)');
+      result.should.include('**Median:** 75p');
+      result.should.include('**Range:** 50p - 100p');
+      result.should.include('**Average:** 77p');
+    });
+
+    it('should format buyer statistics', function () {
+      const stats = { orderCount: 5, volume: 20, median: 40, min: 35, max: 45, avg: 41 };
+      const result = formatStatistics(stats, 'buy');
+      result.should.include('**Buyers:** 5 orders (20 items)');
+      result.should.include('**Median:** 40p');
+    });
   });
 });
 
