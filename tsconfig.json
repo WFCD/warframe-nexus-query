@@ -12,8 +12,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "checkJs": true,
-    "allowJs": true
+    "typeRoots": ["./node_modules/@types", "./types"]
   },
   "include": ["lib/**/*.js", "index.js", "types/**/*.d.ts"],
   "exclude": ["node_modules", "dist", "test"]

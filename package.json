@@ -27,7 +27,8 @@
   "files": [
     "lib",
     "index.js",
-    "basedir.js"
+    "basedir.js",
+    "types"
   ],
   "scripts": {
     "build:docs": "jsdoc -c jsdoc-config.json -d docs",

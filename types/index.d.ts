@@ -1,9 +1,7 @@
 /**
- * TypeScript type definitions for Warframe Nexus Query
- * Comprehensive types for Warframe Market API v2 integration
+ * TypeScript type definitions for warframe-nexus-query
+ * Library for querying Warframe item prices from warframe.market
  */
-
-export as namespace NexusQuery;
 
 export type Platform = 'pc' | 'ps4' | 'xbox' | 'switch' | 'mobile';
 export type PlatformAlias =
@@ -428,11 +426,6 @@ export interface PriceCheckQueryResult {
   apiVersion: 'v1' | 'v2';
 }
 
-export interface PriceCheckQueryStringOptions {
-  maxComponents?: number;
-  includeMarkdown?: boolean;
-}
-
 export interface DiscordEmbed {
   type: 'rich';
   title: string;
@@ -456,6 +449,21 @@ export interface DiscordEmbedThumbnail {
 export interface DiscordEmbedFooter {
   text: string;
   icon_url?: string;
+}
+
+export class PriceCheckQuerier {
+  settings: Settings;
+  logger: Logger;
+  skipMarket: boolean;
+  marketFetcher: MarketFetcherV2 | null;
+  apiVersion: 'v1' | 'v2';
+  creator: AttachmentCreator;
+
+  constructor(options?: PriceCheckQuerierOptions);
+  priceCheckQuery(query: string, platform?: Platform): Promise<SummaryV2[]>;
+  priceCheckQueryString(query: string, priorResults?: SummaryV2[], platform?: Platform): Promise<string>;
+  priceCheckQueryAttachment(query: string, priorResults?: SummaryV2[], platform?: Platform): Promise<DiscordEmbed[]>;
+  stopUpdating(): Promise<void>;
 }
 
 export interface AttachmentCreator {
@@ -486,21 +494,6 @@ export interface Settings {
   lookupAlias(platformAlias: string, market?: boolean): Platform | undefined;
 }
 
-export class PriceCheckQuerier {
-  settings: Settings;
-  logger: Logger;
-  skipMarket: boolean;
-  marketFetcher: MarketFetcherV2 | null;
-  apiVersion: 'v1' | 'v2';
-  creator: AttachmentCreator;
-
-  constructor(options?: PriceCheckQuerierOptions);
-  priceCheckQuery(query: string, platform?: Platform): Promise<SummaryV2[]>;
-  priceCheckQueryString(query: string, priorResults?: SummaryV2[], platform?: Platform): Promise<string>;
-  priceCheckQueryAttachment(query: string, priorResults?: SummaryV2[], platform?: Platform): Promise<DiscordEmbed[]>;
-  stopUpdating(): Promise<void>;
-}
-
 export interface StatisticsCalculator {
   calculateStatistics(orders: Order[], options?: CalculateStatisticsOptions): StatisticsData;
   getBestOrders(orders: Order[], options?: GetBestOrdersOptions): { buy: Order[]; sell: Order[] };
@@ -509,4 +502,7 @@ export interface StatisticsCalculator {
 }
 
 export { SummaryV2 as Summary };
+
 export default PriceCheckQuerier;
+
+export as namespace NexusQuery;
