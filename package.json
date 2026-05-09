@@ -53,7 +53,7 @@
     "chai": "^6.0.1",
     "husky": "^9.0.11",
     "install-peerdeps": "^3.0.3",
-    "lint-staged": "^16.0.0",
+    "lint-staged": "^17.0.3",
     "mocha": "^11.0.1",
     "prettier": "^3.2.5"
   },
