@@ -32,7 +32,7 @@ jobs:
         node-version: ['lts/jod', 'lts/hydrogen', 'lts/iron', 'lts/*']
     steps:
       - name: Set up WARP
-        uses: fscarmen/warp-on-actions@v1.4
+        uses: fscarmen/warp-on-actions@37ce1997e075435a827991dabcce1d080c1fe512 # v1.4
         with:
           stack: dual
           mode: wireguard
