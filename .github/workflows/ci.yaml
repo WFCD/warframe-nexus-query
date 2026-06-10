@@ -25,12 +25,19 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     needs: lint
+    permissions:
+      pull-requests: write
     strategy:
       max-parallel: 1
       fail-fast: false
       matrix:
         node-version: ['lts/jod', 'lts/hydrogen', 'lts/iron', 'lts/*']
     steps:
+      - name: Set up WARP
+        uses: fscarmen/warp-on-actions@37ce1997e075435a827991dabcce1d080c1fe512 # v1.4
+        with:
+          stack: dual
+          mode: wireguard
       - name: Sleep before Test Run
         if: matrix.node-version != 'lts/jod'
         run: echo "Sleeping for 1m to allow previous cleanup" && sleep 60
