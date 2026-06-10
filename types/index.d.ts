@@ -176,6 +176,7 @@ export interface QueryOptions {
   platform: Platform;
   successfulQuery?: () => void;
   rank?: number;
+  ranks?: number[];
   rankLt?: number;
   charges?: number;
   chargesLt?: number;
@@ -185,6 +186,9 @@ export interface QueryOptions {
   cyanStarsLt?: number;
   subtype?: string;
 }
+
+/** Options for filtering price checks by mod rank and other order modifiers. */
+export type PriceCheckOptions = Omit<QueryOptions, 'platform' | 'successfulQuery'>;
 
 export interface GetTopOrdersOptions extends QueryOptions {
   platform: Platform;
@@ -403,8 +407,8 @@ export interface MarketFetcherV2 {
   formatPriceRange(stats: StatisticsData): string;
   formatStatistics(stats: StatisticsData, type?: OrderType): string;
 
-  queryMarket(query: string, options: { platform: Platform; successfulQuery?: () => void }): Promise<SummaryV2[]>;
-  priceCheckQuery(query: string, platform: Platform): Promise<SummaryV2[]>;
+  queryMarket(query: string, options: QueryOptions): Promise<SummaryV2[]>;
+  priceCheckQuery(query: string, platform: Platform, options?: PriceCheckOptions): Promise<SummaryV2[]>;
 
   clearCache(): void;
   checkVersions(): Promise<VersionedCacheVersionData>;
@@ -460,9 +464,19 @@ export class PriceCheckQuerier {
   creator: AttachmentCreator;
 
   constructor(options?: PriceCheckQuerierOptions);
-  priceCheckQuery(query: string, platform?: Platform): Promise<SummaryV2[]>;
-  priceCheckQueryString(query: string, priorResults?: SummaryV2[], platform?: Platform): Promise<string>;
-  priceCheckQueryAttachment(query: string, priorResults?: SummaryV2[], platform?: Platform): Promise<DiscordEmbed[]>;
+  priceCheckQuery(query: string, platform?: Platform, options?: PriceCheckOptions): Promise<SummaryV2[]>;
+  priceCheckQueryString(
+    query: string,
+    priorResults?: SummaryV2[],
+    platform?: Platform,
+    options?: PriceCheckOptions
+  ): Promise<string>;
+  priceCheckQueryAttachment(
+    query: string,
+    priorResults?: SummaryV2[],
+    platform?: Platform,
+    options?: PriceCheckOptions
+  ): Promise<DiscordEmbed[]>;
   stopUpdating(): Promise<void>;
 }
 

@@ -297,6 +297,19 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
       // Should have other economy fields
       should.exist(summary.tradable);
     });
+
+    it('should filter mod prices by rank', async function () {
+      this.timeout(15000);
+      const query = 'blind rage';
+      const unranked = await fetcher.queryMarket(query, { platform: 'pc' });
+      const rank0 = await fetcher.queryMarket(query, { platform: 'pc', rank: 0 });
+      const rank10 = await fetcher.queryMarket(query, { platform: 'pc', rank: 10 });
+
+      rank0[0].name.should.match(/\(R0\)$/);
+      rank10[0].name.should.match(/\(R10\)$/);
+      rank0[0].statistics.sell.median.should.not.equal(rank10[0].statistics.sell.median);
+      unranked[0].name.should.not.match(/\(R\d+\)$/);
+    });
   });
 
   describe('MarketFetcherV2 utility methods', function () {
@@ -1910,6 +1923,19 @@ describe('Warframe Market API v2 Integration', function () {
       result.should.be.an('array');
       const embed = result[0];
       embed.should.be.an('object');
+    });
+
+    it('should compare multiple mod ranks in one attachment', async function () {
+      const query = 'blind rage';
+      const result = await nexus.priceCheckQueryAttachment(query, undefined, 'pc', { ranks: [0, 10] });
+
+      result.should.be.an('array');
+      const embed = result[0];
+      embed.should.be.an('object');
+      embed.fields.should.be.an('array');
+      embed.fields.length.should.be.greaterThanOrEqual(2);
+      embed.fields[0].name.should.include('R0');
+      embed.fields[1].name.should.include('R10');
     });
 
     it('should handle no results gracefully', async function () {

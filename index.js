@@ -7,6 +7,7 @@ import md from 'node-md-config';
 import promiseTimeout from './lib/promiseTimeout.js';
 import Settings from './lib/Settings.js';
 import Creator from './lib/AttachmentCreator.js';
+import { normalizePriceCheckRanks } from './lib/priceCheckOptions.js';
 import { MarketFetcherV2 } from './lib/market/v2/index.js';
 
 export default class PriceCheckQuerier {
@@ -54,10 +55,11 @@ export default class PriceCheckQuerier {
   /**
    * Lookup a list of results for a query
    * @param {string} query Query to search the nexus-stats database against
-   * @param {string} platform Platform to query price data for. One of 'pc', 'ps4', 'xb1'
+   * @param {string} [platform='pc'] Platform to query price data for. One of 'pc', 'ps4', 'xb1'
+   * @param {Object} [options={}] Optional market order filters (rank, ranks, rankLt, etc.)
    * @returns {Promise<Array<NexusItem>>} a Promise of an array of Item objects
    */
-  async priceCheckQuery(query, platform = 'pc') {
+  async priceCheckQuery(query, platform = 'pc', options = {}) {
     this.logger.info(`state:\n\tskipMarket: ${this.skipMarket}\n\tquery: ${query}\n\tplatform: ${platform}`);
     if (!query) {
       throw new Error('This funtcion requires a query to be provided');
@@ -65,19 +67,28 @@ export default class PriceCheckQuerier {
     // eslint-disable-next-line no-param-reassign
     platform = this.settings.lookupAlias(platform.toLowerCase());
 
-    let successfulQuery;
+    const ranks = normalizePriceCheckRanks(options);
+    const { ranks: _ignoredRanks, ...baseOptions } = options;
     let attachments = [];
 
     /* istanbul ignore else */
     if (this.marketFetcher && !this.skipMarket) {
       this.logger.info(`querying market for ${query} on ${platform}`);
       try {
-        const marketPromise = this.marketFetcher.queryMarket(query, {
-          successfulQuery,
-          platform: this.settings.lookupAlias(platform, true),
-        });
-        const marketResults = await promiseTimeout(this.settings.timeouts.market, marketPromise);
-        attachments = [...attachments, ...marketResults];
+        const marketPlatform = this.settings.lookupAlias(platform, true);
+        const rankResults = await Promise.all(
+          ranks.map(async (rank) => {
+            const rankOptions = {
+              ...baseOptions,
+              platform: marketPlatform,
+            };
+            if (rank !== undefined) rankOptions.rank = rank;
+
+            const marketPromise = this.marketFetcher.queryMarket(query, rankOptions);
+            return promiseTimeout(this.settings.timeouts.market, marketPromise);
+          })
+        );
+        attachments = rankResults.flat();
       } catch (e) {
         this.logger.error(`Couldn't process ${query} on warframe.market... time out.`);
       }
@@ -91,12 +102,13 @@ export default class PriceCheckQuerier {
   /**
    * Lookup a list of results for a query
    * @param {string} query Query to search the nexus-stats database against
-   * @param {Object[]} priorResults results provided from a prior search
-   * @param {string} platform Platform to query price data for. One of 'pc', 'ps4', 'xb1'
+   * @param {Object[]} [priorResults] results provided from a prior search
+   * @param {string} [platform='pc'] Platform to query price data for. One of 'pc', 'ps4', 'xb1'
+   * @param {Object} [options={}] Optional market order filters (rank, ranks, rankLt, etc.)
    * @returns {Promise<string>} a Promise of a string containing the results of the query
    */
-  async priceCheckQueryString(query, priorResults, platform = 'pc') {
-    const components = priorResults || (await this.priceCheckQuery(query, platform));
+  async priceCheckQueryString(query, priorResults, platform = 'pc', options = {}) {
+    const components = priorResults || (await this.priceCheckQuery(query, platform, options));
     const tokens = [`[${platform.toUpperCase()}] ${query}`];
     components.slice(0, 4).forEach((component) => {
       tokens.push(`${md.lineEnd}${component.toString()}`);
@@ -109,12 +121,13 @@ export default class PriceCheckQuerier {
   /**
    * Lookup a list of results for a query
    * @param {string} query Query to search the nexus-stats database against
-   * @param {Object[]} priorResults results provided from a prior search
-   * @param {string} platform Platform to query price data for. One of 'pc', 'ps4', 'xb1'
+   * @param {Object[]} [priorResults] results provided from a prior search
+   * @param {string} [platform='pc'] Platform to query price data for. One of 'pc', 'ps4', 'xb1'
+   * @param {Object} [options={}] Optional market order filters (rank, ranks, rankLt, etc.)
    * @returns {Promise<Array<Object>>} a Promise of an array of attachment objects
    */
-  async priceCheckQueryAttachment(query, priorResults, platform = 'pc') {
-    const components = priorResults || (await this.priceCheckQuery(query, platform));
+  async priceCheckQueryAttachment(query, priorResults, platform = 'pc', options = {}) {
+    const components = priorResults || (await this.priceCheckQuery(query, platform, options));
     const realPlatform = this.settings.lookupAlias(platform);
 
     const attachment = this.creator.attachmentFromComponents(components, query, realPlatform);
