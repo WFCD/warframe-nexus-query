@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>warframe-nexus-query Source: market/v2/constants.js</title>
+	<title>warframe-nexus-query Source: priceCheckOptions.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -72,71 +72,82 @@
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: market/v2/constants.js</h1>
+		<h1 class="page-title">Source: priceCheckOptions.js</h1>
     
 <section>
     <article>
         <pre
-            class="sunlight-highlight-javascript linenums">/**
- * Constants for Warframe Market API v2
+            class="sunlight-highlight-javascript linenums">export const ORDER_FILTER_KEYS = [
+  'rank',
+  'rankLt',
+  'charges',
+  'chargesLt',
+  'amberStars',
+  'amberStarsLt',
+  'cyanStars',
+  'cyanStarsLt',
+  'subtype',
+];
+
+/**
+ * @param {unknown} value - Rank value from query options
+ * @returns {number|undefined}
  */
+export function parseRankValue(value) {
+  if (value === undefined || value === '') return undefined;
+  const rank = Number(value);
+  if (!Number.isInteger(rank) || rank &lt; 0) return undefined;
+  return rank;
+}
 
-export const API_BASE_URL = process.env.MARKET_V2_URL_OVERRIDE || 'https://api.warframe.market/v2';
-export const ASSETS_BASE_URL = process.env.MARKET_ASSETS_URL_OVERRIDE || 'https://warframe.market/static/assets/';
+/**
+ * Resolve which mod ranks to price-check. `[undefined]` means no rank filter.
+ * @param {Record&lt;string, unknown>} [options={}] - Price check options
+ * @returns {Array&lt;number|undefined>}
+ */
+export function normalizePriceCheckRanks(options = {}) {
+  if (Array.isArray(options.ranks) &amp;&amp; options.ranks.length) {
+    const parsed = options.ranks.map(parseRankValue).filter((rank) => rank !== undefined);
+    if (parsed.length) {
+      return [...new Set(parsed)].sort((a, b) => a - b);
+    }
+  }
 
-export const DEFAULT_TIMEOUT = parseInt(process.env.MARKET_TIMEOUT, 10) || 5000;
-export const VERSION_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
-export const CACHE_TTL = 60 * 60 * 1000; // 1 hour fallback TTL
-export const SHORT_CACHE_TTL = 60 * 1000; // 1 minute for orders
+  const single = parseRankValue(options.rank);
+  if (single !== undefined) return [single];
 
-export const PLATFORMS = {
-  pc: 'pc',
-  ps4: 'ps4',
-  playstation: 'ps4',
-  xb1: 'xbox',
-  xbone: 'xbox',
-  xbox: 'xbox',
-  switch: 'switch',
-  swi: 'switch',
-  ns: 'switch',
-  mobile: 'mobile',
-};
+  return [undefined];
+}
 
-export const LANGUAGES = {
-  en: 'en',
-  es: 'es',
-  fr: 'fr',
-  de: 'de',
-  it: 'it',
-  pl: 'pl',
-  pt: 'pt',
-  ru: 'ru',
-  ko: 'ko',
-  'zh-hans': 'zh-hans',
-  'zh-hant': 'zh-hant',
-  uk: 'uk',
-};
+/**
+ * @param {Record&lt;string, unknown>} [options={}] - Price check options
+ * @returns {Record&lt;string, unknown>}
+ */
+export function extractOrderFilters(options = {}) {
+  /** @type {Record&lt;string, unknown>} */
+  const filters = {};
 
-export const USER_STATUS = {
-  INVISIBLE: 'invisible',
-  OFFLINE: 'offline',
-  ONLINE: 'online',
-  INGAME: 'ingame',
-};
+  ORDER_FILTER_KEYS.forEach((key) => {
+    if (options[key] !== undefined) filters[key] = options[key];
+  });
 
-export const ACTIVITY_TYPE = {
-  UNKNOWN: 'UNKNOWN',
-  IDLE: 'IDLE',
-  ON_MISSION: 'ON_MISSION',
-  IN_DOJO: 'IN_DOJO',
-  IN_ORBITER: 'IN_ORBITER',
-  IN_RELAY: 'IN_RELAY',
-};
+  return filters;
+}
 
-export const ORDER_TYPE = {
-  BUY: 'buy',
-  SELL: 'sell',
-};
+/**
+ * @param {{ name: string }} summary - Market summary to label
+ * @param {Record&lt;string, unknown>} filters - Active order filters
+ * @returns {{ name: string }}
+ */
+export function labelSummaryForFilters(summary, filters) {
+  if (filters.rank !== undefined) {
+    summary.name = `${summary.name} (R${filters.rank})`;
+  } else if (filters.rankLt !== undefined) {
+    summary.name = `${summary.name} (&lt;R${filters.rankLt})`;
+  }
+
+  return summary;
+}
 </pre>
     </article>
 </section>
