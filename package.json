@@ -35,7 +35,7 @@
     "coverage": "npm test && c8 report --reporter=text-lcov | npx coveralls",
     "lint": "eslint index.js lib/ test/",
     "lint:fix": "eslint index.js lib/ test/ --fix",
-    "prepare": "husky && npx install-peerdeps @wfcd/eslint-config@latest -S",
+    "prepare": "husky",
     "test": "c8 mocha"
   },
   "dependencies": {
@@ -47,19 +47,25 @@
   "devDependencies": {
     "@commitlint/cli": "^21.0.1",
     "@commitlint/config-conventional": "^21.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@types/json-query": "^2.2.0",
-    "@wfcd/eslint-config": "^1.6.1",
     "c8": "^11.0.0",
     "chai": "^6.0.1",
+    "eslint": "^10.6.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import-x": "^4.17.1",
+    "eslint-plugin-no-null": "^1.0.2",
+    "eslint-plugin-prettier": "^5.5.6",
+    "eslint-stylistic-airbnb": "^3.2.0",
+    "globals": "^17.7.0",
     "husky": "^9.0.11",
-    "install-peerdeps": "^3.0.3",
     "lint-staged": "^17.0.5",
     "mocha": "^11.0.1",
     "prettier": "^3.2.5"
   },
   "engines": {
-    "node": ">=18",
-    "npm": ">=8.19"
+    "node": ">=24",
+    "npm": ">=11"
   },
   "publishConfig": {
     "provenance": true

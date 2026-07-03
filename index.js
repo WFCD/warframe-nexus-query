@@ -64,7 +64,6 @@ export default class PriceCheckQuerier {
     if (!query) {
       throw new Error('This funtcion requires a query to be provided');
     }
-    // eslint-disable-next-line no-param-reassign
     platform = this.settings.lookupAlias(platform.toLowerCase());
 
     const ranks = normalizePriceCheckRanks(options);
@@ -89,7 +88,7 @@ export default class PriceCheckQuerier {
           })
         );
         attachments = rankResults.flat();
-      } catch (e) {
+      } catch {
         this.logger.error(`Couldn't process ${query} on warframe.market... time out.`);
       }
     } else {
@@ -158,7 +157,7 @@ export default class PriceCheckQuerier {
         files.map(async (file) => {
           try {
             await unlink(join(global.__basedir, 'tmp', file));
-          } catch (e) {
+          } catch {
             allSuccess = false;
             this.logger.debug(`Couldn't delete ${file}`);
           }

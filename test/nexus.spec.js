@@ -444,7 +444,7 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
         items.map(async (item) => {
           try {
             await fetcher.getTopOrders(item, { platform: 'pc' });
-          } catch (error) {
+          } catch {
             // Some items might not exist, that's ok
           }
         })
@@ -1973,7 +1973,6 @@ describe('Warframe Market API v2 Integration', function () {
 
       // eslint-disable-next-line no-restricted-syntax
       for (const platform of platforms) {
-        // eslint-disable-next-line no-await-in-loop
         const result = await nexus.priceCheckQueryAttachment(query, undefined, platform);
 
         result.should.be.an('array');
@@ -1986,7 +1985,7 @@ describe('Warframe Market API v2 Integration', function () {
         }
 
         // Small delay between platforms
-        // eslint-disable-next-line no-await-in-loop, no-promise-executor-return
+        // eslint-disable-next-line no-promise-executor-return
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     });
@@ -2002,7 +2001,6 @@ describe('AttachmentCreator fieldValueV2 validation', function () {
     const AttachmentCreator = (await import('../lib/AttachmentCreator.js')).default;
     const creator = new AttachmentCreator();
 
-    // eslint-disable-next-line no-null/no-null
     (() => {
       // Access the private fieldValueV2 function indirectly through attachmentFromComponents
       // eslint-disable-next-line no-null/no-null
@@ -2111,11 +2109,9 @@ describe('Discord Webhook Integration (Manual)', function () {
 
     // eslint-disable-next-line no-restricted-syntax
     for (const { query, platform } of testCases) {
-      // eslint-disable-next-line no-await-in-loop
       const embeds = await querier.priceCheckQueryAttachment(query, undefined, platform);
 
       if (embeds && embeds[0] && embeds[0].fields && embeds[0].fields.length) {
-        // eslint-disable-next-line no-await-in-loop
         const res = await fetch(webhook, {
           method: 'POST',
           body: JSON.stringify({ embeds }),
@@ -2126,7 +2122,7 @@ describe('Discord Webhook Integration (Manual)', function () {
       }
 
       // Rate limit protection
-      // eslint-disable-next-line no-await-in-loop, no-promise-executor-return
+      // eslint-disable-next-line no-promise-executor-return
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
