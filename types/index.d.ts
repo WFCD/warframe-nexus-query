@@ -338,6 +338,7 @@ export interface HttpClientOptions {
   timeout?: number;
   locale?: Language;
   logger?: Logger;
+  userAgent?: string;
   token?: string;
   headers?: Record<string, string>;
 }
@@ -358,6 +359,7 @@ export interface CacheOptions {
   cacheId?: string;
   persistent?: boolean;
   logger?: Logger;
+  userAgent?: string;
 }
 
 export interface VersionedCache {
@@ -388,6 +390,7 @@ export interface MarketFetcherV2Options {
   ordersCacheSize?: number;
   cacheTTL?: number;
   baseURL?: string;
+  userAgent?: string;
 }
 
 export interface MarketFetcherV2 {
@@ -485,6 +488,7 @@ export interface AttachmentCreator {
 }
 
 export interface Settings {
+  userAgent: string;
   urls: {
     market: string;
     marketAssets: string;

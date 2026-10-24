@@ -32,12 +32,12 @@ export default class PriceCheckQuerier {
          */
         if (this.#useV2) {
           this.logger.debug('Using Warframe Market API v2');
-          this.marketFetcher = new MarketFetcherV2({ logger });
+          this.marketFetcher = new MarketFetcherV2({ logger, userAgent: this.settings.userAgent });
           this.apiVersion = 'v2';
         } else {
           this.logger.info('Using Warframe Market API v1');
           this.logger.warn('Api v1 is deprecated and impossible to use');
-          this.marketFetcher = new MarketFetcherV2({ logger });
+          this.marketFetcher = new MarketFetcherV2({ logger, userAgent: this.settings.userAgent });
           this.apiVersion = 'v2';
         }
       } catch (e) {
