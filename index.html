@@ -1,103 +1,18 @@
-<!DOCTYPE html>
-
-<html lang="en">
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width">
-	<title>warframe-nexus-query Index</title>
-
-	<!--[if lt IE 9]>
-	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-	<![endif]-->
-	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
-
-	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
-
-</head>
-
-<body>
-
-<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
-<div class="container">
-	<div class="navbar-header">
-		<a class="navbar-brand" href="index.html">warframe-nexus-query</a>
-		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-        </button>
-	</div>
-	<div class="navbar-collapse collapse" id="topNavigation">
-		<ul class="nav navbar-nav">
-			
-			<li class="dropdown">
-				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
-				<ul class="dropdown-menu ">
-					<li><a href="OrderUser.html">OrderUser</a></li><li><a href="module.html#.exports">module.exports</a></li><li><a href="module.exports_module.exports.html">module.exports#module.exports</a></li>
-				</ul>
-			</li>
-			
-			<li class="dropdown">
-				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
-				<ul class="dropdown-menu ">
-					<li><a href="global.html#API_BASE_URL">API_BASE_URL</a></li><li><a href="global.html#attachmentFromComponents">attachmentFromComponents</a></li><li><a href="global.html#calculateMedian">calculateMedian</a></li><li><a href="global.html#calculatePercentile">calculatePercentile</a></li><li><a href="global.html#calculateStatistics">calculateStatistics</a></li><li><a href="global.html#checkVersions">checkVersions</a></li><li><a href="global.html#clear">clear</a></li><li><a href="global.html#clearCache">clearCache</a></li><li><a href="global.html#delete">delete</a></li><li><a href="global.html#extractLocalized">extractLocalized</a></li><li><a href="global.html#extractOrderFilters">extractOrderFilters</a></li><li><a href="global.html#fieldValue">fieldValue</a></li><li><a href="global.html#fieldValueV2">fieldValueV2</a></li><li><a href="global.html#formatPriceRange">formatPriceRange</a></li><li><a href="global.html#formatStatistics">formatStatistics</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getAgeHours">getAgeHours</a></li><li><a href="global.html#getAllOrders">getAllOrders</a></li><li><a href="global.html#getBestOrders">getBestOrders</a></li><li><a href="global.html#getIconUrl">getIconUrl</a></li><li><a href="global.html#getItemBySlug">getItemBySlug</a></li><li><a href="global.html#getItemSet">getItemSet</a></li><li><a href="global.html#getItems">getItems</a></li><li><a href="global.html#getLocalized">getLocalized</a></li><li><a href="global.html#getLocalizedField">getLocalizedField</a></li><li><a href="global.html#getOnlineBuyers">getOnlineBuyers</a></li><li><a href="global.html#getOnlineSellers">getOnlineSellers</a></li><li><a href="global.html#getRecentOrders">getRecentOrders</a></li><li><a href="global.html#getThumbUrl">getThumbUrl</a></li><li><a href="global.html#getTopOrders">getTopOrders</a></li><li><a href="global.html#has">has</a></li><li><a href="global.html#isBuyOrder">isBuyOrder</a></li><li><a href="global.html#isPartOfSet">isPartOfSet</a></li><li><a href="global.html#isSellOrder">isSellOrder</a></li><li><a href="global.html#isUserOnline">isUserOnline</a></li><li><a href="global.html#isVaulted">isVaulted</a></li><li><a href="global.html#labelSummaryForFilters">labelSummaryForFilters</a></li><li><a href="global.html#lookupAlias">lookupAlias</a></li><li><a href="global.html#normalizeLanguage">normalizeLanguage</a></li><li><a href="global.html#normalizePlatform">normalizePlatform</a></li><li><a href="global.html#normalizePriceCheckRanks">normalizePriceCheckRanks</a></li><li><a href="global.html#pad">pad</a></li><li><a href="global.html#parseRankValue">parseRankValue</a></li><li><a href="global.html#post">post</a></li><li><a href="global.html#priceCheckQuery">priceCheckQuery</a></li><li><a href="global.html#queryMarket">queryMarket</a></li><li><a href="global.html#refresh">refresh</a></li><li><a href="global.html#removeOutliers">removeOutliers</a></li><li><a href="global.html#requestChain">requestChain</a></li><li><a href="global.html#safeRange">safeRange</a></li><li><a href="global.html#safeValue">safeValue</a></li><li><a href="global.html#set">set</a></li><li><a href="global.html#setLocale">setLocale</a></li><li><a href="global.html#setTimeout">setTimeout</a></li><li><a href="global.html#shouldRefresh">shouldRefresh</a></li><li><a href="global.html#size">size</a></li><li><a href="global.html#stop">stop</a></li><li><a href="global.html#toJSON">toJSON</a></li><li><a href="global.html#toString">toString</a></li><li><a href="global.html#waitForRequestSlot">waitForRequestSlot</a></li>
-				</ul>
-			</li>
-			
-		</ul>
-        
-            <div class="col-sm-3 col-md-3">
-                <form class="navbar-form" role="search">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
-                        <div class="input-group-btn">
-                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        
-	</div>
-
-</div>
-</div>
-
-
-<div class="container" id="toc-content">
-<div class="row">
-
-	
-	<div class="col-md-8">
-	
-		<div id="main">
-			
-
-	
-	
-
-
-
-
-
-
-
-
-
-
-
-	
-	
-
-
-
-
-
-    <section class="readme-section">
-        <article><h1>warframe-nexus-query</h1>
+<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>warframe-nexus-query</title><meta name="description" content="Documentation for warframe-nexus-query"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script><script async src="assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="index.html" class="title">warframe-nexus-query</a>
+<div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<h1>warframe-nexus-query</h1></div>
+<div class="tsd-panel tsd-typography"><h1 id="warframe-nexus-query" class="tsd-anchor-link">warframe-nexus-query<a href="#warframe-nexus-query" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h1>
 <p><a href="https://github.com/WFCD/banner/blob/master/PROJECTS.md"><img src="https://img.shields.io/badge/Warframe_Comm_Devs-supported-blue.svg?color=2E96EF&amp;logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyOTgiIGhlaWdodD0iMTczIiB2aWV3Qm94PSIwIDAgMjk4IDE3MyI%2BPHBhdGggZD0iTTE4NSA2N2MxNSA4IDI4IDE2IDMxIDE5czIzIDE4LTcgNjBjMCAwIDM1LTMxIDI2LTc5LTE0LTctNjItMzYtNzAtNDUtNC01LTEwLTEyLTE1LTIyLTUgMTAtOSAxNC0xNSAyMi0xMyAxMy01OCAzOC03MiA0NS05IDQ4IDI2IDc5IDI2IDc5LTMwLTQyLTEwLTU3LTctNjBsMzEtMTkgMzYtMjIgMzYgMjJ6TTU1IDE3M2wtMTctM2MtOC0xOS0yMC00NC0yNC01MC01LTctNy0xMS0xNC0xNWwxOC0yYzE2LTMgMjItNyAzMi0xMyAxIDYgMCA5IDIgMTQtNiA0LTIxIDEwLTI0IDE2IDMgMTQgNSAyNyAyNyA1M3ptMTYtMTFsLTktMi0xNC0yOWEzMCAzMCAwIDAgMC04LThoN2wxMy00IDQgN2MtMyAyLTcgMy04IDZhODYgODYgMCAwIDAgMTUgMzB6bTE3MiAxMWwxNy0zYzgtMTkgMjAtNDQgMjQtNTAgNS03IDctMTEgMTQtMTVsLTE4LTJjLTE2LTMtMjItNy0zMi0xMy0xIDYgMCA5LTIgMTQgNiA0IDIxIDEwIDI0IDE2LTMgMTQtNSAyNy0yNyA1M3ptLTE2LTExbDktMiAxNC0yOWEzMCAzMCAwIDAgMSA4LThoLTdsLTEzLTQtNCA3YzMgMiA3IDMgOCA2YTg2IDg2IDAgMCAxLTE1IDMwem0tNzktNDBsLTYtNmMtMSAzLTMgNi02IDdsNSA1YTUgNSAwIDAgMSAyIDB6bS0xMy0yYTQgNCAwIDAgMSAxLTJsMi0yYTQgNCAwIDAgMSAyLTFsNC0xNy0xNy0xMC04IDcgMTMgOC0yIDctNyAyLTgtMTItOCA4IDEwIDE3em0xMiAxMWE1IDUgMCAwIDAtNC0yIDQgNCAwIDAgMC0zIDFsLTMwIDI3YTUgNSAwIDAgMCAwIDdsNCA0YTYgNiAwIDAgMCA0IDIgNSA1IDAgMCAwIDMtMWwyNy0zMWMyLTIgMS01LTEtN3ptMzkgMjZsLTMwLTI4LTYgNmE1IDUgMCAwIDEgMCAzbDI2IDI5YTEgMSAwIDAgMCAxIDBsNS0yIDItMmMxLTIgMy01IDItNnptNS00NWEyIDIgMCAwIDAtNCAwbC0xIDEtMi00YzEtMy01LTktNS05LTEzLTE0LTIzLTE0LTI3LTEzLTIgMS0yIDEgMCAyIDE0IDIgMTUgMTAgMTMgMTNhNCA0IDAgMCAwLTEgMyAzIDMgMCAwIDAgMSAxbC0yMSAyMmE3IDcgMCAwIDEgNCAyIDggOCAwIDAgMSAyIDNsMjAtMjFhNyA3IDAgMCAwIDEgMSA0IDQgMCAwIDAgNCAwYzEtMSA2IDMgNyA0aC0xYTMgMyAwIDAgMCAwIDQgMiAyIDAgMCAwIDQgMGw2LTZhMyAzIDAgMCAwIDAtM3oiIGZpbGw9IiMyZTk2ZWYiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg%3D%3D" alt="Supported by the Warframe Community Developers"></a>
 <a href="https://discord.gg/jGZxH9f"><img src="https://img.shields.io/discord/256087517353213954.svg?logo=discord" alt="Discord"></a></p>
 <p>A Node.js library for querying Warframe item prices from the <a href="https://warframe.market">Warframe.Market</a> API.</p>
-<h2>Features</h2>
+<h2 id="features" class="tsd-anchor-link">Features<a href="#features" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <ul>
 <li>🔄 Support for both Warframe Market API v1 and v2</li>
 <li>📊 Real-time price statistics (median, min, max, average)</li>
@@ -107,37 +22,27 @@
 <li>💾 Smart caching with version-based invalidation</li>
 <li>📱 Discord webhook integration ready</li>
 </ul>
-<h2>Installation</h2>
-<pre class="prettyprint source lang-bash"><code>npm install --save warframe-nexus-query
-</code></pre>
-<h2>Quick Start</h2>
-<pre class="prettyprint source lang-javascript"><code>import PriceCheckQuerier from 'warframe-nexus-query';
+<h2 id="installation" class="tsd-anchor-link">Installation<a href="#installation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="bash"><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">install</span><span class="hl-1"> </span><span class="hl-3">--save</span><span class="hl-1"> </span><span class="hl-2">warframe-nexus-query</span>
+</code><button type="button">Copy</button></pre>
 
-const querier = new PriceCheckQuerier({ logger: console });
+<h2 id="quick-start" class="tsd-anchor-link">Quick Start<a href="#quick-start" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="javascript"><span class="hl-4">import</span><span class="hl-1"> </span><span class="hl-5">PriceCheckQuerier</span><span class="hl-1"> </span><span class="hl-4">from</span><span class="hl-1"> </span><span class="hl-2">&#39;warframe-nexus-query&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">querier</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PriceCheckQuerier</span><span class="hl-1">({ </span><span class="hl-5">logger:</span><span class="hl-1"> </span><span class="hl-5">console</span><span class="hl-1"> });</span><br/><br/><span class="hl-7">// Query item prices</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">results</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">querier</span><span class="hl-1">.</span><span class="hl-0">priceCheckQuery</span><span class="hl-1">(</span><span class="hl-2">&#39;loki prime&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;pc&#39;</span><span class="hl-1">);</span><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-5">results</span><span class="hl-1">);</span><br/><br/><span class="hl-7">// Get Discord-formatted attachments</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">attachments</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">querier</span><span class="hl-1">.</span><span class="hl-0">priceCheckQueryAttachment</span><span class="hl-1">(</span><span class="hl-2">&#39;ash prime systems&#39;</span><span class="hl-1">, </span><span class="hl-3">undefined</span><span class="hl-1">, </span><span class="hl-2">&#39;pc&#39;</span><span class="hl-1">);</span><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-5">attachments</span><span class="hl-1">);</span><br/><br/><span class="hl-7">// Clean up when done</span><br/><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">querier</span><span class="hl-1">.</span><span class="hl-0">stopUpdating</span><span class="hl-1">();</span>
+</code><button type="button">Copy</button></pre>
 
-// Query item prices
-const results = await querier.priceCheckQuery('loki prime', 'pc');
-console.log(results);
+<h2 id="api" class="tsd-anchor-link">API<a href="#api" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="constructor" class="tsd-anchor-link">Constructor<a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="javascript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">querier</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PriceCheckQuerier</span><span class="hl-1">(</span><span class="hl-5">options</span><span class="hl-1">);</span>
+</code><button type="button">Copy</button></pre>
 
-// Get Discord-formatted attachments
-const attachments = await querier.priceCheckQueryAttachment('ash prime systems', undefined, 'pc');
-console.log(attachments);
-
-// Clean up when done
-await querier.stopUpdating();
-</code></pre>
-<h2>API</h2>
-<h3>Constructor</h3>
-<pre class="prettyprint source lang-javascript"><code>const querier = new PriceCheckQuerier(options);
-</code></pre>
 <p><strong>Options:</strong></p>
 <ul>
 <li><code>logger</code> - Logger instance (default: <code>console</code>)</li>
 <li><code>marketCache</code> - Custom cache implementation (optional)</li>
 <li><code>skipMarket</code> - Skip market data fetching (default: <code>false</code>)</li>
 </ul>
-<h3>Methods</h3>
-<h4><code>priceCheckQuery(query, platform)</code></h4>
+<h3 id="methods" class="tsd-anchor-link">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h4 id="_" class="tsd-anchor-link"><code>priceCheckQuery(query, platform)</code><a href="#_" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4>
 <p>Query item prices and return raw result objects.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
@@ -145,9 +50,10 @@ await querier.stopUpdating();
 <li><code>platform</code> (string) - Platform: <code>'pc'</code>, <code>'ps4'</code>, <code>'playstation'</code>, <code>'xb1'</code>, <code>'xbox'</code>, <code>'xbone'</code>, <code>'swi'</code>, <code>'switch'</code>, <code>'ns'</code></li>
 </ul>
 <p><strong>Returns:</strong> <code>Promise&lt;Array&lt;Summary&gt;&gt;</code> - Array of price summary objects</p>
-<pre class="prettyprint source lang-javascript"><code>const results = await querier.priceCheckQuery('nova prime set', 'pc');
-</code></pre>
-<h4><code>priceCheckQueryString(query, platform)</code></h4>
+<pre><code class="javascript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">results</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">querier</span><span class="hl-1">.</span><span class="hl-0">priceCheckQuery</span><span class="hl-1">(</span><span class="hl-2">&#39;nova prime set&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;pc&#39;</span><span class="hl-1">);</span>
+</code><button type="button">Copy</button></pre>
+
+<h4 id="_-1" class="tsd-anchor-link"><code>priceCheckQueryString(query, platform)</code><a href="#_-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4>
 <p>Query item prices and return formatted string.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
@@ -155,10 +61,10 @@ await querier.stopUpdating();
 <li><code>platform</code> (string) - Platform identifier</li>
 </ul>
 <p><strong>Returns:</strong> <code>Promise&lt;string&gt;</code> - Formatted price string</p>
-<pre class="prettyprint source lang-javascript"><code>const priceString = await querier.priceCheckQueryString('maiming strike', 'pc');
-console.log(priceString); // &quot;Maiming Strike: 150p (avg)&quot;
-</code></pre>
-<h4><code>priceCheckQueryAttachment(query, priorResults, platform)</code></h4>
+<pre><code class="javascript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">priceString</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">querier</span><span class="hl-1">.</span><span class="hl-0">priceCheckQueryString</span><span class="hl-1">(</span><span class="hl-2">&#39;maiming strike&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;pc&#39;</span><span class="hl-1">);</span><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-5">priceString</span><span class="hl-1">); </span><span class="hl-7">// &quot;Maiming Strike: 150p (avg)&quot;</span>
+</code><button type="button">Copy</button></pre>
+
+<h4 id="_-2" class="tsd-anchor-link"><code>priceCheckQueryAttachment(query, priorResults, platform)</code><a href="#_-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4>
 <p>Query item prices and return Discord-formatted embeds.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
@@ -167,19 +73,15 @@ console.log(priceString); // &quot;Maiming Strike: 150p (avg)&quot;
 <li><code>platform</code> (string) - Platform identifier</li>
 </ul>
 <p><strong>Returns:</strong> <code>Promise&lt;Array&lt;Object&gt;&gt;</code> - Array of Discord embed objects</p>
-<pre class="prettyprint source lang-javascript"><code>const embeds = await querier.priceCheckQueryAttachment('condition overload', undefined, 'pc');
-// Send embeds to Discord webhook
-await fetch(webhookUrl, {
-  method: 'POST',
-  body: JSON.stringify({ embeds }),
-  headers: { 'Content-Type': 'application/json' },
-});
-</code></pre>
-<h4><code>stopUpdating()</code></h4>
+<pre><code class="javascript"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">embeds</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">querier</span><span class="hl-1">.</span><span class="hl-0">priceCheckQueryAttachment</span><span class="hl-1">(</span><span class="hl-2">&#39;condition overload&#39;</span><span class="hl-1">, </span><span class="hl-3">undefined</span><span class="hl-1">, </span><span class="hl-2">&#39;pc&#39;</span><span class="hl-1">);</span><br/><span class="hl-7">// Send embeds to Discord webhook</span><br/><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-0">fetch</span><span class="hl-1">(</span><span class="hl-5">webhookUrl</span><span class="hl-1">, {</span><br/><span class="hl-1">  </span><span class="hl-5">method:</span><span class="hl-1"> </span><span class="hl-2">&#39;POST&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-5">body:</span><span class="hl-1"> </span><span class="hl-6">JSON</span><span class="hl-1">.</span><span class="hl-0">stringify</span><span class="hl-1">({ </span><span class="hl-5">embeds</span><span class="hl-1"> }),</span><br/><span class="hl-1">  </span><span class="hl-5">headers:</span><span class="hl-1"> { </span><span class="hl-2">&#39;Content-Type&#39;</span><span class="hl-5">:</span><span class="hl-1"> </span><span class="hl-2">&#39;application/json&#39;</span><span class="hl-1"> },</span><br/><span class="hl-1">});</span>
+</code><button type="button">Copy</button></pre>
+
+<h4 id="_-3" class="tsd-anchor-link"><code>stopUpdating()</code><a href="#_-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4>
 <p>Clean up resources and stop background updates.</p>
-<pre class="prettyprint source lang-javascript"><code>await querier.stopUpdating();
-</code></pre>
-<h2>Environment Variables</h2>
+<pre><code class="javascript"><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">querier</span><span class="hl-1">.</span><span class="hl-0">stopUpdating</span><span class="hl-1">();</span>
+</code><button type="button">Copy</button></pre>
+
+<h2 id="environment-variables" class="tsd-anchor-link">Environment Variables<a href="#environment-variables" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <table>
 <thead>
 <tr>
@@ -216,15 +118,12 @@ await fetch(webhookUrl, {
 </tr>
 </tbody>
 </table>
-<h3>API Version Selection</h3>
+<h3 id="api-version-selection" class="tsd-anchor-link">API Version Selection<a href="#api-version-selection" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <p>Switch between v1 and v2 APIs:</p>
-<pre class="prettyprint source lang-bash"><code># Use v2 API (recommended)
-WARFRAME_MARKET_API_VERSION=v2 node app.js
+<pre><code class="bash"><span class="hl-7"># Use v2 API (recommended)</span><br/><span class="hl-5">WARFRAME_MARKET_API_VERSION</span><span class="hl-1">=</span><span class="hl-2">v2</span><span class="hl-1"> </span><span class="hl-0">node</span><span class="hl-1"> </span><span class="hl-2">app.js</span><br/><br/><span class="hl-7"># Use v1 API (legacy)</span><br/><span class="hl-5">WARFRAME_MARKET_API_VERSION</span><span class="hl-1">=</span><span class="hl-2">v1</span><span class="hl-1"> </span><span class="hl-0">node</span><span class="hl-1"> </span><span class="hl-2">app.js</span>
+</code><button type="button">Copy</button></pre>
 
-# Use v1 API (legacy)
-WARFRAME_MARKET_API_VERSION=v1 node app.js
-</code></pre>
-<h2>API v2 Features</h2>
+<h2 id="api-v2-features" class="tsd-anchor-link">API v2 Features<a href="#api-v2-features" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <p>The v2 API includes enhanced features:</p>
 <ul>
 <li><strong>Version-based caching</strong> - Automatic cache invalidation when items update</li>
@@ -234,26 +133,11 @@ WARFRAME_MARKET_API_VERSION=v1 node app.js
 <li><strong>Crossplay support</strong> - Trade across platforms</li>
 <li><strong>Better performance</strong> - Optimized endpoints for faster queries</li>
 </ul>
-<h3>v2 Example Response</h3>
-<pre class="prettyprint source lang-javascript"><code>{
-  item: 'Ash Prime Systems',
-  prices: {
-    selling: { median: 15, average: 18.5, min: 10, max: 30 },
-    buying: { median: 12, average: 11.8, min: 8, max: 15 }
-  },
-  traders: [
-    {
-      user: 'TraderName',
-      platinum: 15,
-      quantity: 3,
-      status: 'online',
-      reputation: 156,
-      activity: 'In Dojo'
-    }
-  ]
-}
-</code></pre>
-<h2>Platform Aliases</h2>
+<h3 id="v2-example-response" class="tsd-anchor-link">v2 Example Response<a href="#v2-example-response" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="javascript"><span class="hl-1">{</span><br/><span class="hl-1">  </span><span class="hl-8">item</span><span class="hl-1">: </span><span class="hl-2">&#39;Ash Prime Systems&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-8">prices</span><span class="hl-1">: {</span><br/><span class="hl-1">    </span><span class="hl-8">selling</span><span class="hl-1">: { </span><span class="hl-8">median</span><span class="hl-1">: </span><span class="hl-9">15</span><span class="hl-1">, </span><span class="hl-8">average</span><span class="hl-1">: </span><span class="hl-9">18.5</span><span class="hl-1">, </span><span class="hl-8">min</span><span class="hl-1">: </span><span class="hl-9">10</span><span class="hl-1">, </span><span class="hl-8">max</span><span class="hl-1">: </span><span class="hl-9">30</span><span class="hl-1"> },</span><br/><span class="hl-1">    </span><span class="hl-8">buying</span><span class="hl-1">: { </span><span class="hl-8">median</span><span class="hl-1">: </span><span class="hl-9">12</span><span class="hl-1">, </span><span class="hl-8">average</span><span class="hl-1">: </span><span class="hl-9">11.8</span><span class="hl-1">, </span><span class="hl-8">min</span><span class="hl-1">: </span><span class="hl-9">8</span><span class="hl-1">, </span><span class="hl-8">max</span><span class="hl-1">: </span><span class="hl-9">15</span><span class="hl-1"> }</span><br/><span class="hl-1">  },</span><br/><span class="hl-1">  </span><span class="hl-8">traders</span><span class="hl-1">: [</span><br/><span class="hl-1">    {</span><br/><span class="hl-1">      </span><span class="hl-5">user:</span><span class="hl-1"> </span><span class="hl-2">&#39;TraderName&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-5">platinum:</span><span class="hl-1"> </span><span class="hl-9">15</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-5">quantity:</span><span class="hl-1"> </span><span class="hl-9">3</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-5">status:</span><span class="hl-1"> </span><span class="hl-2">&#39;online&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-5">reputation:</span><span class="hl-1"> </span><span class="hl-9">156</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-5">activity:</span><span class="hl-1"> </span><span class="hl-2">&#39;In Dojo&#39;</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">  ]</span><br/><span class="hl-1">}</span>
+</code><button type="button">Copy</button></pre>
+
+<h2 id="platform-aliases" class="tsd-anchor-link">Platform Aliases<a href="#platform-aliases" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <p>The following platform identifiers are supported:</p>
 <table>
 <thead>
@@ -281,158 +165,41 @@ WARFRAME_MARKET_API_VERSION=v1 node app.js
 </tr>
 </tbody>
 </table>
-<h2>Response Objects</h2>
-<h3>Summary Object</h3>
+<h2 id="response-objects" class="tsd-anchor-link">Response Objects<a href="#response-objects" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="summary-object" class="tsd-anchor-link">Summary Object<a href="#summary-object" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <p>Result object returned by <code>priceCheckQuery()</code>:</p>
-<pre class="prettyprint source lang-javascript"><code>{
-  type: 'market-v2',          // 'market' for v1, 'market-v2' for v2
-  item: 'Item Name',
-  platform: 'pc',
-  componentName: 'Set',
-  prices: {
-    selling: {
-      median: 100,
-      average: 105.5,
-      min: 80,
-      max: 150,
-      count: 25
-    },
-    buying: {
-      median: 90,
-      average: 88.2,
-      min: 60,
-      max: 95,
-      count: 15
-    }
-  },
-  traders: [                   // v2 only
-    {
-      user: 'Username',
-      platinum: 100,
-      quantity: 2,
-      status: 'online',        // 'online' | 'ingame' | 'offline'
-      reputation: 250,
-      activity: 'On Mission'
-    }
-  ]
-}
-</code></pre>
-<h3>Discord Embed Object</h3>
+<pre><code class="javascript"><span class="hl-1">{</span><br/><span class="hl-1">  </span><span class="hl-8">type</span><span class="hl-1">: </span><span class="hl-2">&#39;market-v2&#39;</span><span class="hl-1">,          </span><span class="hl-7">// &#39;market&#39; for v1, &#39;market-v2&#39; for v2</span><br/><span class="hl-1">  </span><span class="hl-8">item</span><span class="hl-1">: </span><span class="hl-2">&#39;Item Name&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-8">platform</span><span class="hl-1">: </span><span class="hl-2">&#39;pc&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-8">componentName</span><span class="hl-1">: </span><span class="hl-2">&#39;Set&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-8">prices</span><span class="hl-1">: {</span><br/><span class="hl-1">    </span><span class="hl-8">selling</span><span class="hl-1">: {</span><br/><span class="hl-1">      </span><span class="hl-8">median</span><span class="hl-1">: </span><span class="hl-9">100</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">average</span><span class="hl-1">: </span><span class="hl-9">105.5</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">min</span><span class="hl-1">: </span><span class="hl-9">80</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">max</span><span class="hl-1">: </span><span class="hl-9">150</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">count</span><span class="hl-1">: </span><span class="hl-9">25</span><br/><span class="hl-1">    },</span><br/><span class="hl-1">    </span><span class="hl-8">buying</span><span class="hl-1">: {</span><br/><span class="hl-1">      </span><span class="hl-8">median</span><span class="hl-1">: </span><span class="hl-9">90</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">average</span><span class="hl-1">: </span><span class="hl-9">88.2</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">min</span><span class="hl-1">: </span><span class="hl-9">60</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">max</span><span class="hl-1">: </span><span class="hl-9">95</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">count</span><span class="hl-1">: </span><span class="hl-9">15</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">  },</span><br/><span class="hl-1">  </span><span class="hl-8">traders</span><span class="hl-1">: [                   </span><span class="hl-7">// v2 only</span><br/><span class="hl-1">    {</span><br/><span class="hl-1">      </span><span class="hl-5">user:</span><span class="hl-1"> </span><span class="hl-2">&#39;Username&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-5">platinum:</span><span class="hl-1"> </span><span class="hl-9">100</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-5">quantity:</span><span class="hl-1"> </span><span class="hl-9">2</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-5">status:</span><span class="hl-1"> </span><span class="hl-2">&#39;online&#39;</span><span class="hl-1">,        </span><span class="hl-7">// &#39;online&#39; | &#39;ingame&#39; | &#39;offline&#39;</span><br/><span class="hl-1">      </span><span class="hl-5">reputation:</span><span class="hl-1"> </span><span class="hl-9">250</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-5">activity:</span><span class="hl-1"> </span><span class="hl-2">&#39;On Mission&#39;</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">  ]</span><br/><span class="hl-1">}</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="discord-embed-object" class="tsd-anchor-link">Discord Embed Object<a href="#discord-embed-object" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <p>Result object returned by <code>priceCheckQueryAttachment()</code>:</p>
-<pre class="prettyprint source lang-javascript"><code>{
-  title: 'Ash Prime Systems [PC]',
-  url: 'https://warframe.market/items/ash_prime_systems',
-  thumbnail: { url: 'https://warframe.market/static/assets/...' },
-  color: 0x336699,
-  fields: [
-    {
-      name: 'Selling',
-      value: '💰 15p (median)\n📊 10-30p range\n📦 25 orders',
-      inline: true
-    },
-    {
-      name: 'Buying',
-      value: '💰 12p (median)\n📊 8-15p range\n📦 15 orders',
-      inline: true
-    },
-    {
-      name: '🟢 Online Traders',
-      value: 'TraderName: 15p x3'
-    }
-  ],
-  footer: {
-    text: 'Warframe Market • Updated 2 minutes ago'
-  }
-}
-</code></pre>
-<h2>Examples</h2>
-<h3>Basic Price Check</h3>
-<pre class="prettyprint source lang-javascript"><code>import PriceCheckQuerier from 'warframe-nexus-query';
+<pre><code class="javascript"><span class="hl-1">{</span><br/><span class="hl-1">  </span><span class="hl-8">title</span><span class="hl-1">: </span><span class="hl-2">&#39;Ash Prime Systems [PC]&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-8">url</span><span class="hl-1">: </span><span class="hl-2">&#39;https://warframe.market/items/ash_prime_systems&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-8">thumbnail</span><span class="hl-1">: { </span><span class="hl-8">url</span><span class="hl-1">: </span><span class="hl-2">&#39;https://warframe.market/static/assets/...&#39;</span><span class="hl-1"> },</span><br/><span class="hl-1">  </span><span class="hl-8">color</span><span class="hl-1">: </span><span class="hl-9">0x336699</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-8">fields</span><span class="hl-1">: [</span><br/><span class="hl-1">    {</span><br/><span class="hl-1">      </span><span class="hl-5">name:</span><span class="hl-1"> </span><span class="hl-2">&#39;Selling&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-5">value:</span><span class="hl-1"> </span><span class="hl-2">&#39;💰 15p (median)</span><span class="hl-10">\n</span><span class="hl-2">📊 10-30p range</span><span class="hl-10">\n</span><span class="hl-2">📦 25 orders&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-5">inline:</span><span class="hl-1"> </span><span class="hl-3">true</span><br/><span class="hl-1">    },</span><br/><span class="hl-1">    {</span><br/><span class="hl-1">      </span><span class="hl-5">name:</span><span class="hl-1"> </span><span class="hl-2">&#39;Buying&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-5">value:</span><span class="hl-1"> </span><span class="hl-2">&#39;💰 12p (median)</span><span class="hl-10">\n</span><span class="hl-2">📊 8-15p range</span><span class="hl-10">\n</span><span class="hl-2">📦 15 orders&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-5">inline:</span><span class="hl-1"> </span><span class="hl-3">true</span><br/><span class="hl-1">    },</span><br/><span class="hl-1">    {</span><br/><span class="hl-1">      </span><span class="hl-5">name:</span><span class="hl-1"> </span><span class="hl-2">&#39;🟢 Online Traders&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-5">value:</span><span class="hl-1"> </span><span class="hl-2">&#39;TraderName: 15p x3&#39;</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">  ],</span><br/><span class="hl-1">  </span><span class="hl-8">footer</span><span class="hl-1">: {</span><br/><span class="hl-1">    </span><span class="hl-8">text</span><span class="hl-1">: </span><span class="hl-2">&#39;Warframe Market • Updated 2 minutes ago&#39;</span><br/><span class="hl-1">  }</span><br/><span class="hl-1">}</span>
+</code><button type="button">Copy</button></pre>
 
-const querier = new PriceCheckQuerier({ logger: console });
+<h2 id="examples" class="tsd-anchor-link">Examples<a href="#examples" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="basic-price-check" class="tsd-anchor-link">Basic Price Check<a href="#basic-price-check" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="javascript"><span class="hl-4">import</span><span class="hl-1"> </span><span class="hl-5">PriceCheckQuerier</span><span class="hl-1"> </span><span class="hl-4">from</span><span class="hl-1"> </span><span class="hl-2">&#39;warframe-nexus-query&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">querier</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PriceCheckQuerier</span><span class="hl-1">({ </span><span class="hl-5">logger:</span><span class="hl-1"> </span><span class="hl-5">console</span><span class="hl-1"> });</span><br/><br/><span class="hl-7">// Search for an item</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">results</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">querier</span><span class="hl-1">.</span><span class="hl-0">priceCheckQuery</span><span class="hl-1">(</span><span class="hl-2">&#39;nikana prime&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;pc&#39;</span><span class="hl-1">);</span><br/><br/><span class="hl-5">results</span><span class="hl-1">.</span><span class="hl-0">forEach</span><span class="hl-1">((</span><span class="hl-5">result</span><span class="hl-1">) </span><span class="hl-3">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`</span><span class="hl-3">${</span><span class="hl-5">result</span><span class="hl-11">.</span><span class="hl-5">item</span><span class="hl-3">}</span><span class="hl-2"> - </span><span class="hl-3">${</span><span class="hl-5">result</span><span class="hl-11">.</span><span class="hl-5">componentName</span><span class="hl-3">}</span><span class="hl-2">`</span><span class="hl-1">);</span><br/><span class="hl-1">  </span><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`Median sell price: </span><span class="hl-3">${</span><span class="hl-5">result</span><span class="hl-11">.</span><span class="hl-5">prices</span><span class="hl-11">.</span><span class="hl-5">selling</span><span class="hl-11">.</span><span class="hl-5">median</span><span class="hl-3">}</span><span class="hl-2">p`</span><span class="hl-1">);</span><br/><span class="hl-1">  </span><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`Median buy price: </span><span class="hl-3">${</span><span class="hl-5">result</span><span class="hl-11">.</span><span class="hl-5">prices</span><span class="hl-11">.</span><span class="hl-5">buying</span><span class="hl-11">.</span><span class="hl-5">median</span><span class="hl-3">}</span><span class="hl-2">p`</span><span class="hl-1">);</span><br/><span class="hl-1">});</span><br/><br/><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">querier</span><span class="hl-1">.</span><span class="hl-0">stopUpdating</span><span class="hl-1">();</span>
+</code><button type="button">Copy</button></pre>
 
-// Search for an item
-const results = await querier.priceCheckQuery('nikana prime', 'pc');
+<h3 id="discord-bot-integration" class="tsd-anchor-link">Discord Bot Integration<a href="#discord-bot-integration" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="javascript"><span class="hl-4">import</span><span class="hl-1"> </span><span class="hl-5">PriceCheckQuerier</span><span class="hl-1"> </span><span class="hl-4">from</span><span class="hl-1"> </span><span class="hl-2">&#39;warframe-nexus-query&#39;</span><span class="hl-1">;</span><br/><span class="hl-4">import</span><span class="hl-1"> { </span><span class="hl-5">Client</span><span class="hl-1">, </span><span class="hl-5">GatewayIntentBits</span><span class="hl-1"> } </span><span class="hl-4">from</span><span class="hl-1"> </span><span class="hl-2">&#39;discord.js&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">bot</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">Client</span><span class="hl-1">({ </span><span class="hl-5">intents:</span><span class="hl-1"> [</span><span class="hl-5">GatewayIntentBits</span><span class="hl-1">.</span><span class="hl-5">Guilds</span><span class="hl-1">] });</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">querier</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PriceCheckQuerier</span><span class="hl-1">({ </span><span class="hl-5">logger:</span><span class="hl-1"> </span><span class="hl-5">console</span><span class="hl-1"> });</span><br/><br/><span class="hl-5">bot</span><span class="hl-1">.</span><span class="hl-0">on</span><span class="hl-1">(</span><span class="hl-2">&#39;interactionCreate&#39;</span><span class="hl-1">, </span><span class="hl-3">async</span><span class="hl-1"> (</span><span class="hl-5">interaction</span><span class="hl-1">) </span><span class="hl-3">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">if</span><span class="hl-1"> (!</span><span class="hl-5">interaction</span><span class="hl-1">.</span><span class="hl-0">isChatInputCommand</span><span class="hl-1">()) </span><span class="hl-4">return</span><span class="hl-1">;</span><br/><br/><span class="hl-1">  </span><span class="hl-4">if</span><span class="hl-1"> (</span><span class="hl-5">interaction</span><span class="hl-1">.</span><span class="hl-5">commandName</span><span class="hl-1"> === </span><span class="hl-2">&#39;price&#39;</span><span class="hl-1">) {</span><br/><span class="hl-1">    </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">item</span><span class="hl-1"> = </span><span class="hl-5">interaction</span><span class="hl-1">.</span><span class="hl-5">options</span><span class="hl-1">.</span><span class="hl-0">getString</span><span class="hl-1">(</span><span class="hl-2">&#39;item&#39;</span><span class="hl-1">);</span><br/><span class="hl-1">    </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">platform</span><span class="hl-1"> = </span><span class="hl-5">interaction</span><span class="hl-1">.</span><span class="hl-5">options</span><span class="hl-1">.</span><span class="hl-0">getString</span><span class="hl-1">(</span><span class="hl-2">&#39;platform&#39;</span><span class="hl-1">) || </span><span class="hl-2">&#39;pc&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-1">    </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">embeds</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">querier</span><span class="hl-1">.</span><span class="hl-0">priceCheckQueryAttachment</span><span class="hl-1">(</span><span class="hl-5">item</span><span class="hl-1">, </span><span class="hl-3">undefined</span><span class="hl-1">, </span><span class="hl-5">platform</span><span class="hl-1">);</span><br/><br/><span class="hl-1">    </span><span class="hl-4">if</span><span class="hl-1"> (</span><span class="hl-5">embeds</span><span class="hl-1">.</span><span class="hl-5">length</span><span class="hl-1"> &gt; </span><span class="hl-9">0</span><span class="hl-1">) {</span><br/><span class="hl-1">      </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">interaction</span><span class="hl-1">.</span><span class="hl-0">reply</span><span class="hl-1">({ </span><span class="hl-5">embeds</span><span class="hl-1"> });</span><br/><span class="hl-1">    } </span><span class="hl-4">else</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">interaction</span><span class="hl-1">.</span><span class="hl-0">reply</span><span class="hl-1">(</span><span class="hl-2">&#39;No results found for that item.&#39;</span><span class="hl-1">);</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">  }</span><br/><span class="hl-1">});</span><br/><br/><span class="hl-5">bot</span><span class="hl-1">.</span><span class="hl-0">login</span><span class="hl-1">(</span><span class="hl-5">process</span><span class="hl-1">.</span><span class="hl-5">env</span><span class="hl-1">.</span><span class="hl-6">DISCORD_TOKEN</span><span class="hl-1">);</span>
+</code><button type="button">Copy</button></pre>
 
-results.forEach((result) => {
-  console.log(`${result.item} - ${result.componentName}`);
-  console.log(`Median sell price: ${result.prices.selling.median}p`);
-  console.log(`Median buy price: ${result.prices.buying.median}p`);
-});
+<h3 id="multi-platform-price-comparison" class="tsd-anchor-link">Multi-Platform Price Comparison<a href="#multi-platform-price-comparison" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="javascript"><span class="hl-4">import</span><span class="hl-1"> </span><span class="hl-5">PriceCheckQuerier</span><span class="hl-1"> </span><span class="hl-4">from</span><span class="hl-1"> </span><span class="hl-2">&#39;warframe-nexus-query&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">querier</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">PriceCheckQuerier</span><span class="hl-1">({ </span><span class="hl-5">logger:</span><span class="hl-1"> </span><span class="hl-5">console</span><span class="hl-1"> });</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">platforms</span><span class="hl-1"> = [</span><span class="hl-2">&#39;pc&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;ps4&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;xbox&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;switch&#39;</span><span class="hl-1">];</span><br/><br/><span class="hl-4">for</span><span class="hl-1"> (</span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">platform</span><span class="hl-1"> </span><span class="hl-3">of</span><span class="hl-1"> </span><span class="hl-5">platforms</span><span class="hl-1">) {</span><br/><span class="hl-1">  </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">results</span><span class="hl-1"> = </span><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">querier</span><span class="hl-1">.</span><span class="hl-0">priceCheckQuery</span><span class="hl-1">(</span><span class="hl-2">&#39;Trinity Prime Set&#39;</span><span class="hl-1">, </span><span class="hl-5">platform</span><span class="hl-1">);</span><br/><br/><span class="hl-1">  </span><span class="hl-4">if</span><span class="hl-1"> (</span><span class="hl-5">results</span><span class="hl-1">.</span><span class="hl-5">length</span><span class="hl-1"> &gt; </span><span class="hl-9">0</span><span class="hl-1">) {</span><br/><span class="hl-1">    </span><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">price</span><span class="hl-1"> = </span><span class="hl-5">results</span><span class="hl-1">[</span><span class="hl-9">0</span><span class="hl-1">].</span><span class="hl-5">prices</span><span class="hl-1">.</span><span class="hl-5">selling</span><span class="hl-1">.</span><span class="hl-5">median</span><span class="hl-1">;</span><br/><span class="hl-1">    </span><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`</span><span class="hl-3">${</span><span class="hl-5">platform</span><span class="hl-11">.</span><span class="hl-0">toUpperCase</span><span class="hl-11">()</span><span class="hl-3">}</span><span class="hl-2">: </span><span class="hl-3">${</span><span class="hl-5">price</span><span class="hl-3">}</span><span class="hl-2">p`</span><span class="hl-1">);</span><br/><span class="hl-1">  }</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-4">await</span><span class="hl-1"> </span><span class="hl-5">querier</span><span class="hl-1">.</span><span class="hl-0">stopUpdating</span><span class="hl-1">();</span>
+</code><button type="button">Copy</button></pre>
 
-await querier.stopUpdating();
-</code></pre>
-<h3>Discord Bot Integration</h3>
-<pre class="prettyprint source lang-javascript"><code>import PriceCheckQuerier from 'warframe-nexus-query';
-import { Client, GatewayIntentBits } from 'discord.js';
+<h2 id="testing" class="tsd-anchor-link">Testing<a href="#testing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="bash"><span class="hl-7"># Build, then run tests</span><br/><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">test</span><br/><br/><span class="hl-7"># Coverage (Coveralls consumes coverage/lcov.info)</span><br/><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">test:coverage</span><br/><br/><span class="hl-7"># Lint and auto-fix. Formatting comes from ESLint Stylistic.</span><br/><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">lint</span><br/><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">lint:fix</span><br/><br/><span class="hl-7"># Generate API documentation</span><br/><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">build:docs</span>
+</code><button type="button">Copy</button></pre>
 
-const bot = new Client({ intents: [GatewayIntentBits.Guilds] });
-const querier = new PriceCheckQuerier({ logger: console });
+<h2 id="docs" class="tsd-anchor-link">Docs<a href="#docs" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Typedoc writes HTML to <code>docs/</code>. Pull requests build the docs. Pushes to <code>master</code> publish them to GitHub Pages.</p>
+<h2 id="development" class="tsd-anchor-link">Development<a href="#development" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="bash"><span class="hl-7"># Clone repository</span><br/><span class="hl-0">git</span><span class="hl-1"> </span><span class="hl-2">clone</span><span class="hl-1"> </span><span class="hl-2">https://github.com/WFCD/warframe-nexus-query.git</span><br/><span class="hl-0">cd</span><span class="hl-1"> </span><span class="hl-2">warframe-nexus-query</span><br/><br/><span class="hl-7"># Install dependencies</span><br/><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">install</span><br/><br/><span class="hl-7"># Run tests in watch mode</span><br/><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">test</span><span class="hl-1"> </span><span class="hl-3">--</span><span class="hl-1"> </span><span class="hl-3">--watch</span><br/><br/><span class="hl-7"># Lint and auto-fix</span><br/><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">lint:fix</span>
+</code><button type="button">Copy</button></pre>
 
-bot.on('interactionCreate', async (interaction) => {
-  if (!interaction.isChatInputCommand()) return;
-
-  if (interaction.commandName === 'price') {
-    const item = interaction.options.getString('item');
-    const platform = interaction.options.getString('platform') || 'pc';
-
-    const embeds = await querier.priceCheckQueryAttachment(item, undefined, platform);
-
-    if (embeds.length > 0) {
-      await interaction.reply({ embeds });
-    } else {
-      await interaction.reply('No results found for that item.');
-    }
-  }
-});
-
-bot.login(process.env.DISCORD_TOKEN);
-</code></pre>
-<h3>Multi-Platform Price Comparison</h3>
-<pre class="prettyprint source lang-javascript"><code>import PriceCheckQuerier from 'warframe-nexus-query';
-
-const querier = new PriceCheckQuerier({ logger: console });
-const platforms = ['pc', 'ps4', 'xbox', 'switch'];
-
-for (const platform of platforms) {
-  const results = await querier.priceCheckQuery('Trinity Prime Set', platform);
-
-  if (results.length > 0) {
-    const price = results[0].prices.selling.median;
-    console.log(`${platform.toUpperCase()}: ${price}p`);
-  }
-}
-
-await querier.stopUpdating();
-</code></pre>
-<h2>Testing</h2>
-<pre class="prettyprint source lang-bash"><code># Run tests
-npm test
-
-# Run linter
-npm run lint
-
-# Generate coverage report
-npm run coverage
-
-# Generate API documentation
-npm run build:docs
-</code></pre>
-<h2>Development</h2>
-<pre class="prettyprint source lang-bash"><code># Clone repository
-git clone https://github.com/WFCD/warframe-nexus-query.git
-cd warframe-nexus-query
-
-# Install dependencies
-npm install
-
-# Run tests in watch mode
-npm test -- --watch
-
-# Lint and auto-fix
-npm run lint:fix
-</code></pre>
-<h2>Contributing</h2>
+<h2 id="contributing" class="tsd-anchor-link">Contributing<a href="#contributing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <p>Contributions are welcome! Please:</p>
 <ol>
 <li>Fork the repository</li>
@@ -441,9 +208,9 @@ npm run lint:fix
 <li>Push to the branch (<code>git push origin feature/amazing-feature</code>)</li>
 <li>Open a Pull Request</li>
 </ol>
-<h2>License</h2>
-<p>Licensed under the Apache License 2.0. See <a href="LICENSE">LICENSE</a> for details.</p>
-<h2>Links</h2>
+<h2 id="license" class="tsd-anchor-link">License<a href="#license" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Licensed under the Apache License 2.0. See <a href="media/LICENSE">LICENSE</a> for details.</p>
+<h2 id="links" class="tsd-anchor-link">Links<a href="#links" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <ul>
 <li><a href="https://github.com/WFCD/warframe-nexus-query">GitHub Repository</a></li>
 <li><a href="https://www.npmjs.com/package/warframe-nexus-query">npm Package</a></li>
@@ -451,185 +218,73 @@ npm run lint:fix
 <li><a href="https://discord.gg/jGZxH9f">Discord Community</a></li>
 <li><a href="https://github.com/WFCD">Warframe Community Developers</a></li>
 </ul>
-<h2>Acknowledgments</h2>
+<h2 id="acknowledgments" class="tsd-anchor-link">Acknowledgments<a href="#acknowledgments" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <ul>
 <li>Built by the <a href="https://github.com/WFCD">Warframe Community Developers</a></li>
 <li>Powered by <a href="https://warframe.market">Warframe.Market</a> API</li>
 <li>Maintained by <a href="https://github.com/tobitenno">tobitenno</a> and contributors</li>
-</ul></article>
-    </section>
-
-
-
-
-
-
-
-		</div>
-	</div>
-
-	<div class="clearfix"></div>
-
-	
-		<div class="col-md-3">
-			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
-		</div>
-	
-
-</div>
-</div>
-
-
-    <div class="modal fade" id="searchResults">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Search results</h4>
-          </div>
-          <div class="modal-body"></div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div>
-
-
-<footer>
-
-
-	<span class="copyright">
-	©2020, WFCD
-	</span>
-
-<span class="jsdoc-message">
-	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a>
-	
-		on Saturday, October 24th 2026, 04:18:59
-	
-	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
-</span>
-</footer>
-
-<script src="scripts/docstrap.lib.js"></script>
-<script src="scripts/toc.js"></script>
-
-    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
-
-
-<script>
-$( function () {
-	$( "[id*='$']" ).each( function () {
-		var $this = $( this );
-
-		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
-	} );
-
-	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
-		var $this = $( this );
-
-		var example = $this.find( "code" );
-		exampleText = example.html();
-		var lang = /{@lang (.*?)}/.exec( exampleText );
-		if ( lang && lang[1] ) {
-			exampleText = exampleText.replace( lang[0], "" );
-			example.html( exampleText );
-			lang = lang[1];
-		} else {
-			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
-			lang = langClassMatch ? langClassMatch[1] : "javascript";
-		}
-
-		if ( lang ) {
-
-			$this
-			.addClass( "sunlight-highlight-" + lang )
-			.addClass( "linenums" )
-			.html( example.html() );
-
-		}
-	} );
-
-	Sunlight.highlightAll( {
-		lineNumbers : true,
-		showMenu : true,
-		enableDoclinks : true
-	} );
-
-	$.catchAnchorLinks( {
-        navbarOffset: 10
-	} );
-	$( "#toc" ).toc( {
-		anchorName  : function ( i, heading, prefix ) {
-			return $( heading ).attr( "id" ) || ( prefix + i );
-		},
-		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
-		showAndHide : false,
-		smoothScrolling: true
-	} );
-
-	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
-	$( '.dropdown-toggle' ).dropdown();
-
-    $( "table" ).each( function () {
-      var $this = $( this );
-      $this.addClass('table');
-    } );
-
-} );
-</script>
-
-
-
-<!--Navigation and Symbol Display-->
-
-<script>
-	$( function () {
-		$( '#main' ).localScroll( {
-			offset : { top : 60 } //offset by the height of your header (give or take a few px, see what works for you)
-		} );
-		$( "dt.name" ).each( function () {
-			var $this = $( this ).find("h4");
-			var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
-			var dt = $(this);
-			var children = dt.next( "dd" );
-
-			dt.prepend( icon ).css( {cursor : "pointer"} );
-			dt.addClass( "member-collapsed" ).addClass( "member" );
-
-
-			children.hide();
-
-			dt.children().on( "click", function () {
-				children = dt.next( "dd" );
-				children.slideToggle( "fast", function () {
-
-					if ( children.is( ":visible" ) ) {
-						icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
-						dt.addClass( "member-open" ).animate( "member-collapsed" );
-					} else {
-						icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
-						dt.addClass( "member-collapsed" ).removeClass( "member-open" );
-					}
-				} );
-			} );
-
-		} );
-	} );
-</script>
-
-
-<!--Google Analytics-->
-
-
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-            SearcherDisplay.init();
-        });
-    </script>
-
-
-</body>
-</html>
+</ul>
+</div></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details"><a href="#warframe-nexus-query"><span>warframe-<wbr/>nexus-<wbr/>query</span></a>
+<ul>
+<li><a href="#features"><span>Features</span></a></li>
+<li><a href="#installation"><span>Installation</span></a></li>
+<li><a href="#quick-start"><span>Quick <wbr/>Start</span></a></li>
+<li><a href="#api"><span>API</span></a></li>
+<li>
+<ul>
+<li><a href="#constructor"><span>Constructor</span></a></li>
+<li><a href="#methods"><span>Methods</span></a></li>
+<li>
+<ul>
+<li><a href="#_"><span></span></a></li>
+<li><a href="#_-1"><span></span></a></li>
+<li><a href="#_-2"><span></span></a></li>
+<li><a href="#_-3"><span></span></a></li></ul></li></ul></li>
+<li><a href="#environment-variables"><span>Environment <wbr/>Variables</span></a></li>
+<li>
+<ul>
+<li><a href="#api-version-selection"><span>API <wbr/>Version <wbr/>Selection</span></a></li></ul></li>
+<li><a href="#api-v2-features"><span>API v2 <wbr/>Features</span></a></li>
+<li>
+<ul>
+<li><a href="#v2-example-response"><span>v2 <wbr/>Example <wbr/>Response</span></a></li></ul></li>
+<li><a href="#platform-aliases"><span>Platform <wbr/>Aliases</span></a></li>
+<li><a href="#response-objects"><span>Response <wbr/>Objects</span></a></li>
+<li>
+<ul>
+<li><a href="#summary-object"><span>Summary <wbr/>Object</span></a></li>
+<li><a href="#discord-embed-object"><span>Discord <wbr/>Embed <wbr/>Object</span></a></li></ul></li>
+<li><a href="#examples"><span>Examples</span></a></li>
+<li>
+<ul>
+<li><a href="#basic-price-check"><span>Basic <wbr/>Price <wbr/>Check</span></a></li>
+<li><a href="#discord-bot-integration"><span>Discord <wbr/>Bot <wbr/>Integration</span></a></li>
+<li><a href="#multi-platform-price-comparison"><span>Multi-<wbr/>Platform <wbr/>Price <wbr/>Comparison</span></a></li></ul></li>
+<li><a href="#testing"><span>Testing</span></a></li>
+<li><a href="#docs"><span>Docs</span></a></li>
+<li><a href="#development"><span>Development</span></a></li>
+<li><a href="#contributing"><span>Contributing</span></a></li>
+<li><a href="#license"><span>License</span></a></li>
+<li><a href="#links"><span>Links</span></a></li>
+<li><a href="#acknowledgments"><span>Acknowledgments</span></a></li></ul></div></details></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="modules.html">warframe-nexus-query</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>
+<div class="overlay"></div></body></html>
