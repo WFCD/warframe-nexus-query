@@ -19,24 +19,32 @@
   "license": "Apache-2.0",
   "author": "tobitenno",
   "type": "module",
-  "main": "index.js",
-  "types": "./types/index.d.ts",
-  "directories": {
-    "test": "test"
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./basedir": {
+      "types": "./dist/basedir.d.mts",
+      "import": "./dist/basedir.mjs"
+    }
   },
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "files": [
-    "lib",
-    "index.js",
-    "basedir.js",
-    "types"
+    "dist"
   ],
   "scripts": {
-    "build:docs": "jsdoc -c jsdoc-config.json -d docs",
-    "coverage": "npm test && c8 report --reporter=text-lcov | npx coveralls",
-    "lint": "eslint index.js lib/ test/",
-    "lint:fix": "eslint index.js lib/ test/ --fix",
+    "build": "tsdown",
+    "build:docs": "typedoc",
+    "coverage": "npm run test:coverage && c8 report --reporter=text-lcov | npx coveralls",
+    "lint": "eslint eslint.config.mjs index.ts basedir.ts lib/ test/",
+    "lint:fix": "eslint eslint.config.mjs index.ts basedir.ts lib/ test/ --fix",
     "prepare": "husky",
-    "test": "c8 mocha"
+    "prepublishOnly": "npm run build",
+    "pretest": "npm run build",
+    "test": "mocha",
+    "test:coverage": "c8 npm test"
   },
   "dependencies": {
     "flat-cache": "^6.1.19",
@@ -48,20 +56,26 @@
     "@commitlint/cli": "^21.0.1",
     "@commitlint/config-conventional": "^21.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
+    "@types/chai": "^5.2.3",
     "@types/json-query": "^2.2.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^26.6.5",
     "c8": "^12.0.0",
     "chai": "^6.0.1",
     "eslint": "^10.6.0",
-    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import-x": "^4.17.1",
     "eslint-plugin-no-null": "^1.0.2",
-    "eslint-plugin-prettier": "^5.5.6",
     "eslint-stylistic-airbnb": "^3.2.0",
     "globals": "^17.7.0",
     "husky": "^9.0.11",
     "lint-staged": "^17.0.5",
     "mocha": "^12.0.2",
-    "prettier": "^3.2.5"
+    "semantic-release": "^25.0.9",
+    "tsdown": "^0.22.14",
+    "tsx": "^4.23.15",
+    "typedoc": "^0.28.20",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.0"
   },
   "engines": {
     "node": ">=24",

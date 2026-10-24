@@ -1,8 +1,26 @@
-import { create } from 'flat-cache';
+import { create, type FlatCache } from 'flat-cache';
 
-import { API_BASE_URL, MIN_REQUEST_INTERVAL, VERSION_CHECK_INTERVAL, CACHE_TTL, USER_AGENT } from '../constants.js';
+import {
+  API_BASE_URL, MIN_REQUEST_INTERVAL, VERSION_CHECK_INTERVAL, CACHE_TTL, USER_AGENT,
+} from '../constants';
+import type { CacheOptions, VersionedCacheVersionData } from '../types';
 
-import { waitForRequestSlot } from './http.js';
+import { waitForRequestSlot } from './http';
+
+interface CacheRecord<T = unknown> {
+  value: T;
+  timestamp: number;
+  collection?: string;
+}
+
+interface VersionMetadata {
+  versions?: VersionedCacheVersionData;
+  lastVersionCheck?: number;
+}
+
+function messageOf(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
 
 /**
  * Version-based cache system for Warframe Market API v2
@@ -10,13 +28,15 @@ import { waitForRequestSlot } from './http.js';
  * Backs up to persistent storage using flat-cache
  */
 export default class VersionedCache {
-  #cache;
-  #versions;
-  #lastVersionCheck;
-  #persistentCache;
-  #cacheId;
-  #userAgent;
-  #minRequestInterval;
+  #cache: Map<string, CacheRecord>;
+  #versions: VersionedCacheVersionData | undefined;
+  #lastVersionCheck: number | undefined;
+  #persistentCache: FlatCache | undefined;
+  #cacheId: string;
+  #userAgent: string;
+  #minRequestInterval: number;
+  maxSize: number;
+  ttl: number;
 
   constructor({
     maxSize = 100,
@@ -25,7 +45,7 @@ export default class VersionedCache {
     persistent = true,
     userAgent = USER_AGENT,
     minRequestInterval = MIN_REQUEST_INTERVAL,
-  } = {}) {
+  }: CacheOptions = {}) {
     this.#cache = new Map();
     this.maxSize = maxSize;
     this.ttl = ttl;
@@ -35,7 +55,6 @@ export default class VersionedCache {
     this.#userAgent = userAgent;
     this.#minRequestInterval = minRequestInterval;
 
-    // Initialize persistent cache
     if (persistent) {
       this.#persistentCache = create({ cacheId });
       this.#loadFromDisk();
@@ -46,52 +65,44 @@ export default class VersionedCache {
 
   /**
    * Load cache from disk into memory
-   * @private
    */
-  #loadFromDisk() {
+  #loadFromDisk(): void {
     if (!this.#persistentCache) return;
 
     try {
       const keys = this.#persistentCache.keys();
 
-      // Load all cached items
       keys.forEach((key) => {
-        const item = this.#persistentCache.getKey(key);
+        const item = this.#persistentCache?.getKey<CacheRecord | undefined>(key);
         if (item) {
-          // Check if item is still valid (TTL not expired)
           if (item.timestamp && Date.now() - item.timestamp <= this.ttl) {
             this.#cache.set(key, item);
           }
         }
       });
 
-      // Load versions data
-      const versionsData = this.#persistentCache.getKey('_versions_metadata');
+      const versionsData = this.#persistentCache.getKey<VersionMetadata | undefined>('_versions_metadata');
       if (versionsData) {
         this.#versions = versionsData.versions;
         this.#lastVersionCheck = versionsData.lastVersionCheck;
       }
     } catch (error) {
-      // If loading fails, start with empty cache
       // eslint-disable-next-line no-console
-      console.warn('Failed to load cache from disk:', error.message);
+      console.warn('Failed to load cache from disk:', messageOf(error));
     }
   }
 
   /**
    * Save cache to disk
-   * @private
    */
-  #saveToDisk() {
+  #saveToDisk(): void {
     if (!this.#persistentCache) return;
 
     try {
-      // Save all cache entries
       Array.from(this.#cache.entries()).forEach(([key, value]) => {
-        this.#persistentCache.setKey(key, value);
+        this.#persistentCache?.setKey(key, value);
       });
 
-      // Save versions metadata
       if (this.#versions || this.#lastVersionCheck) {
         this.#persistentCache.setKey('_versions_metadata', {
           versions: this.#versions,
@@ -99,35 +110,30 @@ export default class VersionedCache {
         });
       }
 
-      // Persist to disk
       this.#persistentCache.save(true);
     } catch (error) {
-      // If saving fails, log but don't crash
       // eslint-disable-next-line no-console
-      console.warn('Failed to save cache to disk:', error.message);
+      console.warn('Failed to save cache to disk:', messageOf(error));
     }
   }
 
   /**
    * Get item from cache or fetch it
-   * @param {string} key - Cache key
-   * @param {string} collection - Collection name (items, rivens, etc.)
-   * @param {function} fetchFn - Function to fetch data if cache miss
-   * @returns {Promise<*>}
+   * @param key - Cache key
+   * @param collection - Collection name (items, rivens, etc.)
+   * @param fetchFn - Function to fetch data if cache miss
+   * @returns Cached or freshly fetched value
    */
-  async get(key, collection, fetchFn) {
-    // Check if we should refresh based on version
+  async get<T>(key: string, collection: string | undefined, fetchFn: () => Promise<T>): Promise<T> {
     if (collection && (await this.shouldRefresh(collection))) {
       return this.refresh(key, collection, fetchFn);
     }
 
-    // Try to get from cache
-    const cached = this.#get(key);
+    const cached = this.#get<T>(key);
     if (cached !== undefined) {
       return cached;
     }
 
-    // Cache miss - fetch and store
     const data = await fetchFn();
     this.set(key, data, collection);
     return data;
@@ -135,19 +141,19 @@ export default class VersionedCache {
 
   /**
    * Set item in cache
-   * @param {string} key - Cache key
-   * @param {*} value - Value to cache
-   * @param {string} [collection] - Collection name for version tracking
+   * @param key - Cache key
+   * @param value - Value to cache
+   * @param collection - Collection name for version tracking
    */
-  set(key, value, collection) {
-    // LRU eviction if cache is full
+  set<T>(key: string, value: T, collection?: string): void {
     if (this.#cache.size >= this.maxSize) {
       const firstKey = this.#cache.keys().next().value;
-      this.#cache.delete(firstKey);
+      if (firstKey !== undefined) {
+        this.#cache.delete(firstKey);
 
-      // Remove from persistent cache too
-      if (this.#persistentCache) {
-        this.#persistentCache.removeKey(firstKey);
+        if (this.#persistentCache) {
+          this.#persistentCache.removeKey(firstKey);
+        }
       }
     }
 
@@ -157,7 +163,6 @@ export default class VersionedCache {
       collection,
     });
 
-    // Store collection version if provided
     if (collection && this.#versions) {
       const versionKey = `_version_${collection}`;
       const collectionVersion = this.#versions.data?.collections?.[collection];
@@ -169,55 +174,51 @@ export default class VersionedCache {
       }
     }
 
-    // Persist to disk
     this.#saveToDisk();
   }
 
   /**
    * Get item from cache (internal)
-   * @param {string} key - Cache key
-   * @returns {*|undefined}
-   * @private
+   * @param key - Cache key
+   * @returns Cached value, or undefined on miss or expiry
    */
-  #get(key) {
+  #get<T>(key: string): T | undefined {
     const cached = this.#cache.get(key);
     if (!cached) return undefined;
 
-    // Check TTL
     if (Date.now() - cached.timestamp > this.ttl) {
       this.#cache.delete(key);
       return undefined;
     }
 
-    return cached.value;
+    return cached.value as T;
   }
 
   /**
    * Check if collection should be refreshed
-   * @param {string} collection - Collection name
-   * @returns {Promise<boolean>}
+   * @param collection - Collection name
+   * @returns Whether the cached collection version is stale
    */
-  async shouldRefresh(collection) {
+  async shouldRefresh(collection: string): Promise<boolean> {
     try {
       const currentVersions = await this.checkVersions();
-      const cachedVersion = this.#get(`_version_${collection}`);
+      const cachedVersion = this.#get<string>(`_version_${collection}`);
       const serverVersion = currentVersions.data?.collections?.[collection];
 
-      return serverVersion && cachedVersion !== serverVersion;
+      return Boolean(serverVersion && cachedVersion !== serverVersion);
     } catch {
-      // If version check fails, don't force refresh
       return false;
     }
   }
 
   /**
    * Refresh cache entry
-   * @param {string} key - Cache key
-   * @param {string} collection - Collection name
-   * @param {function} fetchFn - Function to fetch fresh data
-   * @returns {Promise<*>}
+   * @param key - Cache key
+   * @param collection - Collection name
+   * @param fetchFn - Function to fetch fresh data
+   * @returns Fresh value
    */
-  async refresh(key, collection, fetchFn) {
+  async refresh<T>(key: string, collection: string, fetchFn: () => Promise<T>): Promise<T> {
     const data = await fetchFn();
     this.set(key, data, collection);
     return data;
@@ -225,10 +226,9 @@ export default class VersionedCache {
 
   /**
    * Check versions from server
-   * @returns {Promise<Object>}
+   * @returns Version payload
    */
-  async checkVersions() {
-    // Check every VERSION_CHECK_INTERVAL (5 minutes)
+  async checkVersions(): Promise<VersionedCacheVersionData> {
     if (this.#versions && this.#lastVersionCheck && Date.now() - this.#lastVersionCheck < VERSION_CHECK_INTERVAL) {
       return this.#versions;
     }
@@ -245,15 +245,13 @@ export default class VersionedCache {
         throw new Error(`Version check failed: ${response.status}`);
       }
 
-      this.#versions = await response.json();
+      this.#versions = (await response.json()) as VersionedCacheVersionData;
       this.#lastVersionCheck = Date.now();
 
-      // Persist versions to disk
       this.#saveToDisk();
 
       return this.#versions;
     } catch (error) {
-      // If fetch fails and we have cached versions, return them
       if (this.#versions) {
         return this.#versions;
       }
@@ -264,27 +262,24 @@ export default class VersionedCache {
   /**
    * Clear entire cache
    */
-  clear() {
+  clear(): void {
     this.#cache.clear();
     this.#versions = undefined;
     this.#lastVersionCheck = undefined;
 
-    // Clear persistent cache
     if (this.#persistentCache) {
       this.#persistentCache.destroy();
-      // Recreate the cache file (creates new empty cache)
       this.#persistentCache = create({ cacheId: this.#cacheId });
     }
   }
 
   /**
    * Delete specific key from cache
-   * @param {string} key - Cache key
+   * @param key - Cache key
    */
-  delete(key) {
+  delete(key: string): void {
     this.#cache.delete(key);
 
-    // Remove from persistent cache
     if (this.#persistentCache) {
       this.#persistentCache.removeKey(key);
       this.#persistentCache.save(true);
@@ -293,18 +288,18 @@ export default class VersionedCache {
 
   /**
    * Get cache size
-   * @returns {number}
+   * @returns Number of in-memory entries
    */
-  size() {
+  size(): number {
     return this.#cache.size;
   }
 
   /**
    * Check if key exists in cache (and is valid)
-   * @param {string} key - Cache key
-   * @returns {boolean}
+   * @param key - Cache key
+   * @returns Whether the key is present and unexpired
    */
-  has(key) {
+  has(key: string): boolean {
     return this.#get(key) !== undefined;
   }
 }

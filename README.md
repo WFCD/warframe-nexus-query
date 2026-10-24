@@ -328,18 +328,23 @@ await querier.stopUpdating();
 ## Testing
 
 ```bash
-# Run tests
+# Build, then run tests
 npm test
 
-# Run linter
-npm run lint
+# Coverage (Coveralls consumes coverage/lcov.info)
+npm run test:coverage
 
-# Generate coverage report
-npm run coverage
+# Lint and auto-fix. Formatting comes from ESLint Stylistic.
+npm run lint
+npm run lint:fix
 
 # Generate API documentation
 npm run build:docs
 ```
+
+## Docs
+
+Typedoc writes HTML to `docs/`. Pull requests build the docs. Pushes to `master` publish them to GitHub Pages.
 
 ## Development
 

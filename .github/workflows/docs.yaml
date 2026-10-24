@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - main
 
 jobs:
   deploy:
@@ -16,7 +17,6 @@ jobs:
           node-version-file: '.nvmrc'
           cache: npm
       - run: npm ci
-      - run: npm i ink-docstrap jsdoc taffydb
       - name: Build
         run: npm run build:docs
       - name: Deploy

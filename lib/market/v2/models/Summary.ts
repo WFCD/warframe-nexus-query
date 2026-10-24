@@ -3,24 +3,57 @@
  * Compatible with v1 Summary but with v2 data structures
  */
 
-import { ASSETS_BASE_URL } from '../constants.js';
+import { ASSETS_BASE_URL } from '../constants';
+import type { StatisticsData, SummaryPrices, TraderInfo } from '../types';
+
+import type Item from './Item';
+import type Order from './Order';
+
+interface OrderBook {
+  buy: Order[];
+  sell: Order[];
+}
+
+interface SummaryStatistics {
+  buy: Partial<StatisticsData>;
+  sell: Partial<StatisticsData>;
+}
 
 export default class SummaryV2 {
+  name: string;
+  slug: string;
+  thumbnail: string | null;
+  partThumb: string | null;
+  icon: string | null;
+  tradingTax: number;
+  ducats: number;
+  vosfor: number;
+  masteryLevel?: number;
+  tradable?: boolean;
+  vaulted?: boolean;
+  wikiUrl?: string;
+  description: string;
+  codex: string;
+  url: string;
+  tags: string[];
+  prices: SummaryPrices;
+  orders: OrderBook;
+  statistics: SummaryStatistics;
+  type: 'market-v2';
+
   /**
    * Create a summary from v2 Item and Order data
-   * @param {Item} item - Item object
-   * @param {Object} orders - Orders object with { buy, sell }
-   * @param {Object} statistics - Statistics object with { buy, sell }
+   * @param item - Item object
+   * @param orders - Orders object with buy and sell lists
+   * @param statistics - Statistics object with buy and sell stats
    */
-  constructor(item, orders, statistics) {
-    // Basic item info
+  constructor(item: Item, orders: OrderBook, statistics: SummaryStatistics) {
     this.name = item.name;
     this.slug = item.slug;
     this.thumbnail = item.getThumbUrl(ASSETS_BASE_URL);
     this.partThumb = item.subIcon ? `${ASSETS_BASE_URL}${item.subIcon}` : this.thumbnail;
     this.icon = item.getIconUrl(ASSETS_BASE_URL);
 
-    // Item metadata
     this.tradingTax = item.tradingTax || 0;
     this.ducats = item.ducats || 0;
     this.vosfor = item.vosfor || 0;
@@ -28,81 +61,76 @@ export default class SummaryV2 {
     this.tradable = item.tradable;
     this.vaulted = item.vaulted;
 
-    // Links and descriptions
     this.wikiUrl = item.wikiLink;
     this.description = item.description || '';
-    this.codex = this.description; // v1 compatibility
+    this.codex = this.description;
     this.url = `https://warframe.market/items/${item.slug}`;
 
-    // Tags
     this.tags = item.tags || [];
 
-    // Prices and statistics (from v2 orders)
     this.prices = {
-      soldCount: statistics.sell.orderCount,
-      soldPrice: statistics.sell.median,
-      minimum: statistics.sell.min,
-      maximum: statistics.sell.max,
-      average: statistics.sell.avg,
-      volume: statistics.sell.volume,
+      soldCount: statistics.sell.orderCount || 0,
+      soldPrice: statistics.sell.median || 0,
+      minimum: statistics.sell.min || 0,
+      maximum: statistics.sell.max || 0,
+      average: statistics.sell.avg || 0,
+      volume: statistics.sell.volume || 0,
     };
 
-    // Store full orders and statistics
     this.orders = orders;
     this.statistics = statistics;
 
-    // Type marker
     this.type = 'market-v2';
   }
 
   /**
    * Get best online sellers
-   * @param {number} limit - Number of sellers to return
-   * @returns {Array<{ingameName: string, platinum: number, quantity: number, status: string, activity: string}>}
+   * @param limit - Number of sellers to return
+   * @returns Online sellers
    */
-  getOnlineSellers(limit = 5) {
+  getOnlineSellers(limit = 5): TraderInfo[] {
     return this.orders.sell
-      .filter((order) => order.isUserOnline())
+      .filter((order) => order.isUserOnline() && order.user)
       .slice(0, limit)
       .map((order) => ({
-        ingameName: order.user.ingameName,
+        ingameName: order.user!.ingameName,
         platinum: order.platinum,
         quantity: order.quantity,
-        status: order.user.status,
-        activity: order.user.getActivityDescription(),
-        reputation: order.user.reputation,
-        platform: order.user.platform,
-        crossplay: order.user.crossplay,
+        status: order.user!.status,
+        activity: order.user!.getActivityDescription(),
+        reputation: order.user!.reputation,
+        platform: order.user!.platform,
+        crossplay: order.user!.crossplay,
       }));
   }
 
   /**
    * Get best online buyers
-   * @param {number} limit - Number of buyers to return
-   * @returns {Array<{ingameName: string, platinum: number, quantity: number, status: string, activity: string}>}
+   * @param limit - Number of buyers to return
+   * @returns Online buyers
    */
-  getOnlineBuyers(limit = 5) {
+  getOnlineBuyers(limit = 5): TraderInfo[] {
     return this.orders.buy
-      .filter((order) => order.isUserOnline())
+      .filter((order) => order.isUserOnline() && order.user)
       .slice(0, limit)
       .map((order) => ({
-        ingameName: order.user.ingameName,
+        ingameName: order.user!.ingameName,
         platinum: order.platinum,
         quantity: order.quantity,
-        status: order.user.status,
-        activity: order.user.getActivityDescription(),
-        reputation: order.user.reputation,
-        platform: order.user.platform,
-        crossplay: order.user.crossplay,
+        status: order.user!.status,
+        activity: order.user!.getActivityDescription(),
+        reputation: order.user!.reputation,
+        platform: order.user!.platform,
+        crossplay: order.user!.crossplay,
       }));
   }
 
   /**
    * String representation (v1 compatible)
-   * @param {string} opt - Option: 'codex', 'item', 'location', 'all'
-   * @returns {string}
+   * @param opt - Option: 'codex', 'item', 'location', 'traders', or 'all'
+   * @returns Formatted summary
    */
-  toString(opt = 'item') {
+  toString(opt = 'item'): string {
     let value = `**${this.name}**\n`;
 
     if (opt === 'codex' || opt === 'all') {
@@ -121,13 +149,11 @@ export default class SummaryV2 {
       }
       value += '\n\n';
 
-      // Sell statistics
       value += `${this.prices.soldCount} sellers (${this.prices.volume} items)\n`;
       value += `Median: ${this.prices.soldPrice}p | `;
       value += `Range: ${this.prices.minimum}p - ${this.prices.maximum}p\n`;
 
-      // Buy statistics (if available)
-      if (this.statistics.buy.orderCount > 0) {
+      if ((this.statistics.buy.orderCount || 0) > 0) {
         value += `\n${this.statistics.buy.orderCount} buyers\n`;
         value += `Median: ${this.statistics.buy.median}p | `;
         value += `Range: ${this.statistics.buy.min}p - ${this.statistics.buy.max}p\n`;
@@ -154,12 +180,12 @@ export default class SummaryV2 {
 
   /**
    * Padding helper (v1 compatibility)
-   * @param {string} str - String to pad
-   * @param {number} length - Target length
-   * @param {string} character - Padding character
-   * @returns {string}
+   * @param str - String to pad
+   * @param length - Target length
+   * @param character - Padding character
+   * @returns Padded string
    */
-  pad(str, length = 10, character = ' ') {
+  pad(str: string, length = 10, character = ' '): string {
     return str.padEnd(length, character);
   }
 }

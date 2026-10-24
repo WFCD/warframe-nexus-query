@@ -49,6 +49,8 @@ docs/
 # Eslint cache
 .eslintcache
 
+dist/
+
 # Cache files
 .cache
 !.cache/.gitkeep

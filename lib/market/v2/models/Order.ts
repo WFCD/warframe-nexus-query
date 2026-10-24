@@ -1,8 +1,22 @@
 /**
  * User information embedded in orders
  */
+
+import type { OrderData, OrderUserData, UserActivity } from '../types';
+
 class OrderUser {
-  constructor(data) {
+  id: string;
+  ingameName: string;
+  avatar?: string;
+  reputation: number;
+  locale?: string;
+  platform?: string;
+  crossplay: boolean;
+  status?: string;
+  activity?: UserActivity;
+  lastSeen: Date | null;
+
+  constructor(data: OrderUserData) {
     this.id = data.id;
     this.ingameName = data.ingameName;
     this.avatar = data.avatar;
@@ -10,24 +24,24 @@ class OrderUser {
     this.locale = data.locale;
     this.platform = data.platform;
     this.crossplay = data.crossplay || false;
-    this.status = data.status; // 'online' | 'ingame' | 'offline' | 'invisible'
-    this.activity = data.activity; // { type, details, startedAt }
+    this.status = data.status;
+    this.activity = data.activity;
     this.lastSeen = data.lastSeen ? new Date(data.lastSeen) : null;
   }
 
   /**
    * Check if user is online
-   * @returns {boolean}
+   * @returns Whether the user is online or in game
    */
-  isOnline() {
+  isOnline(): boolean {
     return this.status === 'online' || this.status === 'ingame';
   }
 
   /**
    * Get activity description
-   * @returns {string}
+   * @returns Activity text, or null when unknown
    */
-  getActivityDescription() {
+  getActivityDescription(): string | null {
     if (!this.activity || !this.activity.type) return null;
 
     const { type, details } = this.activity;
@@ -50,9 +64,9 @@ class OrderUser {
 
   /**
    * Get status emoji
-   * @returns {string}
+   * @returns Status emoji
    */
-  getStatusEmoji() {
+  getStatusEmoji(): string {
     switch (this.status) {
       case 'online':
         return '🟢';
@@ -69,7 +83,7 @@ class OrderUser {
 
   /**
    * Convert to JSON
-   * @returns {Object}
+   * @returns JSON-safe user
    */
   toJSON() {
     return {
@@ -92,71 +106,85 @@ class OrderUser {
  * Represents a buy or sell order with optional user information
  */
 export default class Order {
+  id: string;
+  type: string;
+  platinum: number;
+  quantity: number;
+  perTrade?: boolean | number;
+  rank?: number;
+  charges?: number;
+  subtype?: string;
+  amberStars?: number;
+  cyanStars?: number;
+  visible?: boolean;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+  itemId?: string;
+  group?: string;
+  user: OrderUser | null;
+
   /**
-   * @param {Object} data - Raw order data from API
+   * @param data - Raw order data from API
    */
-  constructor(data) {
+  constructor(data: OrderData) {
     this.id = data.id;
-    this.type = data.type; // 'buy' | 'sell'
+    this.type = data.type;
     this.platinum = data.platinum;
     this.quantity = data.quantity;
     this.perTrade = data.perTrade;
 
-    // Item modifiers
     this.rank = data.rank;
     this.charges = data.charges;
     this.subtype = data.subtype;
     this.amberStars = data.amberStars;
     this.cyanStars = data.cyanStars;
 
-    // Metadata
     this.visible = data.visible;
     this.createdAt = data.createdAt ? new Date(data.createdAt) : null;
     this.updatedAt = data.updatedAt ? new Date(data.updatedAt) : null;
     this.itemId = data.itemId;
     this.group = data.group;
 
-    // User data (if OrderWithUser)
     this.user = data.user ? new OrderUser(data.user) : null;
   }
 
   /**
    * Check if order is from an online user
-   * @returns {boolean}
+   * @returns Whether the order user is online
    */
-  isUserOnline() {
+  isUserOnline(): boolean {
     if (!this.user) return false;
     return this.user.status === 'online' || this.user.status === 'ingame';
   }
 
   /**
    * Check if order is buy type
-   * @returns {boolean}
+   * @returns Whether this is a buy order
    */
-  isBuyOrder() {
+  isBuyOrder(): boolean {
     return this.type === 'buy';
   }
 
   /**
    * Check if order is sell type
-   * @returns {boolean}
+   * @returns Whether this is a sell order
    */
-  isSellOrder() {
+  isSellOrder(): boolean {
     return this.type === 'sell';
   }
 
   /**
    * Get order age in hours
-   * @returns {number}
+   * @returns Age in hours
    */
-  getAgeHours() {
+  getAgeHours(): number {
     if (!this.updatedAt) return 0;
     return (Date.now() - this.updatedAt.getTime()) / (1000 * 60 * 60);
   }
 
   /**
    * Convert to JSON
-   * @returns {Object}
+   * @returns JSON-safe order
    */
   toJSON() {
     return {
@@ -181,11 +209,11 @@ export default class Order {
 
   /**
    * Convert to string representation
-   * @returns {string}
+   * @returns Order label
    */
-  toString() {
+  toString(): string {
     const userStr = this.user ? ` by ${this.user.ingameName}` : '';
-    const modifiers = [];
+    const modifiers: string[] = [];
     if (this.rank != null) modifiers.push(`R${this.rank}`);
     if (this.subtype) modifiers.push(this.subtype);
     const modStr = modifiers.length > 0 ? ` (${modifiers.join(', ')})` : '';

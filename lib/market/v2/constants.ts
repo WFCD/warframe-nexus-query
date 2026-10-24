@@ -1,5 +1,7 @@
 import pkg from '../../../package.json' with { type: 'json' };
 
+import type { Language } from './types';
+
 /**
  * Constants for Warframe Market API v2
  */
@@ -8,13 +10,13 @@ export const API_BASE_URL = process.env.MARKET_V2_URL_OVERRIDE || 'https://api.w
 export const ASSETS_BASE_URL = process.env.MARKET_ASSETS_URL_OVERRIDE || 'https://warframe.market/static/assets/';
 export const USER_AGENT = `@wfcd/nexus-query/${pkg.version} (+https://github.com/WFCD/warframe-nexus-query)`;
 
-export const DEFAULT_TIMEOUT = parseInt(process.env.MARKET_TIMEOUT, 10) || 5000;
+export const DEFAULT_TIMEOUT = parseInt(process.env.MARKET_TIMEOUT || '', 10) || 5000;
 export const MIN_REQUEST_INTERVAL = 3000;
 export const VERSION_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
 export const CACHE_TTL = 60 * 60 * 1000; // 1 hour fallback TTL
 export const SHORT_CACHE_TTL = 60 * 1000; // 1 minute for orders
 
-export const PLATFORMS = {
+export const PLATFORMS: Record<string, string> = {
   pc: 'pc',
   ps4: 'ps4',
   playstation: 'ps4',
@@ -27,7 +29,7 @@ export const PLATFORMS = {
   mobile: 'mobile',
 };
 
-export const LANGUAGES = {
+export const LANGUAGES: Record<string, Language> = {
   en: 'en',
   es: 'es',
   fr: 'fr',

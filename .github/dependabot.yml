@@ -1,40 +1,35 @@
 version: 2
 updates:
   - package-ecosystem: npm
-    directory: "/"
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "friday"
-      time: "00:00"
+      interval: 'daily'
+      time: '15:00'
     commit-message:
-      prefix: "ci"
+      prefix: 'fix'
+      prefix-development: 'ci'
     labels:
-      - "Scope: Dependencies"
-      - "Type: Maintenance"
-    open-pull-requests-limit: 10
-    pull-request-branch-name:
-      separator: "-"
-    rebase-strategy: "auto"
+      - 'dependencies'
     groups:
-      all:
+      default:
         patterns:
-          - "*"
-  - package-ecosystem: github-actions
-    directory: "/"
+          - '*'
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
+    pull-request-branch-name:
+      separator: '-'
+    rebase-strategy: 'auto'
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "friday"
-      time: "00:00"
+      interval: 'daily'
     commit-message:
-      prefix: "ci"
-    labels:
-      - "Scope: Dependencies"
-      - "Type: Maintenance"
-    open-pull-requests-limit: 10
-    pull-request-branch-name:
-      separator: "-"
-    rebase-strategy: "auto"
+      prefix: 'fix'
+      prefix-development: 'ci'
     groups:
-      all:
+      default:
         patterns:
-          - "*"
+          - '*'
+    cooldown:
+      default-days: 7
