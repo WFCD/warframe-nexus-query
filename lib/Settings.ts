@@ -1,12 +1,20 @@
-import { USER_AGENT } from './market/v2/index.js';
+import { USER_AGENT } from './market/v2';
 
 /**
  * Settings storage for nexus query
- * @type {Settings}
- * @property {number} maxCacheLength    - maximum length to store cached data
- * @property {Object} urls              - URL list for nexus stats
  */
 export default class Settings {
+  userAgent: string;
+  urls: {
+    market: string;
+    marketAssets: string;
+  };
+  platforms: Record<string, string | Record<string, string>>;
+  timeouts: {
+    market: number;
+  };
+  defaultString: string;
+
   constructor() {
     this.userAgent = process.env.MARKET_USER_AGENT || USER_AGENT;
 
@@ -39,7 +47,7 @@ export default class Settings {
     };
 
     this.timeouts = {
-      market: process.env.MARKET_TIMEOUT || 3000,
+      market: Number(process.env.MARKET_TIMEOUT) || 3000,
     };
 
     this.defaultString = 'Operator, there is no such item pricecheck available.';
@@ -47,11 +55,18 @@ export default class Settings {
 
   /**
    * Look up real platform for platform alias
-   * @param  {string} platformAlias Alias of platform
-   * @param  {boolean} market Whether or not to use market-specific aliases
-   * @returns {string}               Real platform identifier
+   * @param platformAlias - Alias of platform
+   * @param market - Whether or not to use market-specific aliases
+   * @returns Real platform identifier
    */
-  lookupAlias(platformAlias, market = false) {
-    return market ? this.platforms.market[platformAlias.toLowerCase()] : this.platforms[platformAlias.toLowerCase()];
+  lookupAlias(platformAlias: string, market = false): string | undefined {
+    const key = platformAlias.toLowerCase();
+    if (market) {
+      const marketPlatforms = this.platforms.market;
+      if (typeof marketPlatforms === 'string') return undefined;
+      return marketPlatforms[key];
+    }
+    const platform = this.platforms[key];
+    return typeof platform === 'string' ? platform : undefined;
   }
 }

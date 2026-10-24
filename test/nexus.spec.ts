@@ -15,11 +15,27 @@
 
 import { should as s } from 'chai';
 
-import WFNQ from '../index.js';
-import { MarketFetcherV2 } from '../lib/market/v2/index.js';
+import AttachmentCreator from '../lib/AttachmentCreator';
+import WFNQ from '../index';
+import {
+  HttpClient,
+  Item,
+  MarketFetcherV2,
+  Order,
+  OrderUser,
+  SummaryV2,
+  VersionedCache,
+  calculateStatistics,
+  extractLocalized,
+  formatPriceRange,
+  formatStatistics,
+  getBestOrders,
+  getLocalizedField,
+  normalizeLanguage,
+} from '../lib/market/v2';
 
-process.env.NEXUS_TIMEOUT = 10000;
-process.env.MARKET_TIMEOUT = 30000;
+process.env.NEXUS_TIMEOUT = '10000';
+process.env.MARKET_TIMEOUT = '30000';
 
 const should = s();
 
@@ -39,13 +55,10 @@ const logger = {
 describe('MarketFetcherV2 (Direct API Client)', function () {
   this.timeout(20000);
 
-  let fetcher;
-  let Item;
+  let fetcher!: MarketFetcherV2;
 
   before(async function () {
     fetcher = new MarketFetcherV2({ logger, timeout: 15000 });
-    const itemModule = await import('../lib/market/v2/models/Item.js');
-    Item = itemModule.default;
   });
 
   beforeEach(function (done) {
@@ -87,7 +100,7 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
 
       // Full item should have tradingTax and other economy data
       should.exist(item.tradingTax);
-      item.tradingTax.should.be.a('number');
+      item.tradingTax!.should.be.a('number');
     });
 
     it('should cache items between calls', async function () {
@@ -125,7 +138,7 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
       try {
         await fetcher.getItemBySlug('nonexistent_item_xyz123');
         should.fail('Should have thrown error');
-      } catch (error) {
+      } catch (error: any) {
         should.exist(error);
       }
     });
@@ -149,7 +162,7 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
         const order = orders.sell[0];
         order.should.have.property('platinum');
         order.should.have.property('user');
-        order.user.should.have.property('ingameName');
+        order.user!.should.have.property('ingameName');
       }
     });
 
@@ -272,7 +285,7 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
       try {
         await fetcher.queryMarket('nonexistent_item_xyz123', { platform: 'pc' });
         should.fail('Should have thrown error');
-      } catch (error) {
+      } catch (error: any) {
         should.exist(error);
         error.message.should.include('No items found');
       }
@@ -307,7 +320,7 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
 
       rank0[0].name.should.match(/\(R0\)$/);
       rank10[0].name.should.match(/\(R10\)$/);
-      rank0[0].statistics.sell.median.should.not.equal(rank10[0].statistics.sell.median);
+      rank0[0]!.statistics.sell.median!.should.not.equal(rank10[0]!.statistics.sell.median);
       unranked[0].name.should.not.match(/\(R\d+\)$/);
     });
   });
@@ -448,7 +461,7 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
           } catch {
             // Some items might not exist, that's ok
           }
-        })
+        }),
       );
 
       // Cache should have evicted the oldest entry
@@ -462,13 +475,7 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
 // ============================================================================
 
 describe('VersionedCache (v2)', function () {
-  let VersionedCache;
-  let cache;
-
-  before(async function () {
-    const cacheModule = await import('../lib/market/v2/utils/cache.js');
-    VersionedCache = cacheModule.default;
-  });
+  let cache!: VersionedCache;
 
   beforeEach(function () {
     cache = new VersionedCache({ persistent: false });
@@ -605,7 +612,7 @@ describe('VersionedCache (v2)', function () {
     cache1.set('expires-quickly', { data: 'expired' });
 
     // Wait for expiration
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       setTimeout(() => {
         // Create new instance after TTL expired
         const cache2 = new VersionedCache({
@@ -628,13 +635,7 @@ describe('VersionedCache (v2)', function () {
 // ============================================================================
 
 describe('HttpClient (v2)', function () {
-  let HttpClient;
-  let client;
-
-  before(async function () {
-    const httpModule = await import('../lib/market/v2/utils/http.js');
-    HttpClient = httpModule.default;
-  });
+  let client!: HttpClient;
 
   beforeEach(function () {
     const httpLogger = {
@@ -653,7 +654,7 @@ describe('HttpClient (v2)', function () {
       // Make request to invalid endpoint that returns error response
       await client.get('invalid/nonexistent/endpoint');
       throw new Error('Should have thrown an error');
-    } catch (error) {
+    } catch (error: any) {
       error.should.be.an('Error');
       // Error should have either status or be API error
       const hasStatusCode = error.status !== undefined;
@@ -679,11 +680,10 @@ describe('HttpClient (v2)', function () {
       // Try to fetch real endpoint with impossible timeout
       await shortClient.get('items');
       throw new Error('Should have thrown timeout error');
-    } catch (error) {
+    } catch (error: any) {
       error.should.be.an('Error');
       // Should be either timeout error or network error
-      const isTimeoutError =
-        error.message.includes('timeout') || error.message.includes('abort') || error.message.includes('fetch');
+      const isTimeoutError = error.message.includes('timeout') || error.message.includes('abort') || error.message.includes('fetch');
       isTimeoutError.should.be.true;
     }
   });
@@ -696,7 +696,7 @@ describe('HttpClient (v2)', function () {
       // Request that should return 404 or similar
       await client.get('nonexistent-endpoint-12345');
       throw new Error('Should have thrown an error');
-    } catch (error) {
+    } catch (error: any) {
       error.should.be.an('Error');
       error.message.should.be.a('string').with.length.greaterThan(0);
     }
@@ -709,7 +709,7 @@ describe('HttpClient (v2)', function () {
     // The API should always return valid JSON, but we test error path
     // This is difficult to test without mocking, so we test that
     // valid requests work correctly
-    const result = await client.get('versions');
+    const result = await client.get<object>('versions');
     result.should.be.an('object');
   });
 
@@ -759,7 +759,7 @@ describe('HttpClient (v2)', function () {
     // This will likely fail with 404/405, but tests the POST path
     try {
       await client.post('test-endpoint', { test: 'data' });
-    } catch (error) {
+    } catch (error: any) {
       // Expected to fail, but should be handled gracefully
       error.should.be.an('Error');
       error.message.should.be.a('string');
@@ -772,19 +772,9 @@ describe('HttpClient (v2)', function () {
 // ============================================================================
 
 describe('Summary Model (v2)', function () {
-  let summary;
-  let Item;
-  let Order;
-  let SummaryV2;
+  let summary!: SummaryV2;
 
   before(async function () {
-    const itemModule = await import('../lib/market/v2/models/Item.js');
-    const orderModule = await import('../lib/market/v2/models/Order.js');
-    const summaryModule = await import('../lib/market/v2/models/Summary.js');
-    Item = itemModule.default;
-    Order = orderModule.default;
-    SummaryV2 = summaryModule.default;
-
     // Create mock item
     const itemData = {
       id: 'test-item',
@@ -957,9 +947,7 @@ describe('Summary Model (v2)', function () {
   });
 
   it('should handle vaulted items in toString', async function () {
-    const itemModule = await import('../lib/market/v2/models/Item.js');
-    const ItemClass = itemModule.default;
-    const vaultedItem = new ItemClass(
+    const vaultedItem = new Item(
       {
         id: 'vaulted-item',
         slug: 'vaulted_item',
@@ -968,16 +956,20 @@ describe('Summary Model (v2)', function () {
         tradable: true,
         vaulted: true,
       },
-      'en'
+      'en',
     );
 
     const vaultedSummary = new SummaryV2(
       vaultedItem,
       { buy: [], sell: [] },
       {
-        sell: { volume: 0, orderCount: 0, median: 0, min: 0, max: 0, avg: 0 },
-        buy: { volume: 0, orderCount: 0, median: 0, min: 0, max: 0, avg: 0 },
-      }
+        sell: {
+          volume: 0, orderCount: 0, median: 0, min: 0, max: 0, avg: 0,
+        },
+        buy: {
+          volume: 0, orderCount: 0, median: 0, min: 0, max: 0, avg: 0,
+        },
+      },
     );
 
     const str = vaultedSummary.toString('item');
@@ -1002,15 +994,6 @@ describe('Summary Model (v2)', function () {
 });
 
 describe('Order and OrderUser Models', function () {
-  let Order;
-  let OrderUser;
-
-  before(async function () {
-    const orderModule = await import('../lib/market/v2/models/Order.js');
-    Order = orderModule.default;
-    OrderUser = orderModule.OrderUser;
-  });
-
   it('should get activity descriptions for all types', function () {
     const activities = [
       { type: 'ON_MISSION', expected: 'On Mission' },
@@ -1035,7 +1018,7 @@ describe('Order and OrderUser Models', function () {
       if (expected === undefined) {
         should.not.exist(result);
       } else {
-        result.should.equal(expected);
+        result!.should.equal(expected);
       }
     });
   });
@@ -1091,7 +1074,7 @@ describe('Order and OrderUser Models', function () {
     json.should.have.property('ingameName', 'TestUser');
     json.should.have.property('reputation', 100);
     json.should.have.property('status', 'online');
-    json.activity.should.deep.equal({ type: 'IN_ORBITER' });
+    json.activity!.should.deep.equal({ type: 'IN_ORBITER' });
   });
 
   it('should handle orders without users', function () {
@@ -1235,28 +1218,26 @@ describe('Order and OrderUser Models', function () {
     json.should.have.property('updatedAt');
     json.should.have.property('itemId', 'item-123');
     json.should.have.property('group', 'prime');
-    json.user.should.have.property('ingameName', 'TestUser');
+    json.user!.should.have.property('ingameName', 'TestUser');
   });
 });
 
 describe('Item Model (v2)', function () {
-  let Item;
-
-  before(async function () {
-    const itemModule = await import('../lib/market/v2/models/Item.js');
-    Item = itemModule.default;
-  });
-
   it('should check if item is part of a set', function () {
     const setItem = new Item(
       {
         id: 'item-1',
         slug: 'ash_prime_systems',
         i18n: { en: { name: 'Ash Prime Systems' } },
-        setParts: ['ash_prime_blueprint', 'ash_prime_chassis', 'ash_prime_neuroptics', 'ash_prime_systems'],
+        setParts: [
+          'ash_prime_blueprint',
+          'ash_prime_chassis',
+          'ash_prime_neuroptics',
+          'ash_prime_systems',
+        ],
         setRoot: 'ash_prime_set',
       },
-      'en'
+      'en',
     );
 
     const standaloneItem = new Item(
@@ -1265,7 +1246,7 @@ describe('Item Model (v2)', function () {
         slug: 'maiming_strike',
         i18n: { en: { name: 'Maiming Strike' } },
       },
-      'en'
+      'en',
     );
 
     setItem.isPartOfSet().should.equal(true);
@@ -1280,7 +1261,7 @@ describe('Item Model (v2)', function () {
         i18n: { en: { name: 'Frost Prime Chassis' } },
         vaulted: true,
       },
-      'en'
+      'en',
     );
 
     const activeItem = new Item(
@@ -1290,7 +1271,7 @@ describe('Item Model (v2)', function () {
         i18n: { en: { name: 'Wisp Prime Chassis' } },
         vaulted: false,
       },
-      'en'
+      'en',
     );
 
     vaultedItem.isVaulted().should.equal(true);
@@ -1319,7 +1300,7 @@ describe('Item Model (v2)', function () {
         vaulted: false,
         tags: ['prime', 'warframe'],
       },
-      'en'
+      'en',
     );
 
     const json = item.toJSON();
@@ -1343,7 +1324,7 @@ describe('Item Model (v2)', function () {
         slug: 'ash_prime_systems',
         i18n: { en: { name: 'Ash Prime Systems' } },
       },
-      'en'
+      'en',
     );
 
     const str = item.toString();
@@ -1363,29 +1344,19 @@ describe('Item Model (v2)', function () {
           },
         },
       },
-      'en'
+      'en',
     );
 
     const baseUrl = 'https://warframe.market/static/assets/';
     const thumbUrl = item.getThumbUrl(baseUrl);
     const iconUrl = item.getIconUrl(baseUrl);
 
-    thumbUrl.should.equal(`${baseUrl}icons/en/thumbs/ash_prime_systems.png`);
-    iconUrl.should.equal(`${baseUrl}icons/en/ash_prime_systems.png`);
+    thumbUrl!.should.equal(`${baseUrl}icons/en/thumbs/ash_prime_systems.png`);
+    iconUrl!.should.equal(`${baseUrl}icons/en/ash_prime_systems.png`);
   });
 });
 
 describe('Statistics Utilities', function () {
-  let calculateStatistics;
-  let Order;
-
-  before(async function () {
-    const statsModule = await import('../lib/market/v2/utils/statistics.js');
-    const orderModule = await import('../lib/market/v2/models/Order.js');
-    calculateStatistics = statsModule.calculateStatistics;
-    Order = orderModule.default;
-  });
-
   it('should calculate statistics for sell orders', function () {
     const orders = [
       new Order({
@@ -1393,21 +1364,27 @@ describe('Statistics Utilities', function () {
         type: 'sell',
         platinum: 50,
         quantity: 2,
-        user: { id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc',
+        },
       }),
       new Order({
         id: '2',
         type: 'sell',
         platinum: 60,
         quantity: 1,
-        user: { id: 'u2', ingameName: 'User2', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u2', ingameName: 'User2', status: 'online', platform: 'pc',
+        },
       }),
       new Order({
         id: '3',
         type: 'sell',
         platinum: 70,
         quantity: 3,
-        user: { id: 'u3', ingameName: 'User3', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u3', ingameName: 'User3', status: 'online', platform: 'pc',
+        },
       }),
     ];
 
@@ -1436,7 +1413,9 @@ describe('Statistics Utilities', function () {
         type: 'sell',
         platinum: 50,
         quantity: 1,
-        user: { id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc',
+        },
       }),
     ];
 
@@ -1454,14 +1433,18 @@ describe('Statistics Utilities', function () {
         type: 'sell',
         platinum: 50,
         quantity: 1,
-        user: { id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc',
+        },
       }),
       new Order({
         id: '2',
         type: 'sell',
         platinum: 60,
         quantity: 1,
-        user: { id: 'u2', ingameName: 'User2', status: 'offline', platform: 'pc' },
+        user: {
+          id: 'u2', ingameName: 'User2', status: 'offline', platform: 'pc',
+        },
       }),
     ];
 
@@ -1477,14 +1460,18 @@ describe('Statistics Utilities', function () {
         type: 'sell',
         platinum: 50,
         quantity: 1,
-        user: { id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc',
+        },
       }),
       new Order({
         id: '2',
         type: 'sell',
         platinum: 60,
         quantity: 1,
-        user: { id: 'u2', ingameName: 'User2', status: 'offline', platform: 'pc' },
+        user: {
+          id: 'u2', ingameName: 'User2', status: 'offline', platform: 'pc',
+        },
       }),
     ];
 
@@ -1499,28 +1486,36 @@ describe('Statistics Utilities', function () {
         type: 'sell',
         platinum: 50,
         quantity: 1,
-        user: { id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc',
+        },
       }),
       new Order({
         id: '2',
         type: 'sell',
         platinum: 60,
         quantity: 1,
-        user: { id: 'u2', ingameName: 'User2', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u2', ingameName: 'User2', status: 'online', platform: 'pc',
+        },
       }),
       new Order({
         id: '3',
         type: 'sell',
         platinum: 70,
         quantity: 1,
-        user: { id: 'u3', ingameName: 'User3', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u3', ingameName: 'User3', status: 'online', platform: 'pc',
+        },
       }),
       new Order({
         id: '4',
         type: 'sell',
         platinum: 80,
         quantity: 1,
-        user: { id: 'u4', ingameName: 'User4', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u4', ingameName: 'User4', status: 'online', platform: 'pc',
+        },
       }),
     ];
 
@@ -1535,41 +1530,51 @@ describe('Statistics Utilities', function () {
         type: 'sell',
         platinum: 10,
         quantity: 1,
-        user: { id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc',
+        },
       }),
       new Order({
         id: '2',
         type: 'sell',
         platinum: 20,
         quantity: 1,
-        user: { id: 'u2', ingameName: 'User2', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u2', ingameName: 'User2', status: 'online', platform: 'pc',
+        },
       }),
       new Order({
         id: '3',
         type: 'sell',
         platinum: 30,
         quantity: 1,
-        user: { id: 'u3', ingameName: 'User3', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u3', ingameName: 'User3', status: 'online', platform: 'pc',
+        },
       }),
       new Order({
         id: '4',
         type: 'sell',
         platinum: 40,
         quantity: 1,
-        user: { id: 'u4', ingameName: 'User4', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u4', ingameName: 'User4', status: 'online', platform: 'pc',
+        },
       }),
       new Order({
         id: '5',
         type: 'sell',
         platinum: 50,
         quantity: 1,
-        user: { id: 'u5', ingameName: 'User5', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u5', ingameName: 'User5', status: 'online', platform: 'pc',
+        },
       }),
     ];
 
     const stats = calculateStatistics(orders, { type: 'sell' });
-    stats.q1.should.be.approximately(20, 1);
-    stats.q3.should.be.approximately(40, 1);
+    stats.q1!.should.be.approximately(20, 1);
+    stats.q3!.should.be.approximately(40, 1);
   });
 
   it('should apply includeOutliers option', function () {
@@ -1579,35 +1584,45 @@ describe('Statistics Utilities', function () {
         type: 'sell',
         platinum: 10,
         quantity: 1,
-        user: { id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u1', ingameName: 'User1', status: 'online', platform: 'pc',
+        },
       }),
       new Order({
         id: '2',
         type: 'sell',
         platinum: 50,
         quantity: 1,
-        user: { id: 'u2', ingameName: 'User2', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u2', ingameName: 'User2', status: 'online', platform: 'pc',
+        },
       }),
       new Order({
         id: '3',
         type: 'sell',
         platinum: 55,
         quantity: 1,
-        user: { id: 'u3', ingameName: 'User3', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u3', ingameName: 'User3', status: 'online', platform: 'pc',
+        },
       }),
       new Order({
         id: '4',
         type: 'sell',
         platinum: 60,
         quantity: 1,
-        user: { id: 'u4', ingameName: 'User4', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u4', ingameName: 'User4', status: 'online', platform: 'pc',
+        },
       }),
       new Order({
         id: '5',
         type: 'sell',
         platinum: 1000,
         quantity: 1,
-        user: { id: 'u5', ingameName: 'User5', status: 'online', platform: 'pc' },
+        user: {
+          id: 'u5', ingameName: 'User5', status: 'online', platform: 'pc',
+        },
       }),
     ];
 
@@ -1623,13 +1638,6 @@ describe('Statistics Utilities', function () {
   });
 
   describe('getBestOrders utility', function () {
-    let getBestOrders;
-
-    before(async function () {
-      const statsModule = await import('../lib/market/v2/utils/statistics.js');
-      getBestOrders = statsModule.getBestOrders;
-    });
-
     it('should get best buy and sell orders', function () {
       const orders = [
         new Order({
@@ -1637,28 +1645,36 @@ describe('Statistics Utilities', function () {
           type: 'buy',
           platinum: 40,
           quantity: 1,
-          user: { id: 'u1', ingameName: 'Buyer1', status: 'online', platform: 'pc' },
+          user: {
+            id: 'u1', ingameName: 'Buyer1', status: 'online', platform: 'pc',
+          },
         }),
         new Order({
           id: '2',
           type: 'buy',
           platinum: 35,
           quantity: 1,
-          user: { id: 'u2', ingameName: 'Buyer2', status: 'online', platform: 'pc' },
+          user: {
+            id: 'u2', ingameName: 'Buyer2', status: 'online', platform: 'pc',
+          },
         }),
         new Order({
           id: '3',
           type: 'sell',
           platinum: 50,
           quantity: 1,
-          user: { id: 'u3', ingameName: 'Seller1', status: 'online', platform: 'pc' },
+          user: {
+            id: 'u3', ingameName: 'Seller1', status: 'online', platform: 'pc',
+          },
         }),
         new Order({
           id: '4',
           type: 'sell',
           platinum: 55,
           quantity: 1,
-          user: { id: 'u4', ingameName: 'Seller2', status: 'online', platform: 'pc' },
+          user: {
+            id: 'u4', ingameName: 'Seller2', status: 'online', platform: 'pc',
+          },
         }),
       ];
 
@@ -1678,8 +1694,10 @@ describe('Statistics Utilities', function () {
             type: 'sell',
             platinum: 50 + i,
             quantity: 1,
-            user: { id: `u${i}`, ingameName: `User${i}`, status: 'online', platform: 'pc' },
-          })
+            user: {
+              id: `u${i}`, ingameName: `User${i}`, status: 'online', platform: 'pc',
+            },
+          }),
         );
       }
 
@@ -1694,7 +1712,9 @@ describe('Statistics Utilities', function () {
           type: 'sell',
           platinum: 50,
           quantity: 1,
-          user: { id: 'u1', ingameName: 'User1', status: 'offline', platform: 'pc' },
+          user: {
+            id: 'u1', ingameName: 'User1', status: 'offline', platform: 'pc',
+          },
         }),
       ];
 
@@ -1707,49 +1727,47 @@ describe('Statistics Utilities', function () {
   });
 
   describe('formatPriceRange utility', function () {
-    let formatPriceRange;
-
-    before(async function () {
-      const statsModule = await import('../lib/market/v2/utils/statistics.js');
-      formatPriceRange = statsModule.formatPriceRange;
-    });
-
     it('should format no orders', function () {
-      const stats = { orderCount: 0, min: 0, max: 0, median: 0 };
+      const stats = {
+        orderCount: 0, min: 0, max: 0, median: 0,
+      };
       formatPriceRange(stats).should.equal('No orders found');
     });
 
     it('should format single price', function () {
-      const stats = { orderCount: 1, min: 50, max: 50, median: 50 };
+      const stats = {
+        orderCount: 1, min: 50, max: 50, median: 50,
+      };
       formatPriceRange(stats).should.equal('50p');
     });
 
     it('should format price range', function () {
-      const stats = { orderCount: 5, min: 50, max: 100, median: 75 };
+      const stats = {
+        orderCount: 5, min: 50, max: 100, median: 75,
+      };
       formatPriceRange(stats).should.equal('50p - 100p (median: 75p)');
     });
   });
 
   describe('formatStatistics utility', function () {
-    let formatStatistics;
-
-    before(async function () {
-      const statsModule = await import('../lib/market/v2/utils/statistics.js');
-      formatStatistics = statsModule.formatStatistics;
-    });
-
     it('should format no sellers', function () {
-      const stats = { orderCount: 0, volume: 0, median: 0, min: 0, max: 0, avg: 0 };
+      const stats = {
+        orderCount: 0, volume: 0, median: 0, min: 0, max: 0, avg: 0,
+      };
       formatStatistics(stats, 'sell').should.equal('No sellers found');
     });
 
     it('should format no buyers', function () {
-      const stats = { orderCount: 0, volume: 0, median: 0, min: 0, max: 0, avg: 0 };
+      const stats = {
+        orderCount: 0, volume: 0, median: 0, min: 0, max: 0, avg: 0,
+      };
       formatStatistics(stats, 'buy').should.equal('No buyers found');
     });
 
     it('should format seller statistics', function () {
-      const stats = { orderCount: 10, volume: 50, median: 75, min: 50, max: 100, avg: 77 };
+      const stats = {
+        orderCount: 10, volume: 50, median: 75, min: 50, max: 100, avg: 77,
+      };
       const result = formatStatistics(stats, 'sell');
       result.should.include('**Sellers:** 10 orders (50 items)');
       result.should.include('**Median:** 75p');
@@ -1758,7 +1776,9 @@ describe('Statistics Utilities', function () {
     });
 
     it('should format buyer statistics', function () {
-      const stats = { orderCount: 5, volume: 20, median: 40, min: 35, max: 45, avg: 41 };
+      const stats = {
+        orderCount: 5, volume: 20, median: 40, min: 35, max: 45, avg: 41,
+      };
       const result = formatStatistics(stats, 'buy');
       result.should.include('**Buyers:** 5 orders (20 items)');
       result.should.include('**Median:** 40p');
@@ -1767,17 +1787,6 @@ describe('Statistics Utilities', function () {
 });
 
 describe('i18n Utilities', function () {
-  let normalizeLanguage;
-  let extractLocalized;
-  let getLocalizedField;
-
-  before(async function () {
-    const i18nModule = await import('../lib/market/v2/utils/i18n.js');
-    normalizeLanguage = i18nModule.normalizeLanguage;
-    extractLocalized = i18nModule.extractLocalized;
-    getLocalizedField = i18nModule.getLocalizedField;
-  });
-
   it('should normalize valid language codes', function () {
     normalizeLanguage('en').should.equal('en');
     normalizeLanguage('EN').should.equal('en');
@@ -1799,10 +1808,10 @@ describe('i18n Utilities', function () {
     };
 
     const enData = extractLocalized(i18n, 'en');
-    enData.name.should.equal('English Name');
+    enData.name!.should.equal('English Name');
 
     const esData = extractLocalized(i18n, 'es');
-    esData.name.should.equal('Nombre Español');
+    esData.name!.should.equal('Nombre Español');
   });
 
   it('should fallback to English when locale not found', function () {
@@ -1811,7 +1820,7 @@ describe('i18n Utilities', function () {
     };
 
     const data = extractLocalized(i18n, 'fr');
-    data.name.should.equal('English Name');
+    data.name!.should.equal('English Name');
   });
 
   it('should return empty object for undefined i18n', function () {
@@ -1858,7 +1867,7 @@ describe('i18n Utilities', function () {
 describe('Warframe Market API v2 Integration', function () {
   this.timeout(35000);
 
-  let nexus;
+  let nexus!: WFNQ;
 
   before(function () {
     process.env.WARFRAME_MARKET_API_VERSION = 'v2';
@@ -1887,7 +1896,7 @@ describe('Warframe Market API v2 Integration', function () {
       embed.should.have.property('url').that.is.a('string');
       embed.should.have.property('footer').that.is.an('object');
 
-      if (embed.footer.text) {
+      if (embed.footer?.text) {
         embed.footer.text.should.match(/(v2|Warframe\.Market)/i);
       }
     });
@@ -1959,7 +1968,7 @@ describe('Warframe Market API v2 Integration', function () {
 
       if (embed.fields && embed.fields.length > 0) {
         const hasTraderInfo = embed.fields.some(
-          (field) => field.value.includes('Online Sellers') || field.value.includes('🟢') || field.value.includes('🟡')
+          (field) => field.value.includes('Online Sellers') || field.value.includes('🟢') || field.value.includes('🟡'),
         );
 
         if (embed.footer?.text?.includes('v2')) {
@@ -1970,7 +1979,12 @@ describe('Warframe Market API v2 Integration', function () {
 
     it('should work with different platforms', async function () {
       const query = 'loki prime';
-      const platforms = ['pc', 'ps4', 'xb1', 'switch'];
+      const platforms = [
+        'pc',
+        'ps4',
+        'xb1',
+        'switch',
+      ];
 
       // eslint-disable-next-line no-restricted-syntax
       for (const platform of platforms) {
@@ -1999,7 +2013,6 @@ describe('Warframe Market API v2 Integration', function () {
 
 describe('AttachmentCreator fieldValueV2 validation', function () {
   it('should handle null or undefined mComponent gracefully', async function () {
-    const AttachmentCreator = (await import('../lib/AttachmentCreator.js')).default;
     const creator = new AttachmentCreator();
 
     (() => {
@@ -2014,9 +2027,6 @@ describe('AttachmentCreator fieldValueV2 validation', function () {
   });
 
   it('should handle mComponent with missing or invalid name', async function () {
-    const Summary = (await import('../lib/market/v2/models/Summary.js')).default;
-    const Item = (await import('../lib/market/v2/models/Item.js')).default;
-
     // Create a mock item with invalid name
     const mockItemData = {
       id: 'test_item',
@@ -2036,18 +2046,14 @@ describe('AttachmentCreator fieldValueV2 validation', function () {
 
     (() => {
       const item = new Item(mockItemData, 'en');
-      const summary = new Summary(item, { buy: [], sell: [] }, { sell: { median: 100 }, buy: { median: 90 } });
+      const summary = new SummaryV2(item, { buy: [], sell: [] }, { sell: { median: 100 }, buy: { median: 90 } });
       // eslint-disable-next-line no-null/no-null
-      summary.name = null; // Force invalid name
+      (summary as { name: string | null }).name = null; // Force invalid name
       // This would throw when trying to build field
     }).should.not.throw(); // Construction succeeds, but fieldValueV2 would throw
   });
 
   it('should handle valid v2 component with all required fields', async function () {
-    const Summary = (await import('../lib/market/v2/models/Summary.js')).default;
-    const Item = (await import('../lib/market/v2/models/Item.js')).default;
-    const AttachmentCreator = (await import('../lib/AttachmentCreator.js')).default;
-
     const mockItemData = {
       id: 'ash_prime_systems',
       slug: 'ash-prime-systems',
@@ -2062,13 +2068,17 @@ describe('AttachmentCreator fieldValueV2 validation', function () {
     };
 
     const item = new Item(mockItemData, 'en');
-    const summary = new Summary(
+    const summary = new SummaryV2(
       item,
       { buy: [], sell: [] },
       {
-        sell: { median: 15, min: 10, max: 30, orderCount: 25 },
-        buy: { median: 12, min: 8, max: 15, orderCount: 15 },
-      }
+        sell: {
+          median: 15, min: 10, max: 30, orderCount: 25,
+        },
+        buy: {
+          median: 12, min: 8, max: 15, orderCount: 15,
+        },
+      },
     );
 
     const creator = new AttachmentCreator();

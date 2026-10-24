@@ -1,5 +1,8 @@
 bail: true
 exit: true
 slow: 10000
-spec: test/*.spec.js
+extension: ['ts']
+spec: 'test/**/*.spec.ts'
 timeout: 30000
+node-option:
+  - 'import=tsx'

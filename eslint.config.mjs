@@ -1,9 +1,9 @@
 import { defineConfig, globalIgnores } from 'eslint/config';
 import airbnb from 'eslint-stylistic-airbnb';
-import importX from 'eslint-plugin-import-x';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import { flatConfigs as importXFlatConfigs } from 'eslint-plugin-import-x';
 import noNull from 'eslint-plugin-no-null';
 import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
 /** WFCD base + ESM overrides (formerly @wfcd/eslint-config/esm). */
 const wfcdRules = {
@@ -38,18 +38,33 @@ const wfcdRules = {
     'error',
     {
       devDependencies: [
-        '**/*.test.{js,cjs,mjs}',
-        '**/*.spec.{js,cjs,mjs}',
-        'build/**/*.{js,cjs,mjs}',
+        '**/*.test.{js,cjs,mjs,ts}',
+        '**/*.spec.{js,cjs,mjs,ts}',
+        'build/**/*.{js,cjs,mjs,ts}',
+        'tsdown.config.ts',
+        'eslint.config.mjs',
         'test/**',
       ],
     },
   ],
-  'import-x/extensions': ['error', 'ignorePackages'],
+  'import-x/extensions': [
+    'error',
+    'never',
+    {
+      json: 'always',
+    },
+  ],
   'import-x/order': [
     'error',
     {
-      groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+      groups: [
+        'builtin',
+        'external',
+        'internal',
+        'parent',
+        'sibling',
+        'index',
+      ],
       'newlines-between': 'always',
     },
   ],
@@ -57,11 +72,15 @@ const wfcdRules = {
 };
 
 export default defineConfig([
-  globalIgnores(['.github/**', 'docs/**', 'resources/**', 'types/**']),
-  importX.configs['flat/recommended'],
+  globalIgnores([
+    '.github/**',
+    'docs/**',
+    'resources/**',
+    'types/**',
+  ]),
+  importXFlatConfigs.recommended,
   airbnb.configs['flat/recommended'],
   airbnb.configs['flat/addon-import'],
-  eslintPluginPrettierRecommended,
   {
     plugins: {
       'no-null': noNull,
@@ -76,7 +95,27 @@ export default defineConfig([
     rules: wfcdRules,
   },
   {
-    files: ['test/**/*.js'],
+    files: ['**/*.ts'],
+    extends: [tseslint.configs.recommended],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
+    },
+  },
+  {
+    files: ['test/**/*.ts'],
     languageOptions: {
       globals: {
         ...globals.mocha,
@@ -86,6 +125,7 @@ export default defineConfig([
       'prefer-arrow-callback': 'off',
       'no-new': 'off',
       'no-unused-expressions': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
       'import-x/no-extraneous-dependencies': [
         'error',
         {
@@ -98,7 +138,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['lib/market/v2/**/*.js'],
+    files: ['lib/market/v2/**/*.ts'],
     rules: {
       'no-null/no-null': 'off',
       'no-use-before-define': ['error', { functions: false }],

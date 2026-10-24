@@ -46,7 +46,16 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: npm
       - run: npm ci
-      - run: npm test
+      - name: Run tests
+        if: matrix.node-version != 'lts/krypton'
+        run: npm test
+        env:
+          CI: true
+          NEXUSHUB_USER_KEY: ${{ secrets.NEXUSHUB_USER_KEY }}
+          NEXUSHUB_USER_SECRET: ${{ secrets.NEXUSHUB_USER_SECRET }}
+      - name: Run tests with coverage
+        if: matrix.node-version == 'lts/krypton'
+        run: npm run test:coverage
         env:
           CI: true
           NEXUSHUB_USER_KEY: ${{ secrets.NEXUSHUB_USER_KEY }}
@@ -56,10 +65,23 @@ jobs:
         if: matrix.node-version == 'lts/krypton'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+      - run: npm ci
+      - name: Build docs
+        run: npm run build:docs
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [lint, test]
+    needs: [lint, test, docs]
     permissions:
       id-token: write
       contents: write
@@ -68,6 +90,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: '.nvmrc'

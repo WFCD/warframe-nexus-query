@@ -3,35 +3,38 @@
  * Replaces v1's pre-calculated statistics with client-side calculation
  */
 
+import type { CalculateStatisticsOptions, GetBestOrdersOptions, StatisticsData } from '../types';
+
+interface StatOrder {
+  type: string;
+  platinum: number;
+  quantity: number;
+  isUserOnline(): boolean;
+  isBuyOrder(): boolean;
+  isSellOrder(): boolean;
+}
+
 /**
  * Calculate statistics from order list
- * @param {Array<Order>} orders - Array of orders
- * @param {Object} options - Calculation options
- * @param {string} [options.type='sell'] - Order type ('buy' or 'sell')
- * @param {boolean} [options.onlineOnly=true] - Only include online users
- * @param {boolean} [options.includeOutliers=true] - Include price outliers
- * @returns {Object} Statistics object
+ * @param orders - Array of orders
+ * @param options - Calculation options
+ * @returns Statistics object
  */
-export function calculateStatistics(orders, options = {}) {
+export function calculateStatistics(orders: StatOrder[], options: CalculateStatisticsOptions = {}): StatisticsData {
   const { type = 'sell', onlineOnly = true, includeOutliers = true } = options;
 
-  // Filter orders
   let filtered = orders.filter((o) => o.type === type);
 
-  // Filter online users only
   if (onlineOnly) {
     filtered = filtered.filter((o) => o.isUserOnline());
   }
 
-  // Extract prices
   let prices = filtered.map((o) => o.platinum).sort((a, b) => a - b);
 
-  // Remove outliers if requested (using IQR method)
   if (!includeOutliers && prices.length > 4) {
     prices = removeOutliers(prices);
   }
 
-  // If no prices, return empty stats
   if (prices.length === 0) {
     return {
       volume: 0,
@@ -45,13 +48,11 @@ export function calculateStatistics(orders, options = {}) {
     };
   }
 
-  // Calculate volume
   const volume = filtered.reduce((sum, o) => sum + o.quantity, 0);
 
-  // Calculate statistics
   const median = calculateMedian(prices);
-  const min = prices[0];
-  const max = prices[prices.length - 1];
+  const min = prices[0] ?? 0;
+  const max = prices[prices.length - 1] ?? 0;
   const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
   const q1 = calculatePercentile(prices, 25);
   const q3 = calculatePercentile(prices, 75);
@@ -70,45 +71,51 @@ export function calculateStatistics(orders, options = {}) {
 
 /**
  * Calculate median of sorted array
- * @param {number[]} sortedPrices - Sorted price array
- * @returns {number}
+ * @param sortedPrices - Sorted price array
+ * @returns Median price
  */
-function calculateMedian(sortedPrices) {
+function calculateMedian(sortedPrices: number[]): number {
   const len = sortedPrices.length;
   if (len === 0) return 0;
-  if (len === 1) return sortedPrices[0];
+  const first = sortedPrices[0] ?? 0;
+  if (len === 1) return first;
 
   const mid = Math.floor(len / 2);
+  const upper = sortedPrices[mid] ?? 0;
   if (len % 2 === 0) {
-    return (sortedPrices[mid - 1] + sortedPrices[mid]) / 2;
+    const lower = sortedPrices[mid - 1] ?? 0;
+    return (lower + upper) / 2;
   }
-  return sortedPrices[mid];
+  return upper;
 }
 
 /**
  * Calculate percentile of sorted array
- * @param {number[]} sortedPrices - Sorted price array
- * @param {number} percentile - Percentile (0-100)
- * @returns {number}
+ * @param sortedPrices - Sorted price array
+ * @param percentile - Percentile (0-100)
+ * @returns Percentile value
  */
-function calculatePercentile(sortedPrices, percentile) {
+function calculatePercentile(sortedPrices: number[], percentile: number): number {
   if (sortedPrices.length === 0) return 0;
-  if (sortedPrices.length === 1) return sortedPrices[0];
+  const only = sortedPrices[0] ?? 0;
+  if (sortedPrices.length === 1) return only;
 
   const index = (percentile / 100) * (sortedPrices.length - 1);
   const lower = Math.floor(index);
   const upper = Math.ceil(index);
   const weight = index - lower;
+  const lowerPrice = sortedPrices[lower] ?? 0;
+  const upperPrice = sortedPrices[upper] ?? 0;
 
-  return sortedPrices[lower] * (1 - weight) + sortedPrices[upper] * weight;
+  return lowerPrice * (1 - weight) + upperPrice * weight;
 }
 
 /**
  * Remove outliers using IQR method
- * @param {number[]} sortedPrices - Sorted price array
- * @returns {number[]}
+ * @param sortedPrices - Sorted price array
+ * @returns Prices inside the IQR fence
  */
-function removeOutliers(sortedPrices) {
+function removeOutliers(sortedPrices: number[]): number[] {
   const q1 = calculatePercentile(sortedPrices, 25);
   const q3 = calculatePercentile(sortedPrices, 75);
   const iqr = q3 - q1;
@@ -120,22 +127,21 @@ function removeOutliers(sortedPrices) {
 
 /**
  * Get best orders (lowest sell / highest buy)
- * @param {Array<Order>} orders - Array of orders
- * @param {Object} options - Options
- * @param {number} [options.limit=5] - Number of orders to return
- * @param {boolean} [options.onlineOnly=true] - Only online users
- * @returns {Object} { buy: Order[], sell: Order[] }
+ * @param orders - Array of orders
+ * @param options - Options
+ * @returns Best buy and sell orders
  */
-export function getBestOrders(orders, options = {}) {
+export function getBestOrders<T extends StatOrder>(
+  orders: T[],
+  options: GetBestOrdersOptions = {},
+): { buy: T[]; sell: T[] } {
   const { limit = 5, onlineOnly = true } = options;
 
-  // Filter online if requested
   let filtered = orders;
   if (onlineOnly) {
     filtered = orders.filter((o) => o.isUserOnline());
   }
 
-  // Separate buy and sell orders
   const buyOrders = filtered.filter((o) => o.isBuyOrder()).sort((a, b) => b.platinum - a.platinum);
 
   const sellOrders = filtered.filter((o) => o.isSellOrder()).sort((a, b) => a.platinum - b.platinum);
@@ -148,10 +154,10 @@ export function getBestOrders(orders, options = {}) {
 
 /**
  * Format price range string
- * @param {Object} stats - Statistics object
- * @returns {string}
+ * @param stats - Statistics object
+ * @returns Price range text
  */
-export function formatPriceRange(stats) {
+export function formatPriceRange(stats: Pick<StatisticsData, 'orderCount' | 'min' | 'max' | 'median'>): string {
   if (stats.orderCount === 0) {
     return 'No orders found';
   }
@@ -165,11 +171,11 @@ export function formatPriceRange(stats) {
 
 /**
  * Format statistics for display
- * @param {Object} stats - Statistics object
- * @param {string} type - Order type ('buy' or 'sell')
- * @returns {string}
+ * @param stats - Statistics object
+ * @param type - Order type ('buy' or 'sell')
+ * @returns Formatted statistics
  */
-export function formatStatistics(stats, type = 'sell') {
+export function formatStatistics(stats: StatisticsData, type = 'sell'): string {
   const action = type === 'sell' ? 'Sellers' : 'Buyers';
 
   if (stats.orderCount === 0) {

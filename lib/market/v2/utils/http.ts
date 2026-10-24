@@ -2,30 +2,28 @@
  * HTTP client for Warframe Market API v2
  */
 
-import { API_BASE_URL, DEFAULT_TIMEOUT, MIN_REQUEST_INTERVAL, PLATFORMS, USER_AGENT } from '../constants.js';
+import {
+  API_BASE_URL, DEFAULT_TIMEOUT, MIN_REQUEST_INTERVAL, PLATFORMS, USER_AGENT,
+} from '../constants';
+import type {
+  ApiErrorBody, HttpClientOptions, HttpError, HttpRequestOptions, Logger,
+} from '../types';
 
-import { normalizeLanguage } from './i18n.js';
+import { normalizeLanguage } from './i18n';
 
-/**
- * Make HTTP request with timeout
- * @param {string} url - URL to fetch
- * @param {Object} options - Fetch options
- * @param {number} timeout - Timeout in milliseconds
- * @returns {Promise<Response>}
- */
-let requestChain = Promise.resolve();
+let requestChain: Promise<void> = Promise.resolve();
 let nextRequestAt = 0;
 
 /**
  * Hold the shared market slot so request starts are at least `interval` ms apart.
- * @param {number} [interval] - Minimum gap between request starts
- * @returns {Promise<void>}
+ * @param interval - Minimum gap between request starts
+ * @returns Resolves when this caller may start a request
  */
-export function waitForRequestSlot(interval = MIN_REQUEST_INTERVAL) {
+export function waitForRequestSlot(interval = MIN_REQUEST_INTERVAL): Promise<void> {
   const slot = requestChain.then(async () => {
     const delay = nextRequestAt - Date.now();
     if (delay > 0) {
-      await new Promise((resolve) => {
+      await new Promise<void>((resolve) => {
         setTimeout(resolve, delay);
       });
     }
@@ -34,13 +32,13 @@ export function waitForRequestSlot(interval = MIN_REQUEST_INTERVAL) {
 
   requestChain = slot.then(
     () => undefined,
-    () => undefined
+    () => undefined,
   );
 
   return slot;
 }
 
-async function fetchWithTimeout(url, options = {}, timeout = DEFAULT_TIMEOUT) {
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = DEFAULT_TIMEOUT): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
@@ -53,35 +51,32 @@ async function fetchWithTimeout(url, options = {}, timeout = DEFAULT_TIMEOUT) {
     return response;
   } catch (error) {
     clearTimeout(timeoutId);
-    if (error.name === 'AbortError') {
+    if (error instanceof Error && error.name === 'AbortError') {
       throw new Error(`Request timeout after ${timeout}ms`);
     }
     throw error;
   }
 }
 
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
 /**
  * HTTP Client for Warframe Market API v2
  */
 export default class HttpClient {
-  #baseURL;
-  #timeout;
-  #locale;
-  #logger;
-  #userAgent;
-  #minRequestInterval;
+  #baseURL: string;
+  #timeout: number;
+  #locale: string;
+  #logger: Logger;
+  #userAgent: string;
+  #minRequestInterval: number;
 
   /**
-   * @param {Object} options - Client options
-   * @param {string} [options.baseURL] - Base URL for API
-   * @param {number} [options.timeout] - Request timeout in ms
-   * @param {number} [options.minRequestInterval] - Minimum ms between request starts
-   * @param {string} [options.locale] - Default language
-   * @param {string} [options.userAgent] - User-Agent header
-   * @param {Object} [options.logger] - Logger instance
+   * @param options - Client options
    */
-  constructor(options = {}) {
-    // Ensure baseURL ends with /
+  constructor(options: HttpClientOptions = {}) {
     let baseURL = options.baseURL || API_BASE_URL;
     if (!baseURL.endsWith('/')) {
       baseURL += '/';
@@ -96,18 +91,15 @@ export default class HttpClient {
 
   /**
    * Make GET request
-   * @param {string} path - API path
-   * @param {Object} options - Request options
-   * @param {string} [options.platform] - Platform header
-   * @param {string} [options.locale] - Language header
-   * @param {Object} [options.query] - Query parameters
-   * @returns {Promise<Object>}
+   * @param path - API path
+   * @param options - Request options
+   * @returns Unwrapped response data
    */
-  async get(path, options = {}) {
+  async get<T = unknown>(path: string, options: HttpRequestOptions = {}): Promise<T> {
     const url = this.#buildUrl(path, options.query);
     const headers = this.#buildHeaders(options);
 
-    this.#logger.debug(`[v2] GET ${url}`);
+    this.#logger.debug?.(`[v2] GET ${url}`);
 
     try {
       await waitForRequestSlot(this.#minRequestInterval);
@@ -117,22 +109,22 @@ export default class HttpClient {
         throw await this.#handleError(response);
       }
 
-      const data = await response.json();
-      return this.#unwrapResponse(data);
+      const data = (await response.json()) as ApiErrorBody;
+      return this.#unwrapResponse<T>(data);
     } catch (error) {
-      this.#logger.error(`HTTP GET ${path} failed:`, error.message);
+      this.#logger.error?.(`HTTP GET ${path} failed:`, errorMessage(error));
       throw error;
     }
   }
 
   /**
    * Make POST request
-   * @param {string} path - API path
-   * @param {Object} body - Request body
-   * @param {Object} options - Request options
-   * @returns {Promise<Object>}
+   * @param path - API path
+   * @param body - Request body
+   * @param options - Request options
+   * @returns Unwrapped response data
    */
-  async post(path, body, options = {}) {
+  async post<T = unknown>(path: string, body: unknown, options: HttpRequestOptions = {}): Promise<T> {
     const url = this.#buildUrl(path);
     const headers = {
       ...this.#buildHeaders(options),
@@ -148,37 +140,35 @@ export default class HttpClient {
           headers,
           body: JSON.stringify(body),
         },
-        this.#timeout
+        this.#timeout,
       );
 
       if (!response.ok) {
         throw await this.#handleError(response);
       }
 
-      const data = await response.json();
-      return this.#unwrapResponse(data);
+      const data = (await response.json()) as ApiErrorBody;
+      return this.#unwrapResponse<T>(data);
     } catch (error) {
-      this.#logger.error(`HTTP POST ${path} failed:`, error.message);
+      this.#logger.error?.(`HTTP POST ${path} failed:`, errorMessage(error));
       throw error;
     }
   }
 
   /**
    * Build full URL with query parameters
-   * @param {string} path - API path
-   * @param {Object} [query] - Query parameters
-   * @returns {string}
-   * @private
+   * @param path - API path
+   * @param query - Query parameters
+   * @returns Absolute URL
    */
-  #buildUrl(path, query) {
-    // Remove leading slash from path if present
+  #buildUrl(path: string, query?: Record<string, unknown>): string {
     const cleanPath = path.startsWith('/') ? path.substring(1) : path;
     const url = new URL(cleanPath, this.#baseURL);
 
     if (query) {
       Object.entries(query).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          url.searchParams.append(key, value);
+          url.searchParams.append(key, String(value));
         }
       });
     }
@@ -188,34 +178,29 @@ export default class HttpClient {
 
   /**
    * Build request headers
-   * @param {Object} options - Options
-   * @returns {Object}
-   * @private
+   * @param options - Options
+   * @returns Request headers
    */
-  #buildHeaders(options = {}) {
-    const headers = {
+  #buildHeaders(options: HttpRequestOptions = {}): Record<string, string> {
+    const headers: Record<string, string> = {
       Accept: 'application/json',
       'User-Agent': this.#userAgent,
     };
 
-    // Add language header
     const locale = options.locale || this.#locale;
     if (locale) {
       headers.Language = locale;
     }
 
-    // Add platform header if provided
     if (options.platform) {
       const normalizedPlatform = PLATFORMS[options.platform.toLowerCase()] || options.platform;
       headers.Platform = normalizedPlatform;
     }
 
-    // Add authorization header if provided
     if (options.token) {
       headers.Authorization = `Bearer ${options.token}`;
     }
 
-    // Add custom headers
     if (options.headers) {
       Object.assign(headers, options.headers);
     }
@@ -225,23 +210,22 @@ export default class HttpClient {
 
   /**
    * Handle HTTP error response
-   * @param {Response} response - Response object
-   * @returns {Promise<Error>}
-   * @private
+   * @param response - Response object
+   * @returns Error describing the failed response
    */
-  async #handleError(response) {
-    let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+  async #handleError(response: Response): Promise<HttpError> {
+    let message = `HTTP ${response.status}: ${response.statusText}`;
 
     try {
-      const data = await response.json();
+      const data = (await response.json()) as ApiErrorBody;
       if (data.error && data.error.message) {
-        errorMessage = data.error.message;
+        message = data.error.message;
       }
     } catch {
       // If JSON parsing fails, use default error message
     }
 
-    const error = new Error(errorMessage);
+    const error = new Error(message) as HttpError;
     error.status = response.status;
     error.statusText = response.statusText;
     return error;
@@ -249,34 +233,32 @@ export default class HttpClient {
 
   /**
    * Unwrap API response
-   * @param {Object} data - Response data
-   * @returns {*}
-   * @private
+   * @param data - Response data
+   * @returns Inner `data` payload
    */
-  #unwrapResponse(data) {
-    // v2 API wraps responses in { apiVersion, data, error }
+  #unwrapResponse<T>(data: ApiErrorBody): T {
     if (data.error) {
-      const error = new Error(data.error.message || 'API Error');
+      const error = new Error(data.error.message || 'API Error') as HttpError;
       error.code = data.error.code;
       throw error;
     }
 
-    return data.data;
+    return data.data as T;
   }
 
   /**
    * Set default locale
-   * @param {string} locale - Language code
+   * @param locale - Language code
    */
-  setLocale(locale) {
+  setLocale(locale: string): void {
     this.#locale = normalizeLanguage(locale);
   }
 
   /**
    * Set timeout
-   * @param {number} timeout - Timeout in milliseconds
+   * @param timeout - Timeout in milliseconds
    */
-  setTimeout(timeout) {
+  setTimeout(timeout: number): void {
     this.#timeout = timeout;
   }
 }

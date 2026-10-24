@@ -1,19 +1,17 @@
 {
+  "exclude": ["node_modules", "dist", "docs"],
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "declaration": true,
-    "declarationDir": "./types",
-    "outDir": "./dist",
-    "rootDir": ".",
+    "module": "esnext",
+    "target": "es2024",
     "strict": true,
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
+    "isolatedModules": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
     "noEmit": true,
-    "typeRoots": ["./node_modules/@types", "./types"]
+    "types": ["node", "mocha", "chai"],
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["lib/**/*.js", "index.js", "types/**/*.d.ts"],
-  "exclude": ["node_modules", "dist", "test"]
+  "include": ["index.ts", "basedir.ts", "global.d.ts", "lib/**/*.ts", "test/**/*.ts", "tsdown.config.ts"]
 }
