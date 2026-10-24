@@ -121,6 +121,8 @@ export interface MarketFetcherV2Options {
   cacheSize?: number;
   cacheTTL?: number;
   baseURL?: string;
+  userAgent?: string;
+  minRequestInterval?: number;
 }
 
 export interface HttpClientOptions {
@@ -128,10 +130,14 @@ export interface HttpClientOptions {
   timeout?: number;
   locale?: string;
   logger?: Console;
+  userAgent?: string;
+  minRequestInterval?: number;
 }
 
 export interface CacheOptions {
   maxSize?: number;
   ttl?: number;
   logger?: Console;
+  userAgent?: string;
+  minRequestInterval?: number;
 }

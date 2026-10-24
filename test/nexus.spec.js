@@ -299,7 +299,7 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
     });
 
     it('should filter mod prices by rank', async function () {
-      this.timeout(15000);
+      this.timeout(45000);
       const query = 'blind rage';
       const unranked = await fetcher.queryMarket(query, { platform: 'pc' });
       const rank0 = await fetcher.queryMarket(query, { platform: 'pc', rank: 0 });
@@ -409,6 +409,7 @@ describe('MarketFetcherV2 (Direct API Client)', function () {
     });
 
     it('should evict old entries when orders cache is full', async function () {
+      this.timeout(90000);
       // The orders cache has a max size (default 20)
       // First clear cache
       fetcher.clearCache();
@@ -662,8 +663,8 @@ describe('HttpClient (v2)', function () {
   });
 
   it('should handle timeout errors', async function () {
-    // Tests timeout handling in fetchWithTimeout (lines 29-30)
-    this.timeout(3000);
+    // Queue delay is up to MIN_REQUEST_INTERVAL before the 1ms request timeout
+    this.timeout(10000);
 
     // Create client with very short timeout
     const shortClient = new HttpClient({
