@@ -339,6 +339,7 @@ export interface HttpClientOptions {
   locale?: Language;
   logger?: Logger;
   userAgent?: string;
+  minRequestInterval?: number;
   token?: string;
   headers?: Record<string, string>;
 }
@@ -360,6 +361,7 @@ export interface CacheOptions {
   persistent?: boolean;
   logger?: Logger;
   userAgent?: string;
+  minRequestInterval?: number;
 }
 
 export interface VersionedCache {
@@ -391,6 +393,7 @@ export interface MarketFetcherV2Options {
   cacheTTL?: number;
   baseURL?: string;
   userAgent?: string;
+  minRequestInterval?: number;
 }
 
 export interface MarketFetcherV2 {
